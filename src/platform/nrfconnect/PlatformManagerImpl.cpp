@@ -26,6 +26,8 @@
 #include <platform/PlatformManager.h>
 #include <platform/internal/GenericPlatformManagerImpl_Zephyr.ipp>
 
+#include <support/logging/CHIPLogging.h>
+
 namespace chip {
 namespace DeviceLayer {
 
