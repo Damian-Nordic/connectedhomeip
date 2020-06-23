@@ -60,6 +60,8 @@ class GenericPlatformManagerImpl_FreeRTOS;
 template <class>
 class GenericPlatformManagerImpl_POSIX;
 template <class>
+class GenericPlatformManagerImpl_Zephyr;
+template <class>
 class GenericConnectivityManagerImpl_Thread;
 template <class>
 class GenericThreadStackManagerImpl_OpenThread;
@@ -107,6 +109,8 @@ private:
     friend class Internal::GenericPlatformManagerImpl_FreeRTOS;
     template <class>
     friend class Internal::GenericPlatformManagerImpl_POSIX;
+    template <class>
+    friend class Internal::GenericPlatformManagerImpl_Zephyr;
     template <class>
     friend class Internal::GenericConnectivityManagerImpl_Thread;
     template <class>
