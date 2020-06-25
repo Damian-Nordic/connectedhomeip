@@ -17,7 +17,7 @@
  *    limitations under the License.
  */
 
-#include "include/AppTask.h"
+#include "AppTask.h"
 
 #include <logging/log.h>
 
