@@ -23,7 +23,6 @@
 
 #include <BuildConfig.h>
 #include <platform/CHIPDeviceLayer.h>
-#include <support/logging/CHIPLogging.h>
 
 LOG_MODULE_REGISTER(app);
 

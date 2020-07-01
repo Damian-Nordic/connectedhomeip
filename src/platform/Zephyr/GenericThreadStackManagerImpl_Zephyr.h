@@ -70,6 +70,8 @@ private:
     // ===== Private members for use by this class only.
 
     inline ImplClass * Impl() { return static_cast<ImplClass *>(this); }
+
+    k_mutex mThreadStackLock;
 };
 
 // Instruct the compiler to instantiate the template only when explicitly told to do so.
@@ -78,6 +80,7 @@ extern template class GenericThreadStackManagerImpl_Zephyr<ThreadStackManagerImp
 template <class ImplClass>
 CHIP_ERROR GenericThreadStackManagerImpl_Zephyr<ImplClass>::_InitThreadStack(void)
 {
+    k_mutex_init(&mThreadStackLock);
     return GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(openthread_get_default_instance());
 }
 
@@ -91,30 +94,19 @@ CHIP_ERROR GenericThreadStackManagerImpl_Zephyr<ImplClass>::_StartThreadTask(voi
 template <class ImplClass>
 void GenericThreadStackManagerImpl_Zephyr<ImplClass>::_LockThreadStack(void)
 {
-    if (k_thread_priority_get(k_current_get()) >= 0 || CONFIG_MP_NUM_CPUS != 1)
-    {
-        ChipLogError(DeviceLayer, "No locking is available. All calls to ThreadStackManager must come from a cooperative task.");
-    }
+    k_mutex_lock(&mThreadStackLock, K_FOREVER);
 }
 
 template <class ImplClass>
 bool GenericThreadStackManagerImpl_Zephyr<ImplClass>::_TryLockThreadStack(void)
 {
-    if (k_thread_priority_get(k_current_get()) >= 0 || CONFIG_MP_NUM_CPUS != 1)
-    {
-        ChipLogError(DeviceLayer, "No locking is available. All calls to ThreadStackManager must come from a cooperative task.");
-    }
-
-    return true;
+    return k_mutex_lock(&mThreadStackLock, K_NO_WAIT) == 0;
 }
 
 template <class ImplClass>
 void GenericThreadStackManagerImpl_Zephyr<ImplClass>::_UnlockThreadStack(void)
 {
-    if (k_thread_priority_get(k_current_get()) >= 0 || CONFIG_MP_NUM_CPUS != 1)
-    {
-        ChipLogError(DeviceLayer, "No locking is available. All calls to ThreadStackManager must come from a cooperative task.");
-    }
+    k_mutex_unlock(&mThreadStackLock);
 }
 
 template <class ImplClass>

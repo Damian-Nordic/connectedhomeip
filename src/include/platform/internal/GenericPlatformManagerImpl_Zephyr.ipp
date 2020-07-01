@@ -185,6 +185,8 @@ CHIP_ERROR GenericPlatformManagerImpl_Zephyr<ImplClass>::_StartEventLoopTask(voi
 
 #ifdef CONFIG_THREAD_NAME
     k_thread_name_set(tid, CHIP_DEVICE_CONFIG_CHIP_TASK_NAME);
+#else
+    IgnoreUnusedVariable(tid);
 #endif
 
     return CHIP_NO_ERROR;
