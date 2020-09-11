@@ -109,9 +109,9 @@ container:
 >     source directory in case you have it already installed.
 > -   Likewise, `~/connectedhomeip` can be replaced with an absolute path to
 >     CHIP source directory.
-> -   `--privileged` flag can be omitted if you're not planning to flash
->     the example onto hardware. The parameter gives the container access
->     to devices connected to your computer at the container creation time.
+> -   `--privileged` flag can be omitted if you're not planning to flash the
+>     example onto hardware. The parameter gives the container access to devices
+>     connected to your computer at the container creation time.
 > -   `--rm` flag can be omitted if you don't want the container to be
 >     auto-removed when you exit the container shell session.
 
