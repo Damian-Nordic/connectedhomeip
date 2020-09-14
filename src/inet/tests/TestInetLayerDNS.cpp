@@ -717,10 +717,7 @@ int TestInetLayerDNS(void)
     return nlTestRunnerStats(&DNSTestSuite);
 }
 
-static void __attribute__((constructor)) TestCHIPInetLayerDNSCtor(void)
-{
-    VerifyOrDie(RegisterUnitTests(&TestInetLayerDNS) == CHIP_NO_ERROR);
-}
+CHIP_REGISTER_TEST_SUITE(TestInetLayerDNS)
 
 #else // !INET_CONFIG_ENABLE_DNS_RESOLVER
 

@@ -572,10 +572,7 @@ int TestInetEndPoint(void)
 #endif // !CHIP_SYSTEM_CONFIG_USE_SOCKETS
 }
 
-static void __attribute__((constructor)) TestCHIPInetEndpointCtor(void)
-{
-    VerifyOrDie(RegisterUnitTests(&TestInetEndPoint) == CHIP_NO_ERROR);
-}
+CHIP_REGISTER_TEST_SUITE(TestInetEndPoint)
 
 int main(int argc, char * argv[])
 {

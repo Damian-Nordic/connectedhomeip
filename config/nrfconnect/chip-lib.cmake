@@ -161,6 +161,7 @@ function(chip_build TARGET_NAME BASE_TARGET_NAME)
         ${CHIP_OUTPUT_DIR}/gen/third_party/connectedhomeip/src/app/include
     )
     target_link_directories(${TARGET_NAME} INTERFACE
+        ${CHIP_OUTPUT_DIR}/obj/third_party/connectedhomeip/src/inet/tests/lib
         ${CHIP_OUTPUT_DIR}/obj/third_party/connectedhomeip/src/lib/support/tests/lib
         ${CHIP_OUTPUT_DIR}/obj/third_party/connectedhomeip/src/lib/core/tests/lib
         ${CHIP_OUTPUT_DIR}/obj/third_party/connectedhomeip/src/transport/tests/lib
