@@ -25,6 +25,9 @@
 #include "Service.h"
 #include "ThreadUtil.h"
 
+#include "attribute-storage.h"
+#include "gen/cluster-id.h"
+
 #include <platform/CHIPDeviceLayer.h>
 
 #include <dk_buttons_and_leds.h>
@@ -32,6 +35,7 @@
 #include <setup_payload/QRCodeSetupPayloadGenerator.h>
 #include <setup_payload/SetupPayload.h>
 #include <zephyr.h>
+
 
 #define FACTORY_RESET_TRIGGER_TIMEOUT 3000
 #define FACTORY_RESET_CANCEL_WINDOW_TIMEOUT 3000
@@ -92,6 +96,9 @@ int AppTask::Init()
     // Init ZCL Data Model and start server
     InitServer();
     PrintQRCode(chip::RendezvousInformationFlags::kBLE);
+
+    // Initialize cluster state to meet with the real lock state
+    UpdateClusterState();
 
     return 0;
 }
@@ -385,6 +392,8 @@ void AppTask::ActionCompleted(BoltLockManager::Action_t aAction)
         LOG_INF("Unlock Action has been completed");
         sLockLED.Set(false);
     }
+
+    sAppTask.UpdateClusterState();
 }
 
 void AppTask::PostLockActionRequest(int32_t aActor, BoltLockManager::Action_t aAction)
@@ -414,5 +423,18 @@ void AppTask::DispatchEvent(AppEvent * aEvent)
     else
     {
         LOG_INF("Event received with no handler. Dropping event.");
+    }
+}
+
+void AppTask::UpdateClusterState()
+{
+    uint8_t newValue = !BoltLockMgr().IsUnlocked();
+
+    // write the new on/off value
+    EmberAfStatus status = emberAfWriteAttribute(1, ZCL_ON_OFF_CLUSTER_ID, ZCL_ON_OFF_ATTRIBUTE_ID, CLUSTER_MASK_SERVER,
+                                                 &newValue, ZCL_BOOLEAN_ATTRIBUTE_TYPE);
+    if (status != EMBER_ZCL_STATUS_SUCCESS)
+    {
+        LOG_ERR("Updating on/off %x", status);
     }
 }
