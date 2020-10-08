@@ -61,6 +61,7 @@ using namespace chip::DeviceController;
 #define CDC_JNI_CALLBACK_LOCAL_REF_COUNT 256
 
 static void HandleKeyExchange(ChipDeviceController * deviceController, Transport::PeerConnectionState * state, void * appReqState);
+static void HandleConnectIp(ChipDeviceController * deviceController, Transport::PeerConnectionState * state, void * appReqState);
 static void HandleEchoResponse(ChipDeviceController * deviceController, void * appReqState, System::PacketBuffer * payload);
 static void HandleSimpleOperationComplete(ChipDeviceController * deviceController, void * appReqState);
 static void HandleNotifyChipConnectionClosed(BLE_CONNECTION_OBJECT connObj);
@@ -276,7 +277,7 @@ JNI_METHOD(void, beginConnectDeviceIp)(JNIEnv * env, jobject self, jlong deviceC
 
     pthread_mutex_lock(&sStackLock);
     err = deviceController->ConnectDeviceWithoutSecurePairing(kRemoteDeviceId, deviceIPAddr, (void *) "ConnectDevice",
-                                                              HandleKeyExchange, HandleEchoResponse, HandleError, CHIP_PORT);
+                                                              HandleConnectIp, HandleEchoResponse, HandleError, CHIP_PORT);
     pthread_mutex_unlock(&sStackLock);
 
     if (err != CHIP_NO_ERROR)
@@ -477,11 +478,17 @@ exit:
 
 void HandleKeyExchange(ChipDeviceController * deviceController, Transport::PeerConnectionState * state, void * appReqState)
 {
-    JNIEnv * env;
-
-    sJVM->GetEnv((void **) &env, JNI_VERSION_1_6);
-
     HandleSimpleOperationComplete(deviceController, appReqState);
+}
+
+void HandleConnectIp(ChipDeviceController * deviceController, Transport::PeerConnectionState * state, void * appReqState)
+{
+    // In 'connect IP' aka 'connect without secure pairing' scenario, this callback is invoked synchronously
+    // while still holding sStackLock mutex. Therefore, we must temporarily release the lock here.
+
+    pthread_mutex_unlock(&sStackLock);
+    HandleSimpleOperationComplete(deviceController, appReqState);
+    pthread_mutex_lock(&sStackLock);
 }
 
 void HandleEchoResponse(ChipDeviceController * deviceController, void * appReqState, System::PacketBuffer * payload)
