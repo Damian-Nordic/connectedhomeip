@@ -131,6 +131,7 @@ exit:
             // Network provisioning handshake requires only one message exchange in either direction.
             // If the current message handling did not result in an error, network provisioning is
             // complete.
+            ChipLogProgress(NetworkProvisioning, "Network provisioning has been successfully completed.");
             mDelegate->OnNetworkProvisioningComplete();
         }
     }

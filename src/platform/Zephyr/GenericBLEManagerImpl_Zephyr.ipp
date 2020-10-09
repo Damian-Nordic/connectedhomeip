@@ -144,6 +144,11 @@ void GenericBLEManagerImpl_Zephyr<ImplClass>::DriveBLEState()
             ClearFlag(mFlags, kFlag_AdvertisingEnabled);
             ChipLogProgress(DeviceLayer, "CHIPoBLE advertising disabled because device is fully provisioned");
         }
+        if(ConnectivityMgr().IsThreadProvisioned())
+        {
+            ClearFlag(mFlags, kFlag_AdvertisingEnabled);
+            ChipLogProgress(DeviceLayer, "CHIPoBLE advertising disabled because device is fully provisioned");
+        }
 #endif // CHIP_DEVICE_CONFIG_CHIPOBLE_DISABLE_ADVERTISING_WHEN_PROVISIONED
     }
 
@@ -546,6 +551,12 @@ void GenericBLEManagerImpl_Zephyr<ImplClass>::_OnPlatformEvent(const ChipDeviceE
 
     default:
         break;
+    }
+
+    if(ConnectivityMgr().IsThreadProvisioned())
+    {
+        ClearFlag(mFlags, kFlag_AdvertisingEnabled);
+        ChipLogProgress(DeviceLayer, "CHIPoBLE advertising disabled because device is fully provisioned");
     }
 
     if (err != CHIP_NO_ERROR)
