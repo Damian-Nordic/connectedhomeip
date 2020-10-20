@@ -29,8 +29,7 @@
 
 #include <ble/BleUUID.h>
 #include <controller/CHIPDeviceController.h>
-#include <jni.h>
-#include <pthread.h>
+#include <support/CHIPMem.h>
 #include <support/CodeUtils.h>
 #include <support/ErrorStr.h>
 #include <support/logging/CHIPLogging.h>
@@ -38,6 +37,9 @@
 extern "C" {
 #include <app/chip-zcl-zpro-codec.h>
 } // extern "C"
+
+#include <jni.h>
+#include <pthread.h>
 
 // Choose an approximation of PTHREAD_NULL if pthread.h doesn't define one.
 #ifndef PTHREAD_NULL
@@ -156,6 +158,10 @@ jint JNI_OnLoad(JavaVM * jvm, void * reserved)
     err = GetClassRef(env, "chip/devicecontroller/ChipDeviceControllerException", sChipDeviceControllerExceptionCls);
     SuccessOrExit(err);
     ChipLogProgress(Controller, "Java class references loaded.");
+
+    // Initialize CHIP memory allocators
+    err = chip::Platform::MemoryInit();
+    SuccessOrExit(err);
 
     // Initialize the CHIP System Layer.
     err = sSystemLayer.Init(NULL);
