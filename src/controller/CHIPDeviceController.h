@@ -174,7 +174,7 @@ public:
      *
      * @return bool   If there is an active connection
      */
-    bool IsConnected();
+    bool IsConnected() const;
 
     /**
      * @brief
@@ -182,7 +182,15 @@ public:
      *
      * @return bool   If the connection is active and security context is established
      */
-    bool IsSecurelyConnected();
+    bool IsSecurelyConnected() const;
+
+    /**
+     * @brief
+     *   Get IP Address of the peer if the connection is active
+     *
+     * @return bool   If IP Address was returned
+     */
+    bool GetIpAddress(Inet::IPAddress & addr) const;
 
     // ----- Messaging -----
     /**
