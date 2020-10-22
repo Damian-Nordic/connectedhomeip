@@ -90,8 +90,9 @@ class DLL_EXPORT NetworkProvisioning
 public:
     enum MsgTypes : uint8_t
     {
-        kWiFiAssociationRequest = 0,
-        kIPAddressAssigned      = 1,
+        kWiFiAssociationRequest   = 0,
+        kIPAddressAssigned        = 1,
+        kThreadAssociationRequest = 2
     };
 
     void Init(NetworkProvisioningDelegate * delegate, DeviceNetworkProvisioningDelegate * deviceDelegate);
