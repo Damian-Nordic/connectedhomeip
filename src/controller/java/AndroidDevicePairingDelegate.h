@@ -19,11 +19,21 @@
 #pragma once
 
 #include <controller/CHIPDeviceController.h>
+#include <platform/internal/DeviceNetworkInfo.h>
 
 class AndroidDevicePairingDelegate : public chip::DeviceController::DevicePairingDelegate
 {
 public:
+    using DeviceNetworkInfo = chip::DeviceLayer::Internal::DeviceNetworkInfo;
+
+    AndroidDevicePairingDelegate();
+
+    void SetThreadCredentials(const DeviceNetworkInfo & threadData) { mThreadData = threadData; }
+
     void OnNetworkCredentialsRequested(chip::RendezvousDeviceCredentialsDelegate * callback) override;
     void OnOperationalCredentialsRequested(const char * csr, size_t csr_length,
                                            chip::RendezvousDeviceCredentialsDelegate * callback) override;
+
+private:
+    DeviceNetworkInfo mThreadData = {};
 };

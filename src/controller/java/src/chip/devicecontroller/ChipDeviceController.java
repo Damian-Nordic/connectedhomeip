@@ -115,6 +115,8 @@ public class ChipDeviceController {
     completionListener.onError(error);
   }
 
+  public native void setThreadCredentials(int channel, int panid, byte[] xpanid, byte[] prefix, byte[] masterKey);
+
   /* BluetoothGattCallback handlers */
 
   public native void handleWriteConfirmation(int connId, byte[] svcId, byte[] charId);

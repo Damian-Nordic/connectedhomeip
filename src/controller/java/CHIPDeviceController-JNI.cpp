@@ -34,6 +34,7 @@
 #include <support/CHIPMem.h>
 #include <support/CodeUtils.h>
 #include <support/ErrorStr.h>
+#include <support/SafeInt.h>
 #include <support/logging/CHIPLogging.h>
 
 extern "C" {
@@ -546,6 +547,44 @@ JNI_METHOD(jstring, getIpAddress)(JNIEnv * env, jobject self, jlong deviceContro
 
     addr.ToString(addrStr, sizeof(addrStr));
     return env->NewStringUTF(addrStr);
+}
+
+JNI_METHOD(void, setThreadCredentials)
+(JNIEnv * env, jobject self, jint channel, jint panid, jbyteArray xpanid, jbyteArray prefix, jbyteArray masterKey)
+{
+    using namespace chip::DeviceLayer::Internal;
+
+    const auto xpanidBegin       = env->GetByteArrayElements(xpanid, nullptr);
+    const auto xpanidLength      = env->GetArrayLength(xpanid);
+    const auto prefixBegin       = env->GetByteArrayElements(prefix, nullptr);
+    const auto prefixLength      = env->GetArrayLength(prefix);
+    const auto masterKeyBegin    = env->GetByteArrayElements(masterKey, nullptr);
+    const auto masterKeyLength   = env->GetArrayLength(masterKey);
+    DeviceNetworkInfo threadData = {};
+
+    VerifyOrExit(CanCastTo<uint8_t>(channel), ChipLogError(Controller, "setThreadCredentials() called with invalid Channel"));
+    VerifyOrExit(CanCastTo<uint16_t>(panid), ChipLogError(Controller, "setThreadCredentials() called with invalid PAN ID"));
+    VerifyOrExit(xpanidLength <= kThreadExtendedPANIdLength,
+                 ChipLogError(Controller, "setThreadCredentials() called with invalid XPAN ID"));
+    VerifyOrExit(prefixLength <= kThreadMeshPrefixLength,
+                 ChipLogError(Controller, "setThreadCredentials() called with invalid Mesh Prefix"));
+    VerifyOrExit(masterKeyLength <= kThreadMasterKeyLength,
+                 ChipLogError(Controller, "setThreadCredentials() called with invalid Master Key"));
+
+    memcpy(threadData.ThreadExtendedPANId, xpanidBegin, xpanidLength);
+    memcpy(threadData.ThreadMeshPrefix, prefixBegin, prefixLength);
+    memcpy(threadData.ThreadMasterKey, masterKeyBegin, masterKeyLength);
+    threadData.ThreadPANId                      = panid;
+    threadData.ThreadChannel                    = channel;
+    threadData.FieldPresent.ThreadExtendedPANId = 1;
+    threadData.FieldPresent.ThreadMeshPrefix    = 1;
+
+    sDevicePairingDelegate.SetThreadCredentials(threadData);
+
+exit:
+    env->ReleaseByteArrayElements(masterKey, masterKeyBegin, 0);
+    env->ReleaseByteArrayElements(prefix, prefixBegin, 0);
+    env->ReleaseByteArrayElements(xpanid, xpanidBegin, 0);
 }
 
 JNI_METHOD(jboolean, disconnectDevice)(JNIEnv * env, jobject self, jlong deviceControllerPtr)
