@@ -24,16 +24,37 @@ import androidx.annotation.NonNull;
 import com.google.chip.chiptool.commissioner.NetworkCredential;
 
 public class ThreadNetworkCredential implements NetworkCredential, Parcelable {
+  private final int channel;
+  private final int panid;
+  @NonNull private final byte[] xpanid;
+  @NonNull private final byte[] meshPrefix;
+  @NonNull private final byte[] masterKey;
 
-  @NonNull private final byte[] activeOperationalDataset;
-
-  public ThreadNetworkCredential(@NonNull byte[] activeOperationalDataset) {
-    this.activeOperationalDataset = activeOperationalDataset;
+  public ThreadNetworkCredential(int channel,
+                                 int panid,
+                                 @NonNull byte[] xpanid,
+                                 @NonNull byte[] meshPrefix,
+                                 @NonNull byte[] masterKey) {
+    this.channel = channel;
+    this.panid = panid;
+    this.xpanid = xpanid;
+    this.meshPrefix = meshPrefix;
+    this.masterKey = masterKey;
   }
 
-  protected ThreadNetworkCredential(Parcel in) {
-    activeOperationalDataset = in.createByteArray();
+  private ThreadNetworkCredential(Parcel in) {
+    this(in.readInt(), in.readInt(), in.createByteArray(), in.createByteArray(), in.createByteArray());
   }
+
+  public ThreadNetworkCredential(byte[] encoded) {
+    this(makeParcel(encoded));
+  }
+
+  public int getChannel() { return channel; }
+  public int getPanid() { return panid; }
+  @NonNull public byte[] getXpanid() { return xpanid; }
+  @NonNull public byte[] getMeshPrefix() { return meshPrefix; }
+  @NonNull public byte[] getMasterKey() { return masterKey; }
 
   public static final Creator<ThreadNetworkCredential> CREATOR =
       new Creator<ThreadNetworkCredential>() {
@@ -48,15 +69,6 @@ public class ThreadNetworkCredential implements NetworkCredential, Parcelable {
         }
       };
 
-  public byte[] getActiveOperationalDataset() {
-    return activeOperationalDataset;
-  }
-
-  @Override
-  public byte[] getEncoded() {
-    return activeOperationalDataset;
-  }
-
   @Override
   public int describeContents() {
     return 0;
@@ -64,6 +76,26 @@ public class ThreadNetworkCredential implements NetworkCredential, Parcelable {
 
   @Override
   public void writeToParcel(Parcel parcel, int i) {
-    parcel.writeByteArray(activeOperationalDataset);
+    parcel.writeInt(this.channel);
+    parcel.writeInt(this.panid);
+    parcel.writeByteArray(this.xpanid);
+    parcel.writeByteArray(this.meshPrefix);
+    parcel.writeByteArray(this.masterKey);
+  }
+
+  @Override
+  public byte[] getEncoded() {
+    Parcel parcel = Parcel.obtain();
+    this.writeToParcel(parcel, 0);
+    byte[] encoded = parcel.marshall();
+    parcel.recycle();
+    return encoded;
+  }
+
+  private static Parcel makeParcel(byte[] encoded) {
+    Parcel parcel = Parcel.obtain();
+    parcel.unmarshall(encoded, 0, encoded.length);
+    parcel.setDataPosition(0);
+    return parcel;
   }
 }
