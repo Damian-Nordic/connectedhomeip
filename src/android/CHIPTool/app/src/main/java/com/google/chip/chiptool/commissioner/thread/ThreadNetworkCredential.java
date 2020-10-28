@@ -30,11 +30,12 @@ public class ThreadNetworkCredential implements NetworkCredential, Parcelable {
   @NonNull private final byte[] meshPrefix;
   @NonNull private final byte[] masterKey;
 
-  public ThreadNetworkCredential(int channel,
-                                 int panid,
-                                 @NonNull byte[] xpanid,
-                                 @NonNull byte[] meshPrefix,
-                                 @NonNull byte[] masterKey) {
+  public ThreadNetworkCredential(
+      int channel,
+      int panid,
+      @NonNull byte[] xpanid,
+      @NonNull byte[] meshPrefix,
+      @NonNull byte[] masterKey) {
     this.channel = channel;
     this.panid = panid;
     this.xpanid = xpanid;
@@ -43,18 +44,40 @@ public class ThreadNetworkCredential implements NetworkCredential, Parcelable {
   }
 
   private ThreadNetworkCredential(Parcel in) {
-    this(in.readInt(), in.readInt(), in.createByteArray(), in.createByteArray(), in.createByteArray());
+    this(
+        in.readInt(),
+        in.readInt(),
+        in.createByteArray(),
+        in.createByteArray(),
+        in.createByteArray());
   }
 
   public ThreadNetworkCredential(byte[] encoded) {
     this(makeParcel(encoded));
   }
 
-  public int getChannel() { return channel; }
-  public int getPanid() { return panid; }
-  @NonNull public byte[] getXpanid() { return xpanid; }
-  @NonNull public byte[] getMeshPrefix() { return meshPrefix; }
-  @NonNull public byte[] getMasterKey() { return masterKey; }
+  public int getChannel() {
+    return channel;
+  }
+
+  public int getPanid() {
+    return panid;
+  }
+
+  @NonNull
+  public byte[] getXpanid() {
+    return xpanid;
+  }
+
+  @NonNull
+  public byte[] getMeshPrefix() {
+    return meshPrefix;
+  }
+
+  @NonNull
+  public byte[] getMasterKey() {
+    return masterKey;
+  }
 
   public static final Creator<ThreadNetworkCredential> CREATOR =
       new Creator<ThreadNetworkCredential>() {

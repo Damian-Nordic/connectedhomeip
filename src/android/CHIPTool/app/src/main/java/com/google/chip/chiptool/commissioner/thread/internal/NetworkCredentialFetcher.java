@@ -24,7 +24,6 @@ import com.google.chip.chiptool.commissioner.thread.BorderAgentInfo;
 import com.google.chip.chiptool.commissioner.thread.CommissionerUtils;
 import com.google.chip.chiptool.commissioner.thread.ThreadCommissionerException;
 import com.google.chip.chiptool.commissioner.thread.ThreadNetworkCredential;
-
 import io.openthread.commissioner.ActiveOperationalDataset;
 import io.openthread.commissioner.ByteArray;
 import io.openthread.commissioner.ChannelMask;
@@ -82,11 +81,12 @@ class NetworkCredentialFetcher {
       // Fetch Active Operational Dataset.
       ActiveOperationalDataset activeDataset = new ActiveOperationalDataset();
       throwIfFail(nativeCommissioner.getActiveDataset(activeDataset, 0xFFFF));
-      return new ThreadNetworkCredential(activeDataset.getChannel().getNumber(),
-              activeDataset.getPanId(),
-              CommissionerUtils.getByteArray(activeDataset.getExtendedPanId()),
-              CommissionerUtils.getByteArray(activeDataset.getMeshLocalPrefix()),
-              CommissionerUtils.getByteArray(activeDataset.getNetworkMasterKey()));
+      return new ThreadNetworkCredential(
+          activeDataset.getChannel().getNumber(),
+          activeDataset.getPanId(),
+          CommissionerUtils.getByteArray(activeDataset.getExtendedPanId()),
+          CommissionerUtils.getByteArray(activeDataset.getMeshLocalPrefix()),
+          CommissionerUtils.getByteArray(activeDataset.getNetworkMasterKey()));
     } finally {
       nativeCommissioner.resign();
       nativeCommissioner = null;

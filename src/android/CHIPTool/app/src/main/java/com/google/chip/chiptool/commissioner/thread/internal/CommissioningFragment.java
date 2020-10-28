@@ -29,15 +29,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import com.google.chip.chiptool.ChipClient;
 import com.google.chip.chiptool.R;
 import com.google.chip.chiptool.commissioner.CommissionerActivity;
 import com.google.chip.chiptool.commissioner.thread.ThreadNetworkCredential;
-
-import chip.devicecontroller.ChipDeviceController;
-import io.openthread.commissioner.ActiveOperationalDataset;
-import io.openthread.commissioner.Commissioner;
 
 public class CommissioningFragment extends Fragment {
 
@@ -90,7 +85,9 @@ public class CommissioningFragment extends Fragment {
               commissionerActivity.finishCommissioning(Activity.RESULT_OK);
             });
 
-    ChipClient.INSTANCE.getDeviceController().setThreadCredentials(
+    ChipClient.INSTANCE
+        .getDeviceController()
+        .setThreadCredentials(
             this.networkCredential.getChannel(),
             this.networkCredential.getPanid(),
             this.networkCredential.getXpanid(),
