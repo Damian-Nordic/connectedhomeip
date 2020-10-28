@@ -90,8 +90,9 @@ public class CommissioningFragment extends Fragment {
               commissionerActivity.finishCommissioning(Activity.RESULT_OK);
             });
 
-    ChipClient.INSTANCE.getDeviceController().setThreadCredentials(this.networkCredential.getPanid(),
+    ChipClient.INSTANCE.getDeviceController().setThreadCredentials(
             this.networkCredential.getChannel(),
+            this.networkCredential.getPanid(),
             this.networkCredential.getXpanid(),
             this.networkCredential.getMeshPrefix(),
             this.networkCredential.getMasterKey());
