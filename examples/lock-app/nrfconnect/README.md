@@ -12,6 +12,7 @@ An example application showing the use
         -   [Using Docker container](#using-docker-container)
         -   [Using Native shell](#using-native-shell)
         -   [Supported nRF Connect SDK versions](#supported-nrf-connect-sdk-versions)
+        -   [Building minimal binary](#building-minimal-binary)
     -   [Configuring the example](#configuring-the-example)
     -   [Flashing and debugging](#flashing-and-debugging)
     -   [Accessing the command line](#accessing-the-command-line)
@@ -206,6 +207,18 @@ Docker image in case of doubt.
 Please refer to
 [this section](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_installing.html#updating-the-repositories)
 in the user guide to learn how to update nRF Connect SDK repository.
+
+### Building minimal binary
+
+In order to build the example with no diagnostic features like UART console or
+application logs, which should result in significantly smaller binary, run
+the following commands:
+
+        # Delete the build directory to make sure that no settings are cached
+        $ rm -rf build/
+
+        # Build the example using release config overlay
+        $ west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG=third_party/connectedhomeip/config/nrfconnect/release.conf
 
 <a name="configuring"></a>
 
