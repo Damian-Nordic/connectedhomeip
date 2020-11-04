@@ -207,8 +207,8 @@ in the user guide to learn how to update nRF Connect SDK repository.
 ### Building minimal binary
 
 In order to build the example with no diagnostic features like UART console or
-application logs, which should result in significantly smaller binary, run
-the following commands:
+application logs, which should result in significantly smaller binary, run the
+following commands:
 
         # Delete the build directory to make sure that no settings are cached
         $ rm -rf build/
