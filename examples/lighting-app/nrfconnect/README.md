@@ -275,6 +275,7 @@ To debug the application on target:
 
 ## Testing the example
 
-Check the [CLI tutorial](../../../docs/guides/nrfconnect_examples_cli.md) to learn how to use command-line interface of the application.
+Check the [CLI tutorial](../../../docs/guides/nrfconnect_examples_cli.md) to
+learn how to use command-line interface of the application.
 
 TODO: mention Rendezvous tutorial here
