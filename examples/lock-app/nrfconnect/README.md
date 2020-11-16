@@ -1,6 +1,13 @@
 # CHIP nRF Connect Lock Example Application
 
-The lock example provides demonstration of application running on the connected door lock device. It uses [CHIP](https://github.com/project-chip/connectedhomeip) and the nRF Connect platform. The example supports remote access and control of a simulated door lock over a low-power, 802.15.4 Thread network. It is capable of being paired into an existing CHIP network along with other CHIP-enabled devices. Besides of the remote access, application also allows controlling lock and device states using buttons and visualizes those states on the LEDs.
+The lock example provides demonstration of application running on the connected
+door lock device. It uses
+[CHIP](https://github.com/project-chip/connectedhomeip) and the nRF Connect
+platform. The example supports remote access and control of a simulated door
+lock over a low-power, 802.15.4 Thread network. It is capable of being paired
+into an existing CHIP network along with other CHIP-enabled devices. Besides of
+the remote access, application also allows controlling lock and device states
+using buttons and visualizes those states on the LEDs.
 
 <hr>
 
@@ -21,15 +28,44 @@ The lock example provides demonstration of application running on the connected 
 
 ## Overview
 
-This example application is running on the nRF Connect platform, which is based on the [nRF Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html) and [Zephyr RTOS](https://zephyrproject.org/). Visit CHIP's [nRF Connect Platform Overview](TODO:...) to read more information about platform structure and dependencies.
+This example application is running on the nRF Connect platform, which is based
+on the
+[nRF Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)
+and [Zephyr RTOS](https://zephyrproject.org/). Visit CHIP's
+[nRF Connect Platform Overview](TODO:...) to read more information about
+platform structure and dependencies.
 
-CHIP device running lock application is controlled by the CHIP controller device over Thread protocol. It is assumed that CHIP device by default has Thread disabled, so it should be paired with CHIP controller and get configuration from it. There are few actions necessary to make before full communication is possible and they were described below. There is also a test mode, which allows to start Thread with default settings, by pressing button manually, but it does not fully guarantee that device will be able to communicate with CHIP controller and other devices.
+CHIP device running lock application is controlled by the CHIP controller device
+over Thread protocol. It is assumed that CHIP device by default has Thread
+disabled, so it should be paired with CHIP controller and get configuration from
+it. There are few actions necessary to make before full communication is
+possible and they were described below. There is also a test mode, which allows
+to start Thread with default settings, by pressing button manually, but it does
+not fully guarantee that device will be able to communicate with CHIP controller
+and other devices.
+
 ### BLE Advertising
-After powering up device for the first time, it should start advertising over BLE in order to inform other devices about its presence. For security reasons different devices may start advertising automatically or on User demand and in this example case, starting is triggered by pressing button.
+
+After powering up device for the first time, it should start advertising over
+BLE in order to inform other devices about its presence. For security reasons
+different devices may start advertising automatically or on User demand and in
+this example case, starting is triggered by pressing button.
+
 ### BLE Rendezvous
-In CHIP there is a commissioning procedure called Rendezvous, which is done over BLE between CHIP device and CHIP controller, performing the role of the commissioner. To start it, controller has to previously get onboarding information from the CHIP device. Data are encoded as a QR code payload and typically presented on a device's display or like in this example case, shared using NFC tag.
+
+In CHIP there is a commissioning procedure called Rendezvous, which is done over
+BLE between CHIP device and CHIP controller, performing the role of the
+commissioner. To start it, controller has to previously get onboarding
+information from the CHIP device. Data are encoded as a QR code payload and
+typically presented on a device's display or like in this example case, shared
+using NFC tag.
+
 ### Thread Provisioning
-Successfully finishing Rendezvous procedure allows to perform Provisioning operation, which goal is to send Thread network credentials from CHIP controller to the CHIP device. As a result, device is able to attach the Thread network and communicate with other Thread devices belonging to this network.
+
+Successfully finishing Rendezvous procedure allows to perform Provisioning
+operation, which goal is to send Thread network credentials from CHIP controller
+to the CHIP device. As a result, device is able to attach the Thread network and
+communicate with other Thread devices belonging to this network.
 
 <hr>
 
@@ -37,14 +73,14 @@ Successfully finishing Rendezvous procedure allows to perform Provisioning opera
 
 ## Requirements
 
-In order to make sure that demonstrated application will be working properly, it should be ran with the nRF Connect SDK 1.4 version.
+In order to make sure that demonstrated application will be working properly, it
+should be ran with the nRF Connect SDK 1.4 version.
 
 The example supports building and running on the following devices:
 
-| Board name      | Board platform build name   |
-| ----------------| ----------------------------|
-| [nRF52840 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)   | nrf52840dk_nrf52840         |
-
+| Board name                                                                                | Board platform build name |
+| ----------------------------------------------------------------------------------------- | ------------------------- |
+| [nRF52840 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK) | nrf52840dk_nrf52840       |
 
 <hr>
 
@@ -52,11 +88,14 @@ The example supports building and running on the following devices:
 
 ## Device UI
 
-This section lists device's elements making User Interface in the example application. All described items should be possible to find on the board picture presented below: 
+This section lists device's elements making User Interface in the example
+application. All described items should be possible to find on the board picture
+presented below:
 
 ![nrf52840 DK](../../platform/nrfconnect/doc/images/nrf52840-dk.png)
 
-The following elements of the development kit are used by this application to allow User controlling and monitoring device's state.
+The following elements of the development kit are used by this application to
+allow User controlling and monitoring device's state.
 
 **LED #1** shows the overall state of the device and its connectivity. Four
 states are depicted:
@@ -72,8 +111,8 @@ states are depicted:
     provisioned, but does not yet have full network (Thread) or service
     connectivity.
 
-*   _Solid On_ &mdash; The device is fully provisioned and has full Thread network and
-    service connectivity.
+*   _Solid On_ &mdash; The device is fully provisioned and has full Thread
+    network and service connectivity.
 
 **LED #2** shows the state of the simulated lock bolt. When the LED is lit the
 bolt is extended (i.e. door locked); when not lit, the bolt is retracted (door
@@ -83,9 +122,11 @@ position to another.
 **Button #1** can be used to initiate a OTA software update as well as to reset
 the device to a default state.
 
-**Button #2** can be used to manually change the state of the lock. Pushing the button is changing lock state to the opposite.
+**Button #2** can be used to manually change the state of the lock. Pushing the
+button is changing lock state to the opposite.
 
-**Button #3** can be used to manually start Thread networking in the test mode, using default configuration.
+**Button #3** can be used to manually start Thread networking in the test mode,
+using default configuration.
 
 **Button #4** can be used to start BLE advertisement.
 
