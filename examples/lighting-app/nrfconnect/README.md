@@ -1,6 +1,13 @@
 # CHIP nRF Connect Ligthing Example Application
 
-The lighting example provides demonstration of application running on the connected lighting device. It uses [CHIP](https://github.com/project-chip/connectedhomeip) and the nRF Connect platform. The example supports remote access and control of a lighting over a low-power, 802.15.4 Thread network. It is capable of being paired into an existing CHIP network along with other CHIP-enabled devices. Besides of the remote access, application also allows controlling lighting and device states using buttons and visualizes those states on the LEDs.
+The lighting example provides demonstration of application running on the
+connected lighting device. It uses
+[CHIP](https://github.com/project-chip/connectedhomeip) and the nRF Connect
+platform. The example supports remote access and control of a lighting over a
+low-power, 802.15.4 Thread network. It is capable of being paired into an
+existing CHIP network along with other CHIP-enabled devices. Besides of the
+remote access, application also allows controlling lighting and device states
+using buttons and visualizes those states on the LEDs.
 
 <hr>
 
@@ -28,7 +35,14 @@ and [Zephyr RTOS](https://zephyrproject.org/). Visit CHIP's
 [nRF Connect Platform Overview](TODO:...) to read more information about
 platform structure and dependencies.
 
-CHIP device running lighting application is controlled by the CHIP controller device over Thread protocol. It is assumed that CHIP device by default has Thread disabled, so it should be paired with CHIP controller and get configuration from it. There are few actions necessary to make before full communication is possible and they were described below. There is also a test mode, which allows to start Thread with default settings, by pressing button manually, but it does not fully guarantee that device will be able to communicate with CHIP controller and other devices.
+CHIP device running lighting application is controlled by the CHIP controller
+device over Thread protocol. It is assumed that CHIP device by default has
+Thread disabled, so it should be paired with CHIP controller and get
+configuration from it. There are few actions necessary to make before full
+communication is possible and they were described below. There is also a test
+mode, which allows to start Thread with default settings, by pressing button
+manually, but it does not fully guarantee that device will be able to
+communicate with CHIP controller and other devices.
 
 ### BLE Advertising
 
@@ -105,15 +119,16 @@ states are depicted:
 **Button #1** can be used to initiate a OTA software update as well as to reset
 the device to a default state.
 
-**Button #2** can be used to manually change the state of the lighting. Pushing the button is changing lighting state to the opposite.
+**Button #2** can be used to manually change the state of the lighting. Pushing
+the button is changing lighting state to the opposite.
 
 **Button #3** can be used to manually start Thread networking in the test mode,
 using default configuration.
 
 **Button #4** can be used to start BLE advertisement.
 
-**Segger J-Link USB port** can be used to get logs from the device or communicate with it
-using [command line interface](TODO:).
+**Segger J-Link USB port** can be used to get logs from the device or
+communicate with it using [command line interface](TODO:).
 
 <hr>
 

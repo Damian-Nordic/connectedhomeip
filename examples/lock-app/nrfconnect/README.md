@@ -130,8 +130,8 @@ using default configuration.
 
 **Button #4** can be used to start BLE advertisement.
 
-**Segger J-Link USB port** can be used to get logs from the device or communicate with it
-using [command line interface](TODO:).
+**Segger J-Link USB port** can be used to get logs from the device or
+communicate with it using [command line interface](TODO:).
 
 <hr>
 

@@ -4,14 +4,17 @@ The Pigweed example presents demonstration of application that benefits from the
 Pigweed module functionalities. It uses
 [CHIP](https://github.com/project-chip/connectedhomeip),
 [Pigweed](https://pigweed.googlesource.com/pigweed/pigweed) and the nRF Connect
-platform. The main goal of the application is to provide training ground for making
-experiments, testing Pigweed module features and checking what actions are
-necessary to make in order to fully integrate Pigweed within the CHIP project.
+platform. The main goal of the application is to provide training ground for
+making experiments, testing Pigweed module features and checking what actions
+are necessary to make in order to fully integrate Pigweed within the CHIP
+project.
 
-Pigweed functionalities are being intergrated in CHIP and ran gradually, so currently
-there are following features available:
-- **Echo RPC** - creates Remote Procedure Call server and allows sending commands through
-the serial port to the device, which makes echo and sends received commands back.
+Pigweed functionalities are being intergrated in CHIP and ran gradually, so
+currently there are following features available:
+
+-   **Echo RPC** - creates Remote Procedure Call server and allows sending
+    commands through the serial port to the device, which makes echo and sends
+    received commands back.
 
 <hr>
 
@@ -41,13 +44,13 @@ and [Zephyr RTOS](https://zephyrproject.org/). Visit CHIP's
 [nRF Connect Platform Overview](TODO:...) to read more information about
 platform structure and dependencies.
 
-Pigweed module used in this application is a collection of libraries providing different
-functionalities and targeted to the embedded systems. Libraries are built and organized
-in a way that enables faster and more reliable development.
+Pigweed module used in this application is a collection of libraries providing
+different functionalities and targeted to the embedded systems. Libraries are
+built and organized in a way that enables faster and more reliable development.
 
-In the project CHIP context, Pigweed module is planned to be used to create system
-infrastructures, for example for performing on-device tests, but considering its
-general functionalities, it might be useful also in other cases.
+In the project CHIP context, Pigweed module is planned to be used to create
+system infrastructures, for example for performing on-device tests, but
+considering its general functionalities, it might be useful also in other cases.
 
 <hr>
 
@@ -60,10 +63,10 @@ should be ran with the nRF Connect SDK 1.4 version.
 
 The example supports building and running on the following devices:
 
-| Board name                                                                                | Board platform build name |
-| ----------------------------------------------------------------------------------------- | ------------------------- |
-| [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle) | nrf52840dongle_nrf52840       |
-| [nRF52840 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK) | nrf52840dk_nrf52840       |
+| Board name                                                                                        | Board platform build name |
+| ------------------------------------------------------------------------------------------------- | ------------------------- |
+| [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle) | nrf52840dongle_nrf52840   |
+| [nRF52840 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)         | nrf52840dk_nrf52840       |
 
 <hr>
 
@@ -74,19 +77,20 @@ The example supports building and running on the following devices:
 The following elements of the development kit are used by this application to
 allow User controlling and monitoring device's state:
 
-**LED #1** shows the overall state of the device and it's lit to indicate that application
-was flashed and ran successfully.
+**LED #1** shows the overall state of the device and it's lit to indicate that
+application was flashed and ran successfully.
 
-**Serial port** can be used to communicate with the device by sending commands and receiving
-responses.
+**Serial port** can be used to communicate with the device by sending commands
+and receiving responses.
 
 > **Important**:
 >
-> Please note that supported hardware platforms are using different transport interfaces to
-> perform serial communication, what leads to differences in configuration. By default there
-> are following interfaces used:
-> - nrf52840dk_nrf52840 - UART interface routed to the Segger J-Link USB port.
-> - nrf52840dongle_nrf52840 - USB interface routed to the USB port.
+> Please note that supported hardware platforms are using different transport
+> interfaces to perform serial communication, what leads to differences in
+> configuration. By default there are following interfaces used:
+>
+> -   nrf52840dk_nrf52840 - UART interface routed to the Segger J-Link USB port.
+> -   nrf52840dongle_nrf52840 - USB interface routed to the USB port.
 
 <hr>
 
@@ -313,14 +317,16 @@ to read detailed information on this and other board related topics.
 ## Testing the example
 
 ### Echo RPC:
-Run the following command to start an interactive python shell, where Echo RPC commands can be invoked:
+
+Run the following command to start an interactive python shell, where Echo RPC
+commands can be invoked:
 
 ```
 python -m pw_hdlc_lite.rpc_console --device /dev/ttyACM0 -b 115200 $CHIP_ROOT/third_party/pigweed/repo/pw_rpc/pw_rpc_protos/echo.proto -o /tmp/pw_rpc.out
 ```
 
-To send Echo RPC message type command presented below, where actual message is text in quote after
-the msg= phrase:
+To send Echo RPC message type command presented below, where actual message is
+text in quote after the msg= phrase:
 
 ```
 rpcs.pw.rpc.EchoService.Echo(msg="hi")
