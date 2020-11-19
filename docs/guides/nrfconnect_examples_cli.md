@@ -1,19 +1,23 @@
-# Using command-line interface in nRF Connect SDK examples
+# Using CLI in nRF Connect SDK examples
 
-[lock-app](../../examples/lock-app/nrfconnect/README.md) and
-[lighting-app](../../examples/lighting-app/nrfconnect/README.md) examples for
-the Nordic Semiconductor development kit boards include a command-line interface
-with access to application logs and
-[Zephyr shell](https://docs.zephyrproject.org/1.13.0/subsystems/shell.html).
+The following examples for the development kits from Nordic Semiconductor include a command-line interface
+that allows access to application logs and [Zephyr shell](https://docs.zephyrproject.org/1.13.0/subsystems/shell.html):
 
-To access the console, use serial terminal emulator of your choice, like
-`minicom` or `GNU screen`, with baud rate set to `115200`. For example, if you
-wish to use `minicom`, run the command below, but be aware that `/dev/ttyACM0`
-should be replaced with a device node of your development kit.
+* [Lock app example](../../examples/lock-app/nrfconnect/README.md)
+* [Lighting app example](../../examples/lighting-app/nrfconnect/README.md)  
+
+## Accessing the CLI console
+
+To access the CLI console, use a serial terminal emulator of your choice.
+For example, you can use Minicom or GNU Screen.
+Use the baud rate set to `115200`.
+
+For example, to start using the CLI console with Minicom, complete the following steps:
+1. Run the following command with */dev/ttyACM0* replaced with a device node of your development kit.
 
     $ minicom -D /dev/ttyACM0 -b 115200
 
-If you reboot the board now, you should see boot logs showing up on the console:
+2. Reboot the board to see the boot logs in the console:
 
 ```shell
 uart:~$
@@ -26,8 +30,8 @@ I: Init CHIP stack
 ...
 ```
 
-Now you may try some shell commands. For example, the command below will print
-information about all running threads:
+Now you can start using shell commands.
+For example, the `kernel threads` command prints information about all running threads:
 
 ```shell
 uart:~$ kernel threads
@@ -45,8 +49,10 @@ Threads:
 ...
 ```
 
-Press the `Tab` key, responsible for the command completion feature, to get a
-list of available commands:
+## Listing all commands
+
+To list all available commands, use the Tab key, which is normally used for the command completion feature.
+Pressing the key in an empty command line prints the list of available commands:
 
 ```shell
 uart:~$
@@ -55,10 +61,11 @@ uart:~$
   ot                 resize             shell
 ```
 
-Note that
-[OpenThread commands](https://github.com/openthread/openthread/blob/master/src/cli/README.md)
-are also accessible on the shell, but they must preceded by the word `ot`. For
-example:
+## Using OpenThread commands
+
+[OpenThread commands](https://github.com/openthread/openthread/blob/master/src/cli/README.md) are also accessible from the shell.
+However, they must preceded by `ot`.
+For example:
 
 ```shell
 uart:~$ ot masterkey
