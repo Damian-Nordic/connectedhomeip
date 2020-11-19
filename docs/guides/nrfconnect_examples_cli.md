@@ -12,12 +12,13 @@ To access the CLI console, use a serial terminal emulator of your choice.
 For example, you can use Minicom or GNU Screen.
 Use the baud rate set to `115200`.
 
-For example, to start using the CLI console with Minicom, complete the following steps:
-1. Run the following command with */dev/ttyACM0* replaced with a device node of your development kit.
+For example, to start using the CLI console with Minicom, run the following command
+with */dev/ttyACM0* replaced with a device node of your development kit:
 
     $ minicom -D /dev/ttyACM0 -b 115200
 
-2. Reboot the board to see the boot logs in the console:
+When you reboot the board, you will see the boot logs in the console,
+similar to the following messages:
 
 ```shell
 uart:~$
@@ -29,9 +30,8 @@ I: data wra: 0, 0
 I: Init CHIP stack
 ...
 ```
-
-Now you can start using shell commands.
-For example, the `kernel threads` command prints information about all running threads:
+This means that the console is working correctly and you can now start using shell commands.
+For example, issuing the `kernel threads` command will print information about all running threads:
 
 ```shell
 uart:~$ kernel threads
