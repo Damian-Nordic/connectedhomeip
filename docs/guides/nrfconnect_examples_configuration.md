@@ -4,7 +4,11 @@ When you tried to build nRF Connect SDK example applications like
 [lock-app](../../examples/lock-app/nrfconnect/README.md),
 [lighting-app](../../examples/lighting-app/nrfconnect/README.md) or
 [pigweed-app](../../examples/pigweed-app/nrfconnect/README.md), you could notice
-that some default configuration is used then. In order to change something in the example or add new functionalities to create your own application, often you will have to modify the configuration. This page contains information about how to configure an application in different ways and also sheds some light on the configuration structure to allow you understand building process better.
+that some default configuration is used then. In order to change something in
+the example or add new functionalities to create your own application, often you
+will have to modify the configuration. This page contains information about how
+to configure an application in different ways and also sheds some light on the
+configuration structure to allow you understand building process better.
 
 <hr>
 
@@ -13,7 +17,8 @@ that some default configuration is used then. In order to change something in th
 Changing default application configuration might be done in the many ways and
 you should choose the one that suits you, depending on your needs. You are
 allowed to change configuration temporarily, what will be useful for testing
-impact of changes on the application behavior or permanently in order to not repeat configuring for next builds and allow developing own application.
+impact of changes on the application behavior or permanently in order to not
+repeat configuring for next builds and allow developing own application.
 
 <hr>
 
