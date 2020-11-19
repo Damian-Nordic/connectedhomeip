@@ -1,24 +1,24 @@
 # Using CLI in nRF Connect SDK examples
 
-The following examples for the development kits from Nordic Semiconductor include a command-line interface
-that allows access to application logs and [Zephyr shell](https://docs.zephyrproject.org/1.13.0/subsystems/shell.html):
+The following examples for the development kits from Nordic Semiconductor
+include a command-line interface that allows access to application logs and
+[Zephyr shell](https://docs.zephyrproject.org/1.13.0/subsystems/shell.html):
 
-* [Lock app example](../../examples/lock-app/nrfconnect/README.md)
-* [Lighting app example](../../examples/lighting-app/nrfconnect/README.md)  
+-   [Lock app example](../../examples/lock-app/nrfconnect/README.md)
+-   [Lighting app example](../../examples/lighting-app/nrfconnect/README.md)
 
 ## Accessing the CLI console
 
-To access the CLI console, use a serial terminal emulator of your choice.
-For example, you can use Minicom or GNU Screen.
-Use the baud rate set to `115200`.
+To access the CLI console, use a serial terminal emulator of your choice. For
+example, you can use Minicom or GNU Screen. Use the baud rate set to `115200`.
 
-For example, to start using the CLI console with Minicom, run the following command
-with */dev/ttyACM0* replaced with a device node of your development kit:
+For example, to start using the CLI console with Minicom, run the following
+command with _/dev/ttyACM0_ replaced with a device node of your development kit:
 
     $ minicom -D /dev/ttyACM0 -b 115200
 
-When you reboot the board, you will see the boot logs in the console,
-similar to the following messages:
+When you reboot the board, you will see the boot logs in the console, similar to
+the following messages:
 
 ```shell
 uart:~$
@@ -30,8 +30,10 @@ I: data wra: 0, 0
 I: Init CHIP stack
 ...
 ```
-This means that the console is working correctly and you can now start using shell commands.
-For example, issuing the `kernel threads` command will print information about all running threads:
+
+This means that the console is working correctly and you can now start using
+shell commands. For example, issuing the `kernel threads` command will print
+information about all running threads:
 
 ```shell
 uart:~$ kernel threads
@@ -51,8 +53,9 @@ Threads:
 
 ## Listing all commands
 
-To list all available commands, use the Tab key, which is normally used for the command completion feature.
-Pressing the key in an empty command line prints the list of available commands:
+To list all available commands, use the Tab key, which is normally used for the
+command completion feature. Pressing the key in an empty command line prints the
+list of available commands:
 
 ```shell
 uart:~$
@@ -63,9 +66,9 @@ uart:~$
 
 ## Using OpenThread commands
 
-[OpenThread commands](https://github.com/openthread/openthread/blob/master/src/cli/README.md) are also accessible from the shell.
-However, they must preceded by `ot`.
-For example:
+[OpenThread commands](https://github.com/openthread/openthread/blob/master/src/cli/README.md)
+are also accessible from the shell. However, they must preceded by `ot`. For
+example:
 
 ```shell
 uart:~$ ot masterkey
