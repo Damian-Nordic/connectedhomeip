@@ -4,12 +4,7 @@ When you tried to build nRF Connect SDK example applications like
 [lock-app](../../examples/lock-app/nrfconnect/README.md),
 [lighting-app](../../examples/lighting-app/nrfconnect/README.md) or
 [pigweed-app](../../examples/pigweed-app/nrfconnect/README.md), you could notice
-that some default configuration is used then. Probably after testing an example
-solution you may want to change something in the application configuration or
-add new functionalities to build your own application based on sample. This page
-contains information about how to configure an application in different ways and
-also sheds some light on the configuration structure to allow you understand
-building process better.
+that some default configuration is used then. In order to change something in the example or add new functionalities to create your own application, often you will have to modify the configuration. This page contains information about how to configure an application in different ways and also sheds some light on the configuration structure to allow you understand building process better.
 
 <hr>
 
@@ -18,14 +13,13 @@ building process better.
 Changing default application configuration might be done in the many ways and
 you should choose the one that suits you, depending on your needs. You are
 allowed to change configuration temporarily, what will be useful for testing
-impact of changes on the application behavior, but if you want to develop own
-application, probably you will be interested in making permanent changes.
+impact of changes on the application behavior or permanently in order to not repeat configuring for next builds and allow developing own application.
 
 <hr>
 
 ### Temporary configuration
 
-Temporary solution is basing on editing zephyr/.config, which is storing all
+Temporary solution is basing on editing `zephyr/.config`, which is storing all
 configuration options from the whole application generated as a result of
 building process. After cleaning build and deleting this file, all changes are
 gone, so this is not possible to save changes permanently this way.
@@ -34,7 +28,7 @@ First thing that needs to be done is bulding the application (see:
 [Building nRF Connect examples](TODO:) for more details), by typing following
 command in the example directory:
 
-        # <board_name> should be replaced with the actual target board name
+        # <board_name> should be replaced with the target board name (e.g. nrf52840dk_nrf52840)
         $ west build -b <board_name>
 
 Next, run the terminal-based interface called menuconfig, by typing command:
