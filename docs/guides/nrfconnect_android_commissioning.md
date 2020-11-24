@@ -128,7 +128,7 @@ To form a Wi-Fi network, perform the following steps:
 4. Enter network name and password and click __Turn On__.
 5. Run the following command to assign a well-known IPv6 address to the hotspot interface:
 
-        $ nmcli connection modify Hotspot ipv6.addresses 2001:db8:2::/64
+        $ nmcli connection modify Hotspot ipv6.addresses 2001:db8:2::1/64
 6. Install Routing Advertisement Daemon to enable IPv6 auto-configuration of devices connecting to the hotspot:
 
         $ sudo apt install radvd
@@ -182,7 +182,24 @@ Read [nRF Connect Lock Example Application README](../../examples/lock-app/nrfco
 <details>
 <summary>Click here to expand</summary>
 <br>
+To prepare the accessory device for commissioning:
 
+1. Attach to the device [CLI](nrfconnect_examples_cli.md) to get access to application logs.
+2. Hold **Button 1** for more than 6s to trigger factory reset of the device.
+3. Find a message similar to the one below in application logs:
+
+        I: 666[SVR] Copy/paste the below URL in a browser to see the QR Code:
+                https://dhrishi.github.io/connectedhomeip/qrcode.html?data=CH%3AI34DV%2A-00%200C9SS0
+4. Open the URL in a web browser to have onboarding QR code generated.
+5. Push **Button 4** on the device to start BLE advertising.
+
+To commission the accessory device onto the Thread network created in [Configuring PC as a Thread border router](#Configuring-PC-as-a-Thread-border-router) chapter:
+
+1. Enable **Bluetooth** and **Location** services on your smartphone.
+2. Connect the smartphone to the Wi-Fi Hotspot created in [Configuring PC as a Thread border router](#Configuring-PC-as-a-Thread-border-router) chapter.
+3. Open CHIPTool application.
+4. Tap **SCAN QR CODE** button and scan the onboarding QR code.
+5. Tap **Rendezvous over BLE** button to initiate the commissioning procedure. You should see a few pop-up messages appearing as the commissioning progresses. A message "Secure channel established. Provisioning" indicates that a secure channel has been established successfully and the accessory device was sent Thread provisioning data.
 </details>
 
 ## Sending ZCL commands
@@ -190,5 +207,10 @@ Read [nRF Connect Lock Example Application README](../../examples/lock-app/nrfco
 <details>
 <summary>Click here to expand</summary>
 <br>
+
+1. Go back to the main application screen.
+2. Tap **LIGHT ON/OFF CLUSTER** button.
+3. Verify that the textbox on the next screen is filled in with IP address of the accessory device.
+4. Tap **ON** or **OFF** button to lock or unlock the door. Observe that the second LED on the device gets turned on and off as state of the lock changes.
 
 </details>
