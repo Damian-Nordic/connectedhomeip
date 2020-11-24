@@ -68,7 +68,7 @@ OpenThread RCP firmware is required to allow a PC to communicate with a Thread n
 7. Flash the RCP firmware:
 
         $ nrfjprog --chiperase --program output/nrf52840/bin/ot-rcp.hex --reset
-8. Disable Mass Storage on the device:
+8. Disable Mass Storage feature on the device so that it doesn't interfere with core RCP functionalities:
 
         $ JLinkExe
         J-Link>MSDDisable
@@ -83,15 +83,15 @@ OpenThread RCP firmware is required to allow a PC to communicate with a Thread n
 <br>
 To make your PC work as a Thread border router, you need to complete the following tasks which can be further broken down into smaller steps:
 
-1. Form a Thread network and configure IPv6 packet routing.
+1. Form a Thread network using OTBR (OpenThread Border Router) Docker image and configure IPv6 packet routing to the network.
 2. Form a Wi-Fi network.
 
 To form a Thread network, perform the following steps:
 
-1. Create an IPv6 network to be used by OpenThread Border Router Docker container:
+1. Create an IPv6 network for an OTBR Docker container:
 
         $ docker network create --ipv6 --subnet 2001:db8:1::/64 -o com.docker.network.bridge.name=otbr0 otbr
-2. To start OpenThread Border Router Docker container, use the command below with replaced _rcp-dk_ with a device node name of the nRF 52840 DK that has the RCP firmware installed, e.g. _ttyACM0_:
+2. Start an OTBR Docker container using the command below with replaced _rcp-dk_ with the device node name of the nRF 52840 DK that has the RCP firmware installed, e.g. _ttyACM0_:
 
         $ docker run -it --rm --privileged --network otbr -p 8080:80 \
                 --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
@@ -100,11 +100,12 @@ To form a Thread network, perform the following steps:
 4. Click at the __Form__ button on the left menu.
 5. Notice that On-Mesh Prefix is equal to `fd11:22::`. It will be used later to configure IPv6 packet routing.
 6. Click at the __Form__ button at the bottom to form a new Thread network using the default settings.
-7. Check the output from `docker network inspect otbr` to learn which IPv6 address was assigned to the OTBR Docker container. Most likely, it will be `2001:db8:1::2/64`.
+7. Check the output from `docker network inspect otbr` to learn which IPv6 address was assigned to the OTBR Docker container. Most likely, it will be `2001:db8:1::2`.
 8. Run the following command, with _otbr-container-addr_ replaced with the address retrieved in the previous step, to ensure that packets targeting Thread network nodes are routed via the OTBR Docker container:
 
         $ sudo ip -6 route add fd11:22::/64 dev otbr0 via otbr-container-addr
 
+<br>
 To form a Wi-Fi network, perform the following steps:
 
 1. Open Ubuntu settings widget, by running the command:
@@ -148,6 +149,7 @@ Read [nRF Connect Lock Example Application README](../../examples/lock-app/nrfco
 <details>
 <summary>Click here to expand</summary>
 <br>
+
 1. Read [Android CHIPTool README](../../src/android/CHIPTool/README.md) to learn how to build the application for your smartphone.
 2. Install `android-tools-adb` package:
 
