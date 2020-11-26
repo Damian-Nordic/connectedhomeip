@@ -1,19 +1,14 @@
 # Commissioning nRF Connect Accessory using Android CHIPTool
 
 This article describes how to use [CHIPTool](../../src/android/CHIPTool/README.md) for Android smartphones to commission a Nordic Semiconductor nRF52840 DK running
-[nRF Connect Lock Example Application](../../examples/lock-app/nrfconnect/README.md) onto a CHIP-enabled Thread network.
+[nRF Connect Lock Example Application](../../examples/lock-app/nrfconnect/README.md) onto a CHIP-enabled Thread network. The instructions are also valid for [nRF Connect Lighting Example Application](../../examples/lighting-app/nrfconnect/README.md).
 
 Prerequisites:
 - 2x nRF52840 DK (PCA10056)
+  > :information_source: One nRF52840 DK can be replaced with another [OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor) compatible device like nRF52840 Dongle
 - 1x smartphone with Android 8+
-- 1x PC with Ubuntu 20.04 and Docker installed, with a spare Wi-Fi card
-
-> **Note:**
->
-> While the article refers to the specifc hardware and software components for the sake of clarity, it can be useful even if your configuration differs from the one presented above. In particular:
-> - The instruction should work just fine with other nRF Connect examples like [nRF Connect Lighting Example Application](../../examples/lighting-app/nrfconnect/README.md).
-> - All the presented steps should be achievable using other popular operating systems.
-> - One nRF52840 DK is meant to act as an [OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor) and it can be replaced with another compatible device like nRF52840 Dongle.
+- 1x PC with Ubuntu 20.04 and Docker installed, with a spare Wi-Fi card.<br>
+  > :information_source: While the article uses Ubuntu 20.04 as a reference, all the presented steps should be achievable using other popular operating systems.
 
 The essence of the commissioning process is composed of the following pieces:
 1. CHIPTool discovers the accessory device over BLE.
@@ -51,9 +46,7 @@ BLE is only used during the commissioning phase and afterwards IP connectivity b
 <summary>Click here to expand</summary>
 <br>
 
-> **Note:**
->
-> In case you want to use nRF52840 Dongle as an OpenThread Radio Co-Processor read [nRF52840 dongle support](https://github.com/openthread/openthread/blob/master/examples/platforms/nrf528xx/nrf52840/README.md#nrf52840-dongle-support-pca10059) and adjust the steps below accordingly.
+> :information_source: In case you want to use nRF52840 Dongle as an OpenThread Radio Co-Processor read [nRF52840 dongle support](https://github.com/openthread/openthread/blob/master/examples/platforms/nrf528xx/nrf52840/README.md#nrf52840-dongle-support-pca10059) and adjust the steps below accordingly.
 
 OpenThread RCP firmware is required to allow a PC to communicate with Thread devices. Complete the following steps to build and flash the RCP firmware onto a nRF52840 DK:
 
@@ -80,12 +73,14 @@ OpenThread RCP firmware is required to allow a PC to communicate with Thread dev
 7. Flash the RCP firmware:
 
         $ nrfjprog --chiperase --program output/nrf52840/bin/ot-rcp.hex --reset
-8. Disable Mass Storage feature on the device so that it doesn't interfere with core RCP functionalities. Click [here](https://github.com/openthread/openthread/blob/master/examples/platforms/nrf528xx/nrf52840/README.md#mass-storage-device-known-issue) for more details.
+8. Disable Mass Storage feature on the device so that it doesn't [interfere](https://github.com/openthread/openthread/blob/master/examples/platforms/nrf528xx/nrf52840/README.md#mass-storage-device-known-issue) with core RCP functionalities. Note that power-cycle of the device is required to apply the changes. The setting will remain valid even if you flash another firmware onto the device.
 
         $ JLinkExe
         J-Link>MSDDisable
         Probe configured successfully.
         J-Link>exit
+
+
 </details>
 
 ## Configuring PC as a Thread border router
@@ -125,7 +120,7 @@ To form a Wi-Fi network, perform the following steps:
         $ gnome-control-center
 2. Navigate to Wi-Fi settings.
 3. Click the 3-dot icon at the title bar and select __Turn On Wi-Fi Hotspot...__ option.
-4. Enter network name and password and click __Turn On__.
+4. Enter your network name and password and click __Turn On__.
 5. Run the following command to assign a well-known IPv6 address to the hotspot interface:
 
         $ nmcli connection modify Hotspot ipv6.addresses 2001:db8:2::1/64
@@ -152,7 +147,6 @@ To form a Wi-Fi network, perform the following steps:
 9. Start `radvd` service:
 
         $ systemctl start radvd
-
 </details>
 
 ## Building and flashing nRF Connect Lock Example Application
@@ -169,7 +163,7 @@ Read [nRF Connect Lock Example Application README](../../examples/lock-app/nrfco
 2. Install `android-tools-adb` package:
 
         $ sudo apt install android-tools-adb
-3. Enable **USB debugging** on the smartphone by following the [article](https://developer.android.com/studio/debug/dev-options). Turn on **Install via USB** option if it's present on your Android version.
+3. Enable **USB debugging** on the smartphone by following the [article](https://developer.android.com/studio/debug/dev-options). If **Install via USB** option is present on your Android version, turn it on, too.
 4. Plug the smartphone into a USB port on your PC.
 5. Run the following command with _chip-dir_ replaced with CHIP source directory to install the application:
 
@@ -199,7 +193,7 @@ To commission the accessory device onto the Thread network created in [Configuri
 2. Connect the smartphone to the Wi-Fi Hotspot created in [Configuring PC as a Thread border router](#Configuring-PC-as-a-Thread-border-router) chapter.
 3. Open CHIPTool application.
 4. Tap **SCAN QR CODE** button and scan the onboarding QR code.
-5. Tap **Rendezvous over BLE** button to initiate the commissioning procedure. You should see a few pop-up messages appearing as the commissioning progresses. A message "Secure channel established. Provisioning" indicates that a secure channel has been established successfully and the accessory device was sent Thread provisioning data.
+5. Tap **Rendezvous over BLE** button to initiate the commissioning procedure. You should see a few pop-up messages appearing as the commissioning progresses. A message "Secure channel established. Provisioning" indicates that a secure channel has been established successfully and the accessory device has been sent Thread provisioning data.
 </details>
 
 ## Sending ZCL commands
