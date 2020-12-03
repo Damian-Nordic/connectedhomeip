@@ -16,9 +16,10 @@ CHIPTool offers the following features:
 
 ## Requirements for building
 
-You need Android SDK 21 & NDK downloaded to your machine. Set the `$ANDROID_HOME`
-environment variable to where the SDK is downloaded and the `$ANDROID_NDK_HOME`
-environment variable to point to where the NDK package is downloaded.
+You need Android SDK 21 & NDK downloaded to your machine. Set the
+`$ANDROID_HOME` environment variable to where the SDK is downloaded and the
+`$ANDROID_NDK_HOME` environment variable to point to where the NDK package is
+downloaded.
 
 ## ABIs and TARGET_CPU
 
