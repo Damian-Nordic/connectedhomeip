@@ -19,6 +19,14 @@ on:
     pull_request:
 
 jobs:
+    cancel-expired-runs:
+        runs-on: ubuntu-latest
+        if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+        steps:
+        - uses: rokroskar/workflow-run-cleanup-action@master
+          env:
+              GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
     # TODO ESP32 https://github.com/project-chip/connectedhomeip/issues/1510
     esp32:
         name: ESP32
