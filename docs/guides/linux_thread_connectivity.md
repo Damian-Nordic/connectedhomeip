@@ -34,8 +34,8 @@ following way:
 -   OpenThread Border Router container uses nRF52840 Dongle with
     [OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor)
     firmware to transmit the CHIP messages to the Thread network.
--   CHIP-enabled Thread devices connected to the same Thread network receive
-    and consume the CHIP messages.
+-   CHIP-enabled Thread devices connected to the same Thread network receive and
+    consume the CHIP messages.
 
 The goal will be achieved by completing the following two steps:
 
@@ -112,13 +112,13 @@ To configure OpenThread Border Router, complete the following steps:
 
         $ sudo systemctl start docker
 
-3.  Create an IPv6 network for OpenThread Border Router container in
-    Docker:
+3.  Create an IPv6 network for OpenThread Border Router container in Docker:
 
         $ sudo docker network create --ipv6 --subnet fd11:db8:1::/64 -o com.docker.network.bridge.name=otbr0 otbr
 
-4.  Start OpenThread Border Router container using the following command. In the last line,
-    replace _/dev/ttyACM0_ with the device node name of the nRF52840 Dongle:
+4.  Start OpenThread Border Router container using the following command. In the
+    last line, replace _/dev/ttyACM0_ with the device node name of the nRF52840
+    Dongle:
 
         $ sudo docker run -it --rm --privileged --network otbr -p 8080:80 -e NAT64=0 -e DNS64=0 \
                 --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
@@ -144,5 +144,4 @@ To configure OpenThread Border Router, complete the following steps:
 
 After Open Thread Border Router has been configured, use
 [Python CHIP Controller README](../../src/controller/python/README.md) to
-commission a Thread devices into the network and control it using CHIP
-protocol.
+commission a Thread devices into the network and control it using CHIP protocol.
