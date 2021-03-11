@@ -36,8 +36,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-              with:
-                  submodules: true
+            - name: Pull relevant submodules
+              run: scripts/examples/checkout_submodules.py esp32
             - name: Build example All Clusters App
               run: scripts/examples/esp_example.sh all-clusters-app
             - name: Build ESP32 QEMU and Run Tests

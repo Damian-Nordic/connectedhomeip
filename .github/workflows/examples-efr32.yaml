@@ -39,7 +39,8 @@ jobs:
               # Fetch depth 0 to get all history and be able to check mergepoint for bloat report
               with:
                   fetch-depth: 0
-                  submodules: true
+            - name: Pull relevant submodules
+              run: scripts/examples/checkout_submodules.py efr32
             - name: Initialize CodeQL
               uses: github/codeql-action/init@v1
               with:
