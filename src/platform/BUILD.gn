@@ -595,7 +595,8 @@ if (chip_device_platform != "none" && chip_device_platform != "external") {
       }
     }
 
-    if (chip_enable_openthread && chip_mdns == "platform" && chip_device_platform != "linux") {
+    if (chip_enable_openthread && chip_mdns == "platform" &&
+        chip_device_platform != "linux") {
       sources += [ "OpenThread/MdnsImpl.cpp" ]
     }
 
