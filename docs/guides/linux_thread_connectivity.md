@@ -5,7 +5,8 @@ In order to use a CHIP controller such as
 CHIP-enabled Thread devices from a Linux host, the host must be equipped with a
 Thread radio device, a new Thread network must be created and packets addressed
 to devices within the network must be routed via the radio device. The article
-describes how to achieve that on a Linux machine with Ubuntu 20.04 or later, using
+describes how to achieve that on a Linux machine with Ubuntu 20.04 or later,
+using
 [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle)
 as the radio device.
 
@@ -51,8 +52,11 @@ powerful Linux machine to shorten the firmware build time.
 A variety of development boards from different vendors can be used as a base for
 OpenThread Radio Co-processor firmware.
 
-Read [Configuring OpenThread Radio Co-processor on nRF52840 Dongle](openthread_rcp_nrf_dongle.md) to learn how to use Nordic Semiconductor 
-[nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle) for that purpose.
+Read
+[Configuring OpenThread Radio Co-processor on nRF52840 Dongle](openthread_rcp_nrf_dongle.md)
+to learn how to use Nordic Semiconductor
+[nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle)
+for that purpose.
 
 ## Configuring OpenThread Border Router
 

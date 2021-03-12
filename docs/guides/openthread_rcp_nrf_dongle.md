@@ -1,13 +1,14 @@
 # Configuring OpenThread Radio Co-processor on nRF52840 Dongle
 
-The article describes how to build and program [OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor) (RCP) firmware onto a Nordic
-Semiconductor
+The article describes how to build and program
+[OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor)
+(RCP) firmware onto a Nordic Semiconductor
 [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle).
 
-OpenThread Radio Co-processor design allows to add Thread network capabilities to
-devices which don't support Thread natively. Read
-[Configuring Thread network on a Linux machine](linux_thread_connectivity.md)
-to learn how to add Thread support to a Linux machine.
+OpenThread Radio Co-processor design allows to add Thread network capabilities
+to devices which don't support Thread natively. Read
+[Configuring Thread network on a Linux machine](linux_thread_connectivity.md) to
+learn how to add Thread support to a Linux machine.
 
 ## Building and programming the RCP firmware onto an nRF52840 Dongle
 
