@@ -54,8 +54,8 @@ nRF52840 Dongle:
 
 9.  Connect the nRF52840 Dongle to the USB port.
 
-10. Press the **Reset** button on the dongle to put it into the DFU mode.
-    Red LED on the dongle starts blinking.
+10. Press the **Reset** button on the dongle to put it into the DFU mode. Red
+    LED on the dongle starts blinking.
 
 11. To install the RCP firmware package onto the dongle, run the following
     command, with _/dev/ttyACM0_ replaced with the device node name of your
