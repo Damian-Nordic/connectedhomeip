@@ -419,13 +419,12 @@ void AppTask::StartBLEAdvertisementHandler(AppEvent * aEvent)
 void AppTask::ThreadProvisioningHandler(const ChipDeviceEvent * event, intptr_t arg)
 {
     ARG_UNUSED(arg);
-    if ((event->Type == DeviceEventType::kServiceProvisioningChange) && ConnectivityMgr().IsThreadProvisioned())
+
+    if (event->Type == DeviceEventType::kCHIPoBLEAdvertisingChange &&
+        event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped && sNFC.IsTagEmulationStarted())
     {
-        const int result = sNFC.StopTagEmulation();
-        if (result)
-        {
-            LOG_ERR("Stopping NFC Tag emulation failed");
-        }
+        LOG_INF("Stopping NFC Tag emulation");
+        sNFC.StopTagEmulation();
     }
 }
 #endif
