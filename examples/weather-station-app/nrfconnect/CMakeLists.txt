@@ -29,7 +29,8 @@ project(chip-nrfconnect-weather-station-example)
 
 target_compile_options(app PRIVATE -Werror)
 
-target_include_directories(app PRIVATE 
+target_include_directories(app PRIVATE
+    main
     main/include
     ${NRFCONNECT_COMMON}/app/include
     ${NRFCONNECT_COMMON}/util/include)
@@ -37,6 +38,27 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
     main/AppTask.cpp
     main/main.cpp
+    main/gen/call-command-handler.cpp
+    main/gen/callback-stub.cpp
     ${NRFCONNECT_COMMON}/app/Service.cpp
     ${NRFCONNECT_COMMON}/util/NFCWidget.cpp
-    ${CHIP_ROOT}/src/app/server/DataModelHandler.cpp)
+    ${CHIP_ROOT}/src/app/server/DataModelHandler.cpp
+    ${CHIP_ROOT}/src/app/reporting/reporting-default-configuration.cpp
+    ${CHIP_ROOT}/src/app/reporting/reporting.cpp
+    ${CHIP_ROOT}/src/app/util/af-event.cpp
+    ${CHIP_ROOT}/src/app/util/af-main-common.cpp
+    ${CHIP_ROOT}/src/app/util/attribute-size.cpp
+    ${CHIP_ROOT}/src/app/util/attribute-storage.cpp
+    ${CHIP_ROOT}/src/app/util/attribute-table.cpp
+    ${CHIP_ROOT}/src/app/util/binding-table.cpp
+    ${CHIP_ROOT}/src/app/util/chip-message-send.cpp
+    ${CHIP_ROOT}/src/app/util/client-api.cpp
+    ${CHIP_ROOT}/src/app/util/ember-print.cpp
+    ${CHIP_ROOT}/src/app/util/message.cpp
+    ${CHIP_ROOT}/src/app/util/process-cluster-message.cpp
+    ${CHIP_ROOT}/src/app/util/process-global-message.cpp
+    ${CHIP_ROOT}/src/app/util/util.cpp
+    ${CHIP_ROOT}/src/app/clusters/bindings/bindings.cpp
+    ${CHIP_ROOT}/src/app/clusters/network-commissioning/network-commissioning-ember.cpp
+    ${CHIP_ROOT}/src/app/clusters/network-commissioning/network-commissioning.cpp
+    ${CHIP_ROOT}/src/app/clusters/temperature-measurement-server/temperature-measurement-server.cpp)
