@@ -219,7 +219,7 @@ void AppTask::ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged)
         if (buttonState & DK_BTN1_MSK)
             sAppTask.PostEvent(AppEvent::Type::kButtonPush, ButtonPushHandler);
         else
-            sAppTask.PostEvent(AppEvent::Type::kButtonRelease, ButtonPushHandler);
+            sAppTask.PostEvent(AppEvent::Type::kButtonRelease, ButtonReleaseHandler);
     }
 }
 
