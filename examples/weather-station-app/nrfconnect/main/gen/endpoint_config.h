@@ -172,5 +172,3 @@
   { ZAP_REPORT_DIRECTION(REPORTED), 0x0001, 0x0403, 0x0000, ZAP_CLUSTER_MASK(SERVER), 0x0000, {{ 0, 65344, 0 }} }, /* Reporting for cluster: "Pressure Measurement", attribute: "measured value". side: server */ \
   { ZAP_REPORT_DIRECTION(REPORTED), 0x0001, 0x0405, 0x0000, ZAP_CLUSTER_MASK(SERVER), 0x0000, {{ 0, 65344, 0 }} }, /* Reporting for cluster: "Relative Humidity Measurement", attribute: "measured value". side: server */ \
 }
-
-

@@ -94,4 +94,3 @@ EmberAfStatus emberAfClusterSpecificCommandParse(EmberAfClusterCommand * cmd)
 }
 
 // Cluster specific command parsing
-
