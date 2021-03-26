@@ -20,18 +20,17 @@
 #include <stdint.h>
 
 #include "af-structs.h"
+#include "app/util/util.h"
 #include "call-command-handler.h"
 #include "callback.h"
 #include "cluster-id.h"
 #include "command-id.h"
-#include "app/util/util.h"
 
 using namespace chip;
 
 EmberAfStatus emberAfPressureMeasurementClusterServerCommandParse(EmberAfClusterCommand * cmd);
 EmberAfStatus emberAfRelativeHumidityMeasurementClusterServerCommandParse(EmberAfClusterCommand * cmd);
 EmberAfStatus emberAfTemperatureMeasurementClusterServerCommandParse(EmberAfClusterCommand * cmd);
-
 
 static EmberAfStatus status(bool wasHandled, bool clusterExists, bool mfgSpecific)
 {
@@ -53,7 +52,6 @@ static EmberAfStatus status(bool wasHandled, bool clusterExists, bool mfgSpecifi
     }
 }
 
-
 // Main command parsing controller.
 EmberAfStatus emberAfClusterSpecificCommandParse(EmberAfClusterCommand * cmd)
 {
@@ -73,15 +71,15 @@ EmberAfStatus emberAfClusterSpecificCommandParse(EmberAfClusterCommand * cmd)
     {
         switch (cmd->apsFrame->clusterId)
         {
-        case ZCL_PRESSURE_MEASUREMENT_CLUSTER_ID :
+        case ZCL_PRESSURE_MEASUREMENT_CLUSTER_ID:
             // No commands are enabled for cluster Pressure Measurement
             result = status(false, true, cmd->mfgSpecific);
             break;
-        case ZCL_RELATIVE_HUMIDITY_MEASUREMENT_CLUSTER_ID :
+        case ZCL_RELATIVE_HUMIDITY_MEASUREMENT_CLUSTER_ID:
             // No commands are enabled for cluster Relative Humidity Measurement
             result = status(false, true, cmd->mfgSpecific);
             break;
-        case ZCL_TEMP_MEASUREMENT_CLUSTER_ID :
+        case ZCL_TEMP_MEASUREMENT_CLUSTER_ID:
             // No commands are enabled for cluster Temperature Measurement
             result = status(false, true, cmd->mfgSpecific);
             break;
