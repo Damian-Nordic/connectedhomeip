@@ -104,6 +104,7 @@ private:
 
     struct ServiceData;
 
+    uint8_t mBleIdentity;
     BitFlags<Flags> mFlags;
     uint16_t mGAPConns;
     CHIPoBLEServiceMode mServiceMode;

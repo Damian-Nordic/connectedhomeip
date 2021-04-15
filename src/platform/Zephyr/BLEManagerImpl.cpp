@@ -84,21 +84,33 @@ BT_GATT_SERVICE_DEFINE(CHIPoBLE_Service,
 // This value should be adjusted accordingly if the service declaration changes.
 constexpr int kCHIPoBLE_CCC_AttributeIndex = 3;
 
-void InitRandomStaticAddress()
+int InitIdentity()
 {
-#if !CONFIG_BT_PRIVACY
-    // When the BT privacy feature is disabled, generate a random static address once per boot.
-    // This must be done before bt_enable() has been called.
-    bt_addr_le_t addr;
+#if CONFIG_BT_PRIVACY
+    return BT_ID_DEFAULT;
+#else
+    // When the BT privacy feature is disabled, create a non-default identity using
+    // a random static address, which will be used for advertising.
 
-    int error = bt_addr_le_create_static(&addr);
-    VerifyOrReturn(error == 0, ChipLogError(DeviceLayer, "Failed to create BLE address: %d", error));
+    int id = bt_id_create(nullptr, nullptr);
 
-    error = bt_id_create(&addr, nullptr);
-    VerifyOrReturn(error == 0, ChipLogError(DeviceLayer, "Failed to create BLE identity: %d", error));
+    if (id < 0)
+    {
+        ChipLogError(DeviceLayer, "Failed to create BLE identity: %d", id);
+        return id;
+    }
 
-    ChipLogProgress(DeviceLayer, "BLE address was set to %02X:%02X:%02X:%02X:%02X:%02X", addr.a.val[5], addr.a.val[4],
-                    addr.a.val[3], addr.a.val[2], addr.a.val[1], addr.a.val[0]);
+#if CHIP_PROGRESS_LOGGING
+    size_t addrCount = CONFIG_BT_ID_MAX;
+    bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
+    bt_id_get(addrs, &addrCount);
+
+    const auto & addr = addrs[id].a.val;
+    ChipLogProgress(DeviceLayer, "BLE address was set to %02X:%02X:%02X:%02X:%02X:%02X", addr[5], addr[4], addr[3], addr[2],
+                    addr[1], addr[0]);
+#endif
+ 
+    return id;
 #endif
 }
 
@@ -117,9 +129,12 @@ CHIP_ERROR BLEManagerImpl::_Init()
 
     memset(mSubscribedConns, 0, sizeof(mSubscribedConns));
 
-    InitRandomStaticAddress();
     err = bt_enable(NULL);
     VerifyOrExit(err == CHIP_NO_ERROR, err = MapErrorZephyr(err));
+
+    err = InitIdentity();
+    VerifyOrExit(err >= 0, err = MapErrorZephyr(err));
+    mBleIdentity = static_cast<uint8_t>(err);
 
     memset(&mConnCallbacks, 0, sizeof(mConnCallbacks));
     mConnCallbacks.connected    = HandleConnect;
@@ -219,6 +234,7 @@ CHIP_ERROR BLEManagerImpl::StartAdvertising(void)
 
     bt_le_adv_param advParams =
         BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME, intervalMin, intervalMax, nullptr);
+    advParams.id = mBleIdentity;
 
     // Define advertising data
     ServiceData serviceData;
