@@ -109,7 +109,7 @@ int InitIdentity()
     ChipLogProgress(DeviceLayer, "BLE address was set to %02X:%02X:%02X:%02X:%02X:%02X", addr[5], addr[4], addr[3], addr[2],
                     addr[1], addr[0]);
 #endif
- 
+
     return id;
 #endif
 }
