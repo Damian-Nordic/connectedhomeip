@@ -224,6 +224,8 @@ elseif (BOARD STREQUAL "native_posix_64")
     chip_gn_arg_string("target_cpu" "x64")
 endif()
 
+chip_gn_arg_bool("chip_app_use_echo" TRUE)
+
 # ==============================================================================
 # Define 'chip-gn' target that builds CHIP library(ies) with GN build system
 # ==============================================================================
