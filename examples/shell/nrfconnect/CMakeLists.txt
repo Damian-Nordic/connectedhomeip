@@ -31,7 +31,8 @@ target_compile_options(app PRIVATE -Werror)
 
 target_include_directories(app PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}
-                           ${APP_ROOT}/shell_common/include)
+                           ${APP_ROOT}/shell_common/include
+                           ../../platform/nrfconnect/util/include)
 
 target_sources(app PRIVATE
     ${APP_ROOT}/shell_common/cmd_base64.cpp
@@ -41,6 +42,7 @@ target_sources(app PRIVATE
     ${APP_ROOT}/shell_common/cmd_ping.cpp    
     ${APP_ROOT}/shell_common/cmd_btp.cpp
     ${APP_ROOT}/standalone/main.cpp
+    ../../platform/nrfconnect/util/ThreadUtil.cpp
 )
 
 # 1) The example needs be linked with openthread command line interpreter (required by cmd_otcli.cpp)

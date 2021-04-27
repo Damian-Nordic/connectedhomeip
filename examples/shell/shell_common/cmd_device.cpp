@@ -29,6 +29,9 @@
 #if CHIP_ENABLE_OPENTHREAD
 #include <platform/ThreadStackManager.h>
 #endif
+#if CHIP_DEVICE_LAYER_TARGET_NRFCONNECT
+#include <ThreadUtil.h>
+#endif
 
 #include <ChipShellCollection.h>
 
@@ -830,6 +833,9 @@ int cmd_device_thread(int argc, char ** argv)
     else if (strcmp(argv[0], "start") == 0)
     {
         SuccessOrExit(error = ThreadStackMgr().StartThreadTask());
+#if CHIP_DEVICE_LAYER_TARGET_NRFCONNECT
+        StartDefaultThreadNetwork();
+#endif
     }
     else if (strcmp(argv[0], "role") == 0)
     {
