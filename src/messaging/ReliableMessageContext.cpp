@@ -133,9 +133,7 @@ CHIP_ERROR ReliableMessageContext::FlushAcks()
 
         if (err == CHIP_NO_ERROR)
         {
-#if !defined(NDEBUG)
             ChipLogProgress(ExchangeManager, "Flushed pending ack for MsgId:%08" PRIX32, mPendingPeerAckId);
-#endif
         }
     }
 
@@ -172,17 +170,13 @@ CHIP_ERROR ReliableMessageContext::HandleRcvdAck(uint32_t AckMsgId)
     // Msg is an Ack; Check Retrans Table and remove message context
     if (!GetReliableMessageMgr()->CheckAndRemRetransTable(this, AckMsgId))
     {
-#if !defined(NDEBUG)
         ChipLogError(ExchangeManager, "CHIP MsgId:%08" PRIX32 " not in RetransTable", AckMsgId);
-#endif
         err = CHIP_ERROR_INVALID_ACK_ID;
         // Optionally call an application callback with this error.
     }
     else
     {
-#if !defined(NDEBUG)
         ChipLogProgress(ExchangeManager, "Removed CHIP MsgId:%08" PRIX32 " from RetransTable", AckMsgId);
-#endif
     }
 
     return err;
@@ -203,9 +197,7 @@ CHIP_ERROR ReliableMessageContext::HandleNeedsAck(uint32_t MessageId, BitFlags<M
     // If the message IS a duplicate.
     if (MsgFlags.Has(MessageFlagValues::kDuplicateMessage))
     {
-#if !defined(NDEBUG)
         ChipLogProgress(ExchangeManager, "Forcing tx of solitary ack for duplicate MsgId:%08" PRIX32, MessageId);
-#endif
         // Is there pending ack for a different message id.
         bool wasAckPending = IsAckPending() && mPendingPeerAckId != MessageId;
 
@@ -233,10 +225,8 @@ CHIP_ERROR ReliableMessageContext::HandleNeedsAck(uint32_t MessageId, BitFlags<M
     {
         if (IsAckPending())
         {
-#if !defined(NDEBUG)
             ChipLogProgress(ExchangeManager, "Pending ack queue full; forcing tx of solitary ack for MsgId:%08" PRIX32,
                             mPendingPeerAckId);
-#endif
             // Send the Ack for the currently pending Ack in a SecureChannel::StandaloneAck message.
             err = SendStandaloneAckMessage();
             SuccessOrExit(err);
@@ -265,9 +255,7 @@ CHIP_ERROR ReliableMessageContext::SendStandaloneAckMessage()
     VerifyOrExit(!msgBuf.IsNull(), err = CHIP_ERROR_NO_MEMORY);
 
     // Send the null message
-#if !defined(NDEBUG)
     ChipLogProgress(ExchangeManager, "Sending Standalone Ack for MsgId:%08" PRIX32, mPendingPeerAckId);
-#endif
 
     err = GetExchangeContext()->SendMessage(Protocols::SecureChannel::MsgType::StandaloneAck, std::move(msgBuf),
                                             BitFlags<SendMessageFlags>{ SendMessageFlags::kNoAutoRequestAck });

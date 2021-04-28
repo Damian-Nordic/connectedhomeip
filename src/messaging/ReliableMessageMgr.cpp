@@ -154,10 +154,8 @@ void ReliableMessageMgr::ExecuteActions()
         {
             // If the retransmission was successful, update the passive timer
             entry.nextRetransTimeTick = static_cast<uint16_t>(rc->GetActiveRetransmitTimeoutTick());
-#if !defined(NDEBUG)
             ChipLogProgress(ExchangeManager, "Retransmit MsgId:%08" PRIX32 " Send Cnt %d", entry.retainedBuf.GetMsgId(),
                             entry.sendCount);
-#endif
         }
     }
 
@@ -327,9 +325,7 @@ bool ReliableMessageMgr::CheckAndRemRetransTable(ReliableMessageContext * rc, ui
             // Clear the entry from the retransmision table.
             ClearRetransTable(entry);
 
-#if !defined(NDEBUG)
             ChipLogProgress(ExchangeManager, "Rxd Ack; Removing MsgId:%08" PRIX32 " from Retrans Table", ackMsgId);
-#endif
             return true;
         }
     }

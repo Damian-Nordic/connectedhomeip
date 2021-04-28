@@ -56,13 +56,11 @@ CHIP_ERROR ExchangeMessageDispatch::SendMessage(SecureSessionHandle session, uin
         // Set AckPending flag to false since current outgoing message is going to serve as the ack on this exchange.
         reliableMessageContext->SetAckPending(false);
 
-#if !defined(NDEBUG)
         if (!payloadHeader.HasMessageType(Protocols::SecureChannel::MsgType::StandaloneAck))
         {
             ChipLogProgress(ExchangeManager, "Piggybacking Ack for MsgId:%08" PRIX32 " with msg",
                             reliableMessageContext->GetPendingPeerAckId());
         }
-#endif
     }
 
     if (!IsTransportReliable() && reliableMessageContext->AutoRequestAck() && mReliableMessageMgr != nullptr &&
