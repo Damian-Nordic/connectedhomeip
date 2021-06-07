@@ -38,11 +38,10 @@ during the commissioning process and CHIPTool must use DNS Service Discovery
 (DNS-SD) to learn or refresh the address before the IPv6-based communication can
 be initiated.
 
-Since a typical smartphone does not have a Thread
-radio built-in, extra effort is needed to prepare a fully-fledged testing
-environment. This page refers to the
-[OpenThread Border Router](openthread_border_router_pi.md) article to set up a
-Thread Border Router on a Raspberry Pi.
+Since a typical smartphone does not have a Thread radio built-in, extra effort
+is needed to prepare a fully-fledged testing environment. This page refers to
+the [OpenThread Border Router](openthread_border_router_pi.md) article to set up
+a Thread Border Router on a Raspberry Pi.
 
 The following diagram shows the connectivity between network components required
 to allow communication between devices running the CHIPTool and Lock
@@ -67,10 +66,12 @@ presented in this article:
         nRF52840 Dongle.
     -   One nRF52840 DK is needed to run the Lock application and can be
         replaced with another compatible device like nRF5340 DK.
-        
+
 -   Smartphone compatible with Android 8.0 or later
--   Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
--   Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
+-   Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of
+    memory)
+-   Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement
+    Guard enabled on the router)
 
 <hr>
 
@@ -78,8 +79,8 @@ presented in this article:
 
 ## Setting up Thread Border Router
 
-Follow the [OpenThread Border Router](openthread_border_router_pi.md) article
-to set up OpenThread Border Router on a Raspberry Pi, using either nRF52840 DK or
+Follow the [OpenThread Border Router](openthread_border_router_pi.md) article to
+set up OpenThread Border Router on a Raspberry Pi, using either nRF52840 DK or
 nRF52840 Dongle as the
 [OpenThread Radio Co-Processor](https://openthread.io/platforms/co-processor).
 
@@ -158,7 +159,8 @@ To commission the accessory device onto the Thread network created in the
 complete the following steps:
 
 1. Enable **Bluetooth** and **Location** services on your smartphone.
-2. Connect the smartphone to the same Wi-Fi network as the Raspberry Pi which runs OpenThread Border Router.
+2. Connect the smartphone to the same Wi-Fi network as the Raspberry Pi which
+   runs OpenThread Border Router.
 3. Open the CHIPTool application on your smartphone.
 4. Tap the **PROVISION CHIP DEVICE WITH THREAD** button and scan the
    commissioning QR code. Several notifications will appear, informing you of
@@ -182,7 +184,7 @@ Once the device is commissioned, the following screen appears:
 ![CHIPTool device control screen](../../docs/images/CHIPTool_device_commissioned.jpg)
 
 The two textboxes at the top contain **Fabric ID** and **Node ID** of the last
-commissioned device. 
+commissioned device.
 
 Check the IPv6 connectivity with the device using the following steps:
 
