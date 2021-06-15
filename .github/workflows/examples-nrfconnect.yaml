@@ -64,28 +64,28 @@ jobs:
             #       queries: +security-and-quality
             - name: Build example nRF Connect SDK Lock App on nRF52840 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh lock-app nrf52840dk_nrf52840
+              run: scripts/examples/nrfconnect_example.sh lock-app nrf52840dk_nrf52840 -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Lighting App on nRF52840 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh lighting-app nrf52840dk_nrf52840
+              run: scripts/examples/nrfconnect_example.sh lighting-app nrf52840dk_nrf52840 -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Lighting App on nRF52840 DK with RPC
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh lighting-app nrf52840dk_nrf52840 -DOVERLAY_CONFIG=rpc.overlay
+              run: scripts/examples/nrfconnect_example.sh lighting-app nrf52840dk_nrf52840 -DOVERLAY_CONFIG=rpc.overlay -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Shell on nRF52840 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh shell nrf52840dk_nrf52840
+              run: scripts/examples/nrfconnect_example.sh shell nrf52840dk_nrf52840 -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Pigweed on nRF52840 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh pigweed-app nrf52840dk_nrf52840
+              run: scripts/examples/nrfconnect_example.sh pigweed-app nrf52840dk_nrf52840 -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Lock App on nRF5340 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh lock-app nrf5340dk_nrf5340_cpuapp
+              run: scripts/examples/nrfconnect_example.sh lock-app nrf5340dk_nrf5340_cpuapp -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Lighting App on nRF5340 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh lighting-app nrf5340dk_nrf5340_cpuapp
+              run: scripts/examples/nrfconnect_example.sh lighting-app nrf5340dk_nrf5340_cpuapp -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Build example nRF Connect SDK Shell on nRF5340 DK
               timeout-minutes: 5
-              run: scripts/examples/nrfconnect_example.sh shell nrf5340dk_nrf5340_cpuapp
+              run: scripts/examples/nrfconnect_example.sh shell nrf5340dk_nrf5340_cpuapp -DCONFIG_COMPILER_OPT='"-g0"'
             - name: Run unit tests for Zephyr native_posix_64 platform
               timeout-minutes: 5
               run:
