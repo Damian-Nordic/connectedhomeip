@@ -48,7 +48,7 @@ void LogV(const char * module, uint8_t category, const char * msg, va_list v)
     const size_t prefixLen = strlen(formattedMsg);
     vsnprintfcb(formattedMsg + prefixLen, sizeof(formattedMsg) - prefixLen, msg, v);
 
-    const char* allocatedMsg = log_strdup(formattedMsg);
+    const char * allocatedMsg = log_strdup(formattedMsg);
 
     // Invoke the Zephyr logging library to log the message.
     //

@@ -20,13 +20,12 @@
 #error "The command for triggerring the DFU is available for nRF52840 Dongle only"
 #endif
 
-#include <shell/shell.h>
 #include <drivers/gpio.h>
+#include <shell/shell.h>
 
-namespace
-{
-constexpr const char* kGPIOController = "GPIO_0";
-constexpr gpio_pin_t kGPIOResetPin = 19;
+namespace {
+constexpr const char * kGPIOController = "GPIO_0";
+constexpr gpio_pin_t kGPIOResetPin     = 19;
 
 int cmd_dfu(const struct shell * shell, size_t argc, char ** argv)
 {
@@ -34,7 +33,7 @@ int cmd_dfu(const struct shell * shell, size_t argc, char ** argv)
     // Normally, a user must press the Reset button to reboot into the bootloader, but it can
     // also be done programatically by setting an appropriate GPIO pin.
 
-    const device* gpioController = device_get_binding(kGPIOController);
+    const device * gpioController = device_get_binding(kGPIOController);
 
     if (!gpioController)
     {

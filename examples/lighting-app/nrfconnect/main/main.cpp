@@ -44,7 +44,8 @@ int main(void)
 
 #ifdef CONFIG_USB
     ret = usb_enable(nullptr);
-    if (ret) {
+    if (ret)
+    {
         LOG_ERR("Failed to initialize USB device");
         goto exit;
     }
