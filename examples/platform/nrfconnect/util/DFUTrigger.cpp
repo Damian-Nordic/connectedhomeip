@@ -53,7 +53,7 @@ int cmd_dfu(const struct shell * shell, size_t argc, char ** argv)
         shell_fprintf(shell, SHELL_NORMAL, "Cannot set GPIO reset pin");
         return -ENOEXEC;
     }
-    
+
     return 0;
 }
 } // namespace
