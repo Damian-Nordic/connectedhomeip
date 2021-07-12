@@ -34,16 +34,19 @@ public:
     FixedBufferAllocator() = default;
     FixedBufferAllocator(uint8_t * buffer, size_t capacity) { Reset(buffer, capacity); }
 
-    template<size_t N>
-    explicit FixedBufferAllocator(uint8_t (&buffer)[N]) { Reset(buffer); }
+    template <size_t N>
+    explicit FixedBufferAllocator(uint8_t (&buffer)[N])
+    {
+        Reset(buffer);
+    }
 
     void Reset(uint8_t * buffer, size_t capacity)
     {
         mBegin = buffer;
-        mEnd = buffer + capacity;
+        mEnd   = buffer + capacity;
     }
 
-    template<size_t N>
+    template <size_t N>
     void Reset(uint8_t (&buffer)[N])
     {
         Reset(buffer, N);
@@ -80,7 +83,7 @@ private:
     void operator=(const FixedBufferAllocator &) = delete;
 
     uint8_t * mBegin = nullptr;
-    uint8_t * mEnd =   nullptr;
+    uint8_t * mEnd   = nullptr;
 };
 
 } // namespace chip
