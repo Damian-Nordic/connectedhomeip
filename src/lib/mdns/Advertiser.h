@@ -34,7 +34,14 @@ static constexpr uint16_t kMdnsPort = 5353;
 // Need 8 bytes to fit a thread mac.
 static constexpr size_t kMaxMacSize = 8;
 
-static constexpr size_t kKeyDiscriminatorMaxLength      = 5;
+// Operational node TXT entries
+static constexpr size_t kTxtRetryIntervalIdleMaxLength   = 7;
+static constexpr size_t kTxtRetryIntervalActiveMaxLength = 7;
+static constexpr size_t kTxtEntryMaxNumberOperational    = 2;
+static constexpr size_t kTxtTotalValueLengthOperational  = kTxtRetryIntervalIdleMaxLength + kTxtRetryIntervalActiveMaxLength;
+
+// Commissionable/commissioner node TXT entries
+static constexpr size_t kKeyDiscriminatorMaxLength      = 4;
 static constexpr size_t kKeyVendorProductMaxLength      = 11;
 static constexpr size_t kKeyAdditionalPairingMaxLength  = 1;
 static constexpr size_t kKeyCommissioningModeMaxLength  = 1;
@@ -43,7 +50,12 @@ static constexpr size_t kKeyDeviceNameMaxLength         = 32;
 static constexpr size_t kKeyRotatingIdMaxLength         = 100;
 static constexpr size_t kKeyPairingInstructionMaxLength = 128;
 static constexpr size_t kKeyPairingHintMaxLength        = 10;
+static constexpr size_t kTxtEntryMaxNumberCommission    = 9;
+static constexpr size_t kTxtTotalValueLengthCommission  = kKeyDiscriminatorMaxLength + kKeyVendorProductMaxLength +
+    kKeyAdditionalPairingMaxLength + kKeyCommissioningModeMaxLength + kKeyDeviceTypeMaxLength + kKeyDeviceNameMaxLength +
+    kKeyRotatingIdMaxLength + kKeyPairingInstructionMaxLength + kKeyPairingHintMaxLength;
 
+// Commissionable/commissioner node subtypes
 static constexpr size_t kSubTypeShortDiscriminatorMaxLength = 4; // _S<dd>
 static constexpr size_t kSubTypeLongDiscriminatorMaxLength  = 6; // _L<dddd>
 static constexpr size_t kSubTypeVendorMaxLength             = 7; // _V<ddddd>
@@ -51,9 +63,8 @@ static constexpr size_t kSubTypeDeviceTypeMaxLength         = 5; // _T<ddd>
 static constexpr size_t kSubTypeCommissioningModeMaxLength  = 3; // _C<d>
 static constexpr size_t kSubTypeAdditionalPairingMaxLength  = 3; // _A<d>
 static constexpr size_t kSubTypeMaxNumber                   = 6;
-static constexpr size_t kSubTypeMaxLength =
-    std::max({ kSubTypeShortDiscriminatorMaxLength, kSubTypeLongDiscriminatorMaxLength, kSubTypeVendorMaxLength,
-               kSubTypeDeviceTypeMaxLength, kSubTypeCommissioningModeMaxLength, kSubTypeAdditionalPairingMaxLength });
+static constexpr size_t kSubTypeTotalLength = kSubTypeShortDiscriminatorMaxLength + kSubTypeLongDiscriminatorMaxLength +
+    kSubTypeVendorMaxLength + kSubTypeDeviceTypeMaxLength + kSubTypeCommissioningModeMaxLength + kSubTypeAdditionalPairingMaxLength;
 
 enum class CommssionAdvertiseMode : uint8_t
 {
@@ -98,11 +109,6 @@ private:
 class OperationalAdvertisingParameters : public BaseAdvertisingParams<OperationalAdvertisingParameters>
 {
 public:
-    // Amount of mDNS text entries required for this advertising type
-    static constexpr uint8_t kNumAdvertisingTxtEntries = 2;
-    static constexpr uint8_t kTxtMaxKeySize            = 3 + 1; // "CRI"/"CRA" as possible keys
-    static constexpr uint8_t kTxtMaxValueSize          = 7 + 1; // Max for text representation of the 32-bit MRP intervals
-
     OperationalAdvertisingParameters & SetPeerId(const PeerId & peerId)
     {
         mPeerId = peerId;
@@ -131,11 +137,6 @@ private:
 class CommissionAdvertisingParameters : public BaseAdvertisingParams<CommissionAdvertisingParameters>
 {
 public:
-    // Amount of mDNS text entries required for this advertising type
-    static constexpr uint8_t kNumAdvertisingTxtEntries = 8;     // Min 1 - Max 8
-    static constexpr uint8_t kTxtMaxKeySize            = 2 + 1; // "D"/"VP"/"CM"/"DT"/"DN"/"RI"/"PI"/"PH" as possible keys
-    static constexpr uint8_t kTxtMaxValueSize          = 128;   // Max from PI - Pairing Instruction
-
     CommissionAdvertisingParameters & SetShortDiscriminator(uint8_t discriminator)
     {
         mShortDiscriminator = discriminator;

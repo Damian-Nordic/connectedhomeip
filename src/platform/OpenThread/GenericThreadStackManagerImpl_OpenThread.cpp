@@ -49,6 +49,7 @@
 #include <platform/ThreadStackManager.h>
 #include <platform/internal/CHIPDeviceLayerInternal.h>
 #include <support/CodeUtils.h>
+#include <support/FixedBufferAllocator.h>
 #include <support/ThreadOperationalDataset.h>
 #include <support/logging/CHIPLogging.h>
 
@@ -63,6 +64,24 @@ extern "C" void otAppCliInit(otInstance * aInstance);
 namespace chip {
 namespace DeviceLayer {
 namespace Internal {
+namespace {
+
+CHIP_ERROR Clone(FixedBufferAllocator & alloc, const char *& dest, const char * str)
+{
+    const auto ptr = alloc.Clone(str);
+    ReturnErrorCodeIf(ptr == nullptr, CHIP_ERROR_BUFFER_TOO_SMALL);
+    dest = ptr;
+    return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR Clone(FixedBufferAllocator & alloc, const uint8_t *& dest, const void * data, size_t dataLen)
+{
+    const auto ptr = alloc.Clone(data, dataLen);
+    ReturnErrorCodeIf(ptr == nullptr, CHIP_ERROR_BUFFER_TOO_SMALL);
+    dest = ptr;
+    return CHIP_NO_ERROR;
+}
+} // namespace
 
 // Fully instantiate the generic implementation class in whatever compilation unit includes this file.
 template class GenericThreadStackManagerImpl_OpenThread<ThreadStackManagerImpl>;
@@ -1069,6 +1088,13 @@ void GenericThreadStackManagerImpl_OpenThread<ImplClass>::OnSrpClientStateChange
 }
 
 template <class ImplClass>
+bool GenericThreadStackManagerImpl_OpenThread<ImplClass>::SrpClient::Service::Matches(const char * aInstanceName,
+                                                                                      const char * aName) const
+{
+    return IsUsed() && (strcmp(mService.mInstanceName, aInstanceName) == 0) && (strcmp(mService.mName, aName) == 0);
+}
+
+template <class ImplClass>
 CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AddSrpService(const char * aInstanceName, const char * aName,
                                                                                uint16_t aPort,
                                                                                const Span<const char * const> & aSubTypes,
@@ -1078,27 +1104,26 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AddSrpService(c
     CHIP_ERROR error                         = CHIP_NO_ERROR;
     typename SrpClient::Service * srpService = nullptr;
     size_t entryId                           = 0;
+    FixedBufferAllocator alloc;
 
     Impl()->LockThreadStack();
 
     VerifyOrExit(aInstanceName, error = CHIP_ERROR_INVALID_ARGUMENT);
-    VerifyOrExit(strlen(aInstanceName) <= SrpClient::kMaxInstanceNameSize, error = CHIP_ERROR_INVALID_STRING_LENGTH);
     VerifyOrExit(aName, error = CHIP_ERROR_INVALID_ARGUMENT);
-    VerifyOrExit(strlen(aName) <= SrpClient::kMaxNameSize, error = CHIP_ERROR_INVALID_STRING_LENGTH);
 
     // Try to find an empty slot in array for the new service and
     // remove the possible existing entry from anywhere in the list
     for (typename SrpClient::Service & service : mSrpClient.mServices)
     {
         // Remove possible existing entry
-        if ((strcmp(service.mInstanceName, aInstanceName) == 0) && (strcmp(service.mName, aName) == 0))
+        if (service.Matches(aInstanceName, aName))
         {
             SuccessOrExit(error = MapOpenThreadError(otSrpClientClearService(mOTInst, &service.mService)));
             // Clear memory immediately, as OnSrpClientNotification will not be called.
             memset(&service, 0, sizeof(service));
         }
 
-        if ((srpService == nullptr) && (strcmp(service.mInstanceName, "") == 0))
+        if ((srpService == nullptr) && !service.IsUsed())
         {
             // Assign first empty slot found in array for a new service.
             srpService = &service;
@@ -1108,30 +1133,23 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AddSrpService(c
     }
 
     // Verify there is a slot found for the new service.
-    VerifyOrExit(srpService, error = MapOpenThreadError(OT_ERROR_NO_BUFS));
+    VerifyOrExit(srpService != nullptr, error = CHIP_ERROR_BUFFER_TOO_SMALL);
+    alloc.Reset(srpService->mServiceBuffer);
 
     otSrpClientSetLeaseInterval(mOTInst, aLeaseInterval);
     otSrpClientSetKeyLeaseInterval(mOTInst, aKeyLeaseInterval);
 
-    memcpy(srpService->mInstanceName, aInstanceName, strlen(aInstanceName) + 1);
-    srpService->mService.mInstanceName = srpService->mInstanceName;
-
-    memcpy(srpService->mName, aName, strlen(aName) + 1);
-    srpService->mService.mName = srpService->mName;
-
+    SuccessOrExit(error = Clone(alloc, srpService->mService.mInstanceName, aInstanceName));
+    SuccessOrExit(error = Clone(alloc, srpService->mService.mName, aName));
     srpService->mService.mPort = aPort;
 
 #if OPENTHREAD_API_VERSION >= 132
-    VerifyOrExit(aSubTypes.size() <= ArraySize(srpService->mSubTypeBuffers), error = CHIP_ERROR_BUFFER_TOO_SMALL);
+    VerifyOrExit(aSubTypes.size() < ArraySize(srpService->mSubTypes), error = CHIP_ERROR_BUFFER_TOO_SMALL);
     entryId = 0;
 
     for (const char * subType : aSubTypes)
     {
-        auto & destBuffer = srpService->mSubTypeBuffers[entryId];
-        VerifyOrExit(strlen(subType) < ArraySize(destBuffer), error = CHIP_ERROR_BUFFER_TOO_SMALL);
-        strcpy(destBuffer, subType);
-
-        srpService->mSubTypes[entryId++] = destBuffer;
+        SuccessOrExit(error = Clone(alloc, srpService->mSubTypes[entryId++], subType));
     }
 
     srpService->mSubTypes[entryId]      = nullptr;
@@ -1144,18 +1162,14 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AddSrpService(c
 
     for (const chip::Mdns::TextEntry & entry : aTxtEntries)
     {
-        VerifyOrExit(strlen(entry.mKey) < SrpClient::kMaxTxtKeySize, error = CHIP_ERROR_BUFFER_TOO_SMALL);
-        strcpy(srpService->mTxtKeyBuffers[entryId], entry.mKey);
-
-        VerifyOrExit(entry.mDataSize <= SrpClient::kMaxTxtValueSize, error = CHIP_ERROR_BUFFER_TOO_SMALL);
-        memcpy(srpService->mTxtValueBuffers[entryId], entry.mData, entry.mDataSize);
-
         using OtTxtValueLength = decltype(srpService->mTxtEntries[entryId].mValueLength);
-        static_assert(SrpClient::kMaxTxtValueSize <= std::numeric_limits<OtTxtValueLength>::max(),
+        static_assert(SrpClient::kServiceBufferSize <= std::numeric_limits<OtTxtValueLength>::max(),
                       "DNS TXT value length may not fit in otDnsTxtEntry structure");
-        srpService->mTxtEntries[entryId].mKey         = srpService->mTxtKeyBuffers[entryId];
-        srpService->mTxtEntries[entryId].mValue       = srpService->mTxtValueBuffers[entryId];
+
+        // TXT entry keys are constants, so they don't need to be cloned
+        srpService->mTxtEntries[entryId].mKey         = entry.mKey;
         srpService->mTxtEntries[entryId].mValueLength = static_cast<OtTxtValueLength>(entry.mDataSize);
+        SuccessOrExit(error = Clone(alloc, srpService->mTxtEntries[entryId].mValue, entry.mData, entry.mDataSize));
         ++entryId;
     }
 
@@ -1187,14 +1201,12 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_RemoveSrpServic
     Impl()->LockThreadStack();
 
     VerifyOrExit(aInstanceName, error = CHIP_ERROR_INVALID_ARGUMENT);
-    VerifyOrExit(strlen(aInstanceName) <= SrpClient::kMaxInstanceNameSize, error = CHIP_ERROR_INVALID_STRING_LENGTH);
     VerifyOrExit(aName, error = CHIP_ERROR_INVALID_ARGUMENT);
-    VerifyOrExit(strlen(aName) <= SrpClient::kMaxNameSize, error = CHIP_ERROR_INVALID_STRING_LENGTH);
 
     // Check if service to remove exists.
     for (typename SrpClient::Service & service : mSrpClient.mServices)
     {
-        if ((strcmp(service.mInstanceName, aInstanceName) == 0) && (strcmp(service.mName, aName) == 0))
+        if (service.Matches(aInstanceName, aName))
         {
             srpService = &service;
             break;
