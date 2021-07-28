@@ -96,7 +96,7 @@ void LogOpenThreadStateChange(otInstance * otInst, uint32_t flags)
 #if CHIP_DETAIL_LOGGING
 
     const uint32_t kParamsChanged = (OT_CHANGED_THREAD_NETWORK_NAME | OT_CHANGED_THREAD_PANID | OT_CHANGED_THREAD_EXT_PANID |
-                                     OT_CHANGED_THREAD_CHANNEL | OT_CHANGED_MASTER_KEY | OT_CHANGED_PSKC);
+                                     OT_CHANGED_THREAD_CHANNEL | OT_CHANGED_NETWORK_KEY | OT_CHANGED_PSKC);
 
     static char strBuf[64];
 
