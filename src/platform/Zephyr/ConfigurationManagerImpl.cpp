@@ -93,7 +93,9 @@ void ConfigurationManagerImpl::DoFactoryReset(intptr_t arg)
     const CHIP_ERROR err = FactoryResetConfig();
 
     if (err != CHIP_NO_ERROR)
+    {
         ChipLogError(DeviceLayer, "FactoryResetConfig() failed: %s", ErrorStr(err));
+    }
 
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD
     ThreadStackMgr().ErasePersistentInfo();
