@@ -107,7 +107,9 @@ void TestIPv6(nlTestSuite * inSuite, void * inContext)
 }
 
 const nlTest sTests[] = {
+#if INET_CONFIG_ENABLE_IPV4
     NL_TEST_DEF("TestIPv4", TestIPv4), //
+#endif
     NL_TEST_DEF("TestIPv6", TestIPv6), //
     NL_TEST_SENTINEL()                 //
 };

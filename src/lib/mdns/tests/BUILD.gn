@@ -16,6 +16,7 @@ import("//build_overrides/build.gni")
 import("//build_overrides/chip.gni")
 import("//build_overrides/nlunit_test.gni")
 
+import("${chip_root}/src/platform/device.gni")
 import("${chip_root}/build/chip/chip_test_suite.gni")
 
 chip_test_suite("tests") {
@@ -26,10 +27,15 @@ chip_test_suite("tests") {
     "TestTxtFields.cpp",
   ]
 
+  if (chip_device_platform == "nrfconnect") {
+    test_sources += ["TestAdvertiser_OpenThread.cpp" ]
+  }
+
   cflags = [ "-Wconversion" ]
 
   public_deps = [
     "${chip_root}/src/lib/mdns",
+    "${chip_root}/src/platform",
     "${nlunit_test_root}:nlunit-test",
   ]
 }

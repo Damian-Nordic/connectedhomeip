@@ -80,7 +80,7 @@ static void TestKeyValueStoreMgr_Uint32Key(nlTestSuite * inSuite, void * inConte
 {
     CHIP_ERROR err;
     const char * kTestKey = "uint32_key";
-    const char kTestValue = 5;
+    const uint32_t kTestValue = 5;
     uint32_t read_value;
     err = KeyValueStoreMgr().Put(kTestKey, kTestValue);
     NL_TEST_ASSERT(inSuite, err == CHIP_NO_ERROR);

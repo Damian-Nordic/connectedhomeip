@@ -67,7 +67,7 @@ project(AllChipTests)
 enable_testing()
 
 target_sources(app PRIVATE main/runner.cpp)
-target_link_options(app PUBLIC -Wl,--whole-archive ${CHIP_TESTS} -Wl,--no-whole-archive)
+target_link_options(app PUBLIC -Wl,--whole-archive ${CHIP_TESTS} -Wl,--no-whole-archive -no-pie)
 target_link_libraries(app PUBLIC chip $<TARGET_FILE:kernel>)
 target_compile_definitions(app PUBLIC CHIP_HAVE_CONFIG_H)
 

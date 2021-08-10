@@ -84,7 +84,7 @@ private:
 void TestPtrResponse(nlTestSuite * inSuite, void * inContext)
 {
     IPAddress ipAddress;
-    NL_TEST_ASSERT(inSuite, IPAddress::FromString("10.20.30.40", ipAddress));
+    NL_TEST_ASSERT(inSuite, IPAddress::FromString("2001:db8::1", ipAddress));
 
     PtrResponder responder(kNames, kTargetNames);
 
