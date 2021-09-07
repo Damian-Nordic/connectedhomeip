@@ -6,7 +6,7 @@
 
 #include "app_task.h"
 
-#include "led_widget.h"
+#include "LEDWidget.h"
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app/common/gen/attribute-id.h>
