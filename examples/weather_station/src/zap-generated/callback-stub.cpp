@@ -208,16 +208,17 @@ emberAfMessageSentCallback(const MessageSendDestination &destination, EmberApsFr
 	return false;
 }
 
-EmberAfStatus __attribute__((weak)) emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,
-									 EmberAfAttributeMetadata *attributeMetadata,
-									 uint8_t *buffer, uint16_t maxReadLength)
+EmberAfStatus __attribute__((weak))
+emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,
+				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
+				     uint16_t maxReadLength)
 {
 	return EMBER_ZCL_STATUS_FAILURE;
 }
 
 EmberAfStatus __attribute__((weak))
 emberAfExternalAttributeWriteCallback(EndpointId endpoint, ClusterId clusterId,
-				      EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
+				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
 {
 	return EMBER_ZCL_STATUS_FAILURE;
 }

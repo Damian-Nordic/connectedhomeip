@@ -1,6 +1,6 @@
 /*
  *
- *    Copyright (c) 2022 Project CHIP Authors
+ *    Copyright (c) 2021 Project CHIP Authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ namespace Controller
 		// replaced by IMDelegate.
 		mDevice->AddIMResponseHandler(sender.get(), onSuccessCallback, onFailureCallback);
 
-		SuccessOrExit(err = mDevice->SendCommands(sender.get(), mTimeout));
+		SuccessOrExit(err = mDevice->SendCommands(sender.get()));
 
 		// We have successfully sent the command, and the callback handler will be responsible to free the
 		// object, release the object now.
@@ -121,7 +121,7 @@ namespace Controller
 		// replaced by IMDelegate.
 		mDevice->AddIMResponseHandler(sender.get(), onSuccessCallback, onFailureCallback);
 
-		SuccessOrExit(err = mDevice->SendCommands(sender.get(), mTimeout));
+		SuccessOrExit(err = mDevice->SendCommands(sender.get()));
 
 		// We have successfully sent the command, and the callback handler will be responsible to free the
 		// object, release the object now.
@@ -184,7 +184,7 @@ namespace Controller
 		// replaced by IMDelegate.
 		mDevice->AddIMResponseHandler(sender.get(), onSuccessCallback, onFailureCallback);
 
-		SuccessOrExit(err = mDevice->SendCommands(sender.get(), mTimeout));
+		SuccessOrExit(err = mDevice->SendCommands(sender.get()));
 
 		// We have successfully sent the command, and the callback handler will be responsible to free the
 		// object, release the object now.

@@ -6,9 +6,9 @@
 
 #include "app_task.h"
 
+#include "LEDWidget.h"
 #include "battery.h"
 #include "buzzer.h"
-#include "led_widget.h"
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/attribute-id.h>
@@ -229,7 +229,7 @@ int AppTask::StartApp()
 	while (true) {
 		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 		DispatchEvent(event);
-	}
+		}
 }
 
 void AppTask::PostEvent(const AppEvent &event)
@@ -569,7 +569,7 @@ void AppTask::UpdateStatusLED()
 	default:
 		break;
 	}
-}
+	}
 
 void AppTask::LEDStateUpdateHandler(LEDWidget &ledWidget)
 {
