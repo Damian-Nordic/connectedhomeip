@@ -44,9 +44,9 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
                src/app_task.cpp
                src/main.cpp
-               src/gen/attribute-size.cpp
-               src/gen/IMClusterCommandHandler.cpp
-               src/gen/callback-stub.cpp
+               src/zap-generated/attribute-size.cpp
+               src/zap-generated/IMClusterCommandHandler.cpp
+               src/zap-generated/callback-stub.cpp
                ${NRFCONNECT_COMMON}/util/LEDWidget.cpp
                ${NRFCONNECT_COMMON}/util/ThreadUtil.cpp
                ${NRFCONNECT_COMMON}/util/DFUOverSMP.cpp
