@@ -34,3 +34,7 @@
 #define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION 1
 #define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION_STRING "Prerelease weather station firmware"
 #define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION 1
+
+/* Configure the number of fabrics and operational node services */
+#define CHIP_CONFIG_MAX_DEVICE_ADMINS 5
+#define CHIP_DEVICE_CONFIG_THREAD_SRP_MAX_SERVICES 10
