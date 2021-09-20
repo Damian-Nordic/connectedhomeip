@@ -49,7 +49,14 @@ source_set("commands") {
     sources += [ "Dns.cpp" ]
   }
 
-  public_deps = [ "${chip_root}/src/lib/shell:shell_core" ]
+  if (chip_device_platform == "nrfconnect") {
+    sources += [ "Ota.cpp" ]
+  }
+
+  public_deps = [
+    "${chip_root}/src/controller",
+    "${chip_root}/src/lib/shell:shell_core"
+  ]
 
   if (chip_device_platform != "none") {
     public_deps += [ "${chip_root}/src/app/server" ]

@@ -53,6 +53,7 @@ include(${CHIP_ROOT}/src/app/chip_data_model.cmake)
 
 target_include_directories(app PRIVATE
                            main/include
+                           ${GEN_DIR}
                            ${GEN_DIR}/app-common
                            ${GEN_DIR}/lock-app
                            ${NLIO_ROOT}
@@ -66,6 +67,7 @@ target_sources(app PRIVATE
                main/ZclCallbacks.cpp
                ${GEN_DIR}/lock-app/zap-generated/attribute-size.cpp
                ${GEN_DIR}/lock-app/zap-generated/callback-stub.cpp
+               ${GEN_DIR}/lock-app/zap-generated/CHIPClusters.cpp
                ${GEN_DIR}/lock-app/zap-generated/IMClusterCommandHandler.cpp
                ${NRFCONNECT_COMMON}/util/LEDWidget.cpp
                ${NRFCONNECT_COMMON}/util/ThreadUtil.cpp)

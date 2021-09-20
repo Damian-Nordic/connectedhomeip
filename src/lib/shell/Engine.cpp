@@ -107,6 +107,7 @@ void Engine::RegisterDefaultCommands()
     RegisterConfigCommands();
     RegisterDeviceCommands();
     RegisterOnboardingCodesCommands();
+    RegisterOtaCommands();
 #endif
 #if CHIP_DEVICE_CONFIG_ENABLE_NFC
     RegisterNFCCommands();
