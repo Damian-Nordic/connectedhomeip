@@ -71,8 +71,10 @@ target_sources(app PRIVATE
                ${NRFCONNECT_COMMON}/util/ThreadUtil.cpp)
 
 chip_configure_data_model(app
+    INCLUDE_CLIENT_CALLBACKS
     INCLUDE_SERVER
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../lock-common/lock-app.zap
+    GEN_DIR ${GEN_DIR}/lock-app/zap-generated
 )
 
 if(BUILD_WITH_DFU)
