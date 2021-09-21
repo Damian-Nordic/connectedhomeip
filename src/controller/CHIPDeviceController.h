@@ -69,7 +69,7 @@ namespace Controller {
 
 using namespace chip::Protocols::UserDirectedCommissioning;
 
-constexpr uint16_t kNumMaxActiveDevices = 64;
+constexpr uint16_t kNumMaxActiveDevices = 2;
 constexpr uint16_t kNumMaxPairedDevices = 128;
 
 // Raw functions for cluster callbacks
@@ -83,16 +83,18 @@ struct ControllerInitParams
     PersistentStorageDelegate * storageDelegate = nullptr;
     System::Layer * systemLayer                 = nullptr;
     Inet::InetLayer * inetLayer                 = nullptr;
-
 #if CONFIG_NETWORK_LAYER_BLE
     Ble::BleLayer * bleLayer = nullptr;
 #endif
+    Transport::FabricTable * fabricTable                  = nullptr;
+    FabricIndex fabricIndex                               = Transport::kMinValidFabricIndex;
+    SecureSessionMgr * sessionManager                     = nullptr;
+    Messaging::ExchangeManager * exchangeManager          = nullptr;
     DeviceControllerInteractionModelDelegate * imDelegate = nullptr;
+
 #if CHIP_DEVICE_CONFIG_ENABLE_MDNS
     DeviceAddressUpdateDelegate * mDeviceAddressUpdateDelegate = nullptr;
 #endif
-    OperationalCredentialsDelegate * operationalCredentialsDelegate = nullptr;
-
     /* The following keypair must correspond to the public key used for generating
        controllerNOC. It's used by controller to establish CASE sessions with devices */
     Crypto::P256Keypair * ephemeralKeypair = nullptr;
@@ -103,7 +105,6 @@ struct ControllerInitParams
     ByteSpan controllerRCAC;
 
     uint16_t controllerVendorId;
-
     /* The port used for operational communication to listen for and send messages over UDP/TCP.
      * The default value of `0` will pick any available port. */
     uint16_t listenPort = 0;
@@ -172,6 +173,7 @@ public:
 struct CommissionerInitParams : public ControllerInitParams
 {
     DevicePairingDelegate * pairingDelegate = nullptr;
+    OperationalCredentialsDelegate * operationalCredentialsDelegate = nullptr;
 };
 
 /**
@@ -190,10 +192,7 @@ class DLL_EXPORT DeviceController : public Messaging::ExchangeDelegate,
                                     public app::InteractionModelDelegate
 {
 public:
-    DeviceController();
-    virtual ~DeviceController() {}
-
-    CHIP_ERROR Init(ControllerInitParams params);
+    CHIP_ERROR Init(const ControllerInitParams & params);
 
     /**
      * @brief
@@ -274,13 +273,13 @@ public:
     DeviceControllerInteractionModelDelegate * GetInteractionModelDelegate() { return mInteractionModelDelegate; }
 
 protected:
-    enum class State
+    enum class State : uint8_t
     {
         NotInitialized,
         Initialized
     };
 
-    State mState;
+    State mState = State::NotInitialized;
 
     /* A list of device objects that can be used for communicating with corresponding
        CHIP devices. The list does not contain all the paired devices, but only the ones
@@ -289,7 +288,7 @@ protected:
     Device mActiveDevices[kNumMaxActiveDevices];
 
     SerializableU64Set<kNumMaxPairedDevices> mPairedDevices;
-    bool mPairedDevicesInitialized;
+    bool mPairedDevicesInitialized = false;
 
     PeerId mLocalId    = PeerId();
     FabricId mFabricId = kUndefinedFabricId;
@@ -326,9 +325,7 @@ protected:
     void PersistNextKeyId();
 
     FabricIndex mFabricIndex = Transport::kMinValidFabricIndex;
-    Transport::FabricTable mFabrics;
-
-    OperationalCredentialsDelegate * mOperationalCredentialsDelegate;
+    Transport::FabricTable * mFabrics = nullptr;
 
     SessionIDAllocator mIDAllocator;
 
@@ -354,6 +351,7 @@ private:
     void ReleaseAllDevices();
 
     CHIP_ERROR ProcessControllerNOCChain(const ControllerInitParams & params);
+    CHIP_ERROR InitFabricInfo();
 };
 
 /**
@@ -566,6 +564,7 @@ public:
 
 private:
     DevicePairingDelegate * mPairingDelegate;
+    OperationalCredentialsDelegate * mOperationalCredentialsDelegate;
 
     /* This field is an index in mActiveDevices list. The object at this index in the list
        contains the device object that's tracking the state of the device that's being paired.

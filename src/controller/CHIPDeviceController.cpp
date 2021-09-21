@@ -104,16 +104,7 @@ using namespace chip::Protocols::UserDirectedCommissioning;
 
 constexpr uint32_t kSessionEstablishmentTimeout = 30 * kMillisecondsPerSecond;
 
-DeviceController::DeviceController()
-{
-    mState                    = State::NotInitialized;
-    mSessionMgr               = nullptr;
-    mExchangeMgr              = nullptr;
-    mStorageDelegate          = nullptr;
-    mPairedDevicesInitialized = false;
-}
-
-CHIP_ERROR DeviceController::Init(ControllerInitParams params)
+CHIP_ERROR DeviceController::Init(const ControllerInitParams & params)
 {
     VerifyOrReturnError(mState == State::NotInitialized, CHIP_ERROR_INCORRECT_STATE);
 
@@ -127,7 +118,6 @@ CHIP_ERROR DeviceController::Init(ControllerInitParams params)
     {
 #if CONFIG_DEVICE_LAYER
         ReturnErrorOnFailure(DeviceLayer::PlatformMgr().InitChipStack());
-
         mSystemLayer = &DeviceLayer::SystemLayer();
         mInetLayer   = &DeviceLayer::InetLayer;
 #endif // CONFIG_DEVICE_LAYER
@@ -137,56 +127,65 @@ CHIP_ERROR DeviceController::Init(ControllerInitParams params)
     VerifyOrReturnError(mInetLayer != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
 
     mStorageDelegate = params.storageDelegate;
+    VerifyOrReturnError(mStorageDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
+
 #if CONFIG_NETWORK_LAYER_BLE
+    mBleLayer = params.bleLayer;
 #if CONFIG_DEVICE_LAYER
-    if (params.bleLayer == nullptr)
+    if (mBleLayer == nullptr)
     {
-        params.bleLayer = DeviceLayer::ConnectivityMgr().GetBleLayer();
+        mBleLayer = DeviceLayer::ConnectivityMgr().GetBleLayer();
     }
 #endif // CONFIG_DEVICE_LAYER
-    mBleLayer = params.bleLayer;
     VerifyOrReturnError(mBleLayer != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
 #endif
 
-    mTransportMgr          = chip::Platform::New<DeviceTransportMgr>();
-    mSessionMgr            = chip::Platform::New<SecureSessionMgr>();
-    mExchangeMgr           = chip::Platform::New<Messaging::ExchangeManager>();
-    mMessageCounterManager = chip::Platform::New<secure_channel::MessageCounterManager>();
-
-    ReturnErrorOnFailure(mTransportMgr->Init(
-        Transport::UdpListenParameters(mInetLayer).SetAddressType(Inet::kIPAddressType_IPv6).SetListenPort(mListenPort)
-#if INET_CONFIG_ENABLE_IPV4
-            ,
-        Transport::UdpListenParameters(mInetLayer).SetAddressType(Inet::kIPAddressType_IPv4).SetListenPort(mListenPort)
-#endif
-#if CONFIG_NETWORK_LAYER_BLE
-            ,
-        Transport::BleListenParameters(mBleLayer)
-#endif
-            ));
-
-    ReturnErrorOnFailure(mFabrics.Init(mStorageDelegate));
-
-    ReturnErrorOnFailure(mSessionMgr->Init(mSystemLayer, mTransportMgr, &mFabrics, mMessageCounterManager));
-
-    ReturnErrorOnFailure(mExchangeMgr->Init(mSessionMgr));
-
-    ReturnErrorOnFailure(mMessageCounterManager->Init(mExchangeMgr));
-
-    ReturnErrorOnFailure(mExchangeMgr->RegisterUnsolicitedMessageHandlerForProtocol(Protocols::TempZCL::Id, this));
-
-    if (params.imDelegate != nullptr)
+    mFabrics     = params.fabricTable;
+    mFabricIndex = params.fabricIndex;
+    if (mFabrics == nullptr)
     {
-        mInteractionModelDelegate = params.imDelegate;
+        mFabrics = chip::Platform::New<Transport::FabricTable>();
+        ReturnErrorOnFailure(mFabrics->Init(mStorageDelegate));
+        ReturnErrorOnFailure(ProcessControllerNOCChain(params));
+    }
+    ReturnErrorOnFailure(InitFabricInfo());
+
+    if (params.sessionManager != nullptr && params.exchangeManager != nullptr)
+    {
+        mSessionMgr  = params.sessionManager;
+        mExchangeMgr = params.exchangeManager;
     }
     else
+    {
+        mTransportMgr          = chip::Platform::New<DeviceTransportMgr>();
+        mMessageCounterManager = chip::Platform::New<secure_channel::MessageCounterManager>();
+        mSessionMgr            = chip::Platform::New<SecureSessionMgr>();
+        mExchangeMgr           = chip::Platform::New<Messaging::ExchangeManager>();
+
+        ReturnErrorOnFailure(mTransportMgr->Init(
+            Transport::UdpListenParameters(mInetLayer).SetAddressType(Inet::kIPAddressType_IPv6).SetListenPort(mListenPort)
+#if INET_CONFIG_ENABLE_IPV4
+                ,
+            Transport::UdpListenParameters(mInetLayer).SetAddressType(Inet::kIPAddressType_IPv4).SetListenPort(mListenPort)
+#endif
+#if CONFIG_NETWORK_LAYER_BLE
+                ,
+            Transport::BleListenParameters(mBleLayer)
+#endif
+                ));
+        ReturnErrorOnFailure(mMessageCounterManager->Init(mExchangeMgr));
+        ReturnErrorOnFailure(mSessionMgr->Init(mSystemLayer, mTransportMgr, mFabrics, mMessageCounterManager));
+        ReturnErrorOnFailure(mExchangeMgr->Init(mSessionMgr));
+    }
+    ReturnErrorOnFailure(mExchangeMgr->RegisterUnsolicitedMessageHandlerForProtocol(Protocols::TempZCL::Id, this));
+
+    mInteractionModelDelegate = params.imDelegate;
+    if (mInteractionModelDelegate == nullptr)
     {
         mDefaultIMDelegate        = chip::Platform::New<DeviceControllerInteractionModelDelegate>();
         mInteractionModelDelegate = mDefaultIMDelegate;
     }
     ReturnErrorOnFailure(chip::app::InteractionModelEngine::GetInstance()->Init(mExchangeMgr, mInteractionModelDelegate));
-
-    mExchangeMgr->SetDelegate(this);
 
 #if CHIP_DEVICE_CONFIG_ENABLE_MDNS
     ReturnErrorOnFailure(Mdns::Resolver::Instance().SetResolverDelegate(this));
@@ -194,12 +193,8 @@ CHIP_ERROR DeviceController::Init(ControllerInitParams params)
     Mdns::Resolver::Instance().StartResolver(mInetLayer, kMdnsPort);
 #endif // CHIP_DEVICE_CONFIG_ENABLE_MDNS
 
+    mExchangeMgr->SetDelegate(this);
     InitDataModelHandler(mExchangeMgr);
-
-    VerifyOrReturnError(params.operationalCredentialsDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
-    mOperationalCredentialsDelegate = params.operationalCredentialsDelegate;
-
-    ReturnErrorOnFailure(ProcessControllerNOCChain(params));
 
     mState = State::Initialized;
 
@@ -242,13 +237,18 @@ CHIP_ERROR DeviceController::ProcessControllerNOCChain(const ControllerInitParam
     ReturnErrorOnFailure(newFabric.SetNOCCert(chipCertSpan));
     newFabric.SetVendorId(params.controllerVendorId);
 
-    Transport::FabricInfo * fabric = mFabrics.FindFabricWithIndex(mFabricIndex);
+    Transport::FabricInfo * fabric = mFabrics->FindFabricWithIndex(mFabricIndex);
+    ReturnErrorCodeIf(fabric == nullptr, CHIP_ERROR_INCORRECT_STATE);
+    return fabric->SetFabricInfo(newFabric);
+}
+
+CHIP_ERROR DeviceController::InitFabricInfo()
+{
+    Transport::FabricInfo * fabric = mFabrics->FindFabricWithIndex(mFabricIndex);
     ReturnErrorCodeIf(fabric == nullptr, CHIP_ERROR_INCORRECT_STATE);
 
-    ReturnErrorOnFailure(fabric->SetFabricInfo(newFabric));
     mLocalId  = fabric->GetPeerId();
     mVendorId = fabric->GetVendorId();
-
     mFabricId = fabric->GetFabricId();
 
     ChipLogProgress(Controller, "Joined the fabric at index %d. Compressed fabric ID is: 0x" ChipLogFormatX64, mFabricIndex,
@@ -343,7 +343,7 @@ CHIP_ERROR DeviceController::Shutdown()
         mDefaultIMDelegate = nullptr;
     }
 
-    mFabrics.ReleaseFabricIndex(mFabricIndex);
+    mFabrics->ReleaseFabricIndex(mFabricIndex);
 
 #if CHIP_DEVICE_CONFIG_ENABLE_MDNS
     Mdns::Resolver::Instance().SetResolverDelegate(nullptr);
@@ -717,13 +717,11 @@ void DeviceController::OnNodeIdResolutionFailed(const chip::PeerId & peer, CHIP_
 ControllerDeviceInitParams DeviceController::GetControllerDeviceInitParams()
 {
     return ControllerDeviceInitParams{
-        .transportMgr    = mTransportMgr,
         .sessionMgr      = mSessionMgr,
         .exchangeMgr     = mExchangeMgr,
-        .inetLayer       = mInetLayer,
         .storageDelegate = mStorageDelegate,
         .idAllocator     = &mIDAllocator,
-        .fabricsTable    = &mFabrics,
+        .fabricsTable    = mFabrics,
         .imDelegate      = mInteractionModelDelegate,
     };
 }
@@ -744,6 +742,9 @@ DeviceCommissioner::DeviceCommissioner() :
 CHIP_ERROR DeviceCommissioner::Init(CommissionerInitParams params)
 {
     ReturnErrorOnFailure(DeviceController::Init(params));
+
+    VerifyOrReturnError(params.operationalCredentialsDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
+    mOperationalCredentialsDelegate = params.operationalCredentialsDelegate;
 
     uint16_t nextKeyID = 0;
     uint16_t size      = sizeof(nextKeyID);
@@ -821,7 +822,7 @@ CHIP_ERROR DeviceCommissioner::PairDevice(NodeId remoteDeviceId, RendezvousParam
 
     uint16_t keyID = 0;
 
-    Transport::FabricInfo * fabric = mFabrics.FindFabricWithIndex(mFabricIndex);
+    Transport::FabricInfo * fabric = mFabrics->FindFabricWithIndex(mFabricIndex);
 
     VerifyOrExit(IsOperationalNodeId(remoteDeviceId), err = CHIP_ERROR_INVALID_ARGUMENT);
     VerifyOrExit(mState == State::Initialized, err = CHIP_ERROR_INCORRECT_STATE);

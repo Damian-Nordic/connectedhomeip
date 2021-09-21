@@ -52,7 +52,6 @@
 #include <transport/raw/UDP.h>
 
 #if CONFIG_NETWORK_LAYER_BLE
-#include <ble/BleLayer.h>
 #include <transport/raw/BLE.h>
 #endif
 
@@ -79,15 +78,10 @@ using DeviceTransportMgr = TransportMgr<Transport::UDP /* IPv6 */
 
 struct ControllerDeviceInitParams
 {
-    DeviceTransportMgr * transportMgr           = nullptr;
-    SecureSessionMgr * sessionMgr               = nullptr;
-    Messaging::ExchangeManager * exchangeMgr    = nullptr;
-    Inet::InetLayer * inetLayer                 = nullptr;
-    PersistentStorageDelegate * storageDelegate = nullptr;
-    SessionIDAllocator * idAllocator            = nullptr;
-#if CONFIG_NETWORK_LAYER_BLE
-    Ble::BleLayer * bleLayer = nullptr;
-#endif
+    SecureSessionMgr * sessionMgr                         = nullptr;
+    Messaging::ExchangeManager * exchangeMgr              = nullptr;
+    PersistentStorageDelegate * storageDelegate           = nullptr;
+    SessionIDAllocator * idAllocator                      = nullptr;
     Transport::FabricTable * fabricsTable                 = nullptr;
     DeviceControllerInteractionModelDelegate * imDelegate = nullptr;
 };
@@ -196,16 +190,12 @@ public:
         mTransportMgr    = params.transportMgr;
         mSessionManager  = params.sessionMgr;
         mExchangeMgr     = params.exchangeMgr;
-        mInetLayer       = params.inetLayer;
         mListenPort      = listenPort;
         mFabricIndex     = fabric;
         mStorageDelegate = params.storageDelegate;
         mIDAllocator     = params.idAllocator;
         mFabricsTable    = params.fabricsTable;
         mpIMDelegate     = params.imDelegate;
-#if CONFIG_NETWORK_LAYER_BLE
-        mBleLayer = params.bleLayer;
-#endif
     }
 
     /**
@@ -470,14 +460,8 @@ private:
      */
     Transport::PeerAddress mDeviceAddress = Transport::PeerAddress::UDP(Inet::IPAddress::Any);
 
-    Inet::InetLayer * mInetLayer = nullptr;
-
     bool mActive           = false;
     ConnectionState mState = ConnectionState::NotConnected;
-
-#if CONFIG_NETWORK_LAYER_BLE
-    Ble::BleLayer * mBleLayer = nullptr;
-#endif
 
     PASESessionSerializable mPairing;
 

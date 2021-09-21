@@ -462,10 +462,6 @@ void Device::Reset()
     mState          = ConnectionState::NotConnected;
     mSessionManager = nullptr;
     mStatusDelegate = nullptr;
-    mInetLayer      = nullptr;
-#if CONFIG_NETWORK_LAYER_BLE
-    mBleLayer = nullptr;
-#endif
     if (mExchangeMgr)
     {
         // Ensure that any exchange contexts we have open get closed now,
