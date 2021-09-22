@@ -48,6 +48,10 @@
 #include <protocols/bdx/TransferFacilitator.h>
 #include <utility>
 
+#include <dfu/dfu_target.h>
+#include <dfu/dfu_target_mcuboot.h>
+} // hack to fix the header above
+
 using chip::DeviceLayer::ConnectivityMgr;
 using namespace chip;
 using namespace chip::Controller;
@@ -59,7 +63,8 @@ namespace {
 
 Shell::Engine sSubShell;
 Controller::DeviceController sController;
-constexpr uint64_t kOtaProviderDeviceId = 841375;
+uint32_t sDfuBuffer[128];
+constexpr uint64_t kOtaProviderDeviceId = 2;
 
 using namespace chip::bdx;
 
@@ -73,6 +78,7 @@ private:
     void HandleTransferSessionOutput(chip::bdx::TransferSession::OutputEvent & event)
     {
         CHIP_ERROR err = CHIP_NO_ERROR;
+        int result;
 
         if (event.EventType != TransferSession::OutputEventType::kNone)
         {
@@ -87,6 +93,9 @@ private:
                 ChipLogProgress(BDX, "Transfer complete!");
                 mTransfer.Reset();
                 mIsTransferComplete = false;
+                result              = dfu_target_done(true);
+                if (result)
+                    ChipLogError(BDX, "dfu_target_done failed: %d", result);
             }
             break;
         case TransferSession::OutputEventType::kMsgToSend: {
@@ -107,9 +116,19 @@ private:
         }
         case TransferSession::OutputEventType::kAcceptReceived:
             VerifyOrReturn(CHIP_NO_ERROR == mTransfer.PrepareBlockQuery(), ChipLogError(BDX, "PrepareBlockQuery failed"));
+            dfu_target_mcuboot_set_buf((uint8_t *) sDfuBuffer, sizeof(sDfuBuffer));
+            dfu_target_reset();
+            result = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MCUBOOT, event.transferAcceptData.Length, nullptr);
+            ChipLogProgress(BDX, "Starting transfer of %u bytes...", (uint32_t) event.transferAcceptData.Length);
+            if (result)
+                ChipLogError(BDX, "dfu_target_init failed: %d", result);
             break;
         case TransferSession::OutputEventType::kBlockReceived: {
-            ChipLogProgress(BDX, "Got block length %zu", event.blockdata.Length);
+            ChipLogProgress(BDX, "Got block length %u", (uint32_t) event.blockdata.Length);
+            result = dfu_target_write(event.blockdata.Data, event.blockdata.Length);
+
+            if (result)
+                ChipLogError(BDX, "dfu_target_write failed: %d", result);
 
             if (event.blockdata.IsEof)
             {
@@ -127,14 +146,17 @@ private:
         case TransferSession::OutputEventType::kStatusReceived:
             ChipLogError(BDX, "Got StatusReport %u", static_cast<uint32_t>(event.statusData.statusCode));
             mTransfer.Reset();
+            dfu_target_reset();
             break;
         case TransferSession::OutputEventType::kInternalError:
             ChipLogError(BDX, "InternalError");
             mTransfer.Reset();
+            dfu_target_reset();
             break;
         case TransferSession::OutputEventType::kTransferTimeout:
             ChipLogError(BDX, "Transfer timed out");
             mTransfer.Reset();
+            dfu_target_reset();
             break;
         case TransferSession::OutputEventType::kInitReceived:
         case TransferSession::OutputEventType::kAckReceived:
