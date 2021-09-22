@@ -379,15 +379,13 @@ CHIP_ERROR DeviceController::GetDevice(NodeId deviceId, Device ** out_device)
     }
     else
     {
-        err = InitializePairedDeviceList();
-        SuccessOrExit(err);
-
-        VerifyOrExit(mPairedDevices.Contains(deviceId), err = CHIP_ERROR_NOT_CONNECTED);
+        InitializePairedDeviceList();
 
         index = GetInactiveDeviceIndex();
         VerifyOrExit(index < kNumMaxActiveDevices, err = CHIP_ERROR_NO_MEMORY);
         device = &mActiveDevices[index];
 
+        if (mPairedDevices.Contains(deviceId))
         {
             SerializedDevice deviceInfo;
             uint16_t size = sizeof(deviceInfo.inner);
@@ -401,6 +399,11 @@ CHIP_ERROR DeviceController::GetDevice(NodeId deviceId, Device ** out_device)
             VerifyOrExit(err == CHIP_NO_ERROR, ReleaseDevice(device));
 
             device->Init(GetControllerDeviceInitParams(), mListenPort, mFabricIndex);
+        }
+        else
+        {
+            device->InitCommissioned(GetControllerDeviceInitParams(), mListenPort, deviceId, Transport::PeerAddress::UDP({}),
+                                     mFabricIndex);
         }
     }
 

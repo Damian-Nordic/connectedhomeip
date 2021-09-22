@@ -225,6 +225,17 @@ public:
         mDeviceAddress = peerAddress;
     }
 
+    void InitCommissioned(ControllerDeviceInitParams params, uint16_t listenPort, NodeId deviceId,
+                          const Transport::PeerAddress & peerAddress, FabricIndex fabric)
+    {
+        Init(params, mListenPort, fabric);
+        mDeviceId                         = deviceId;
+        mState                            = ConnectionState::NotConnected;
+        mDeviceOperationalCertProvisioned = true;
+
+        mDeviceAddress = peerAddress;
+    }
+
     /** @brief Serialize the Pairing Session to a string. It's guaranteed that the string
      *         will be null terminated, and there won't be any embedded null characters.
      *
