@@ -172,7 +172,7 @@ public:
 
 struct CommissionerInitParams : public ControllerInitParams
 {
-    DevicePairingDelegate * pairingDelegate = nullptr;
+    DevicePairingDelegate * pairingDelegate                         = nullptr;
     OperationalCredentialsDelegate * operationalCredentialsDelegate = nullptr;
 };
 
@@ -324,7 +324,7 @@ protected:
 
     void PersistNextKeyId();
 
-    FabricIndex mFabricIndex = Transport::kMinValidFabricIndex;
+    FabricIndex mFabricIndex          = Transport::kMinValidFabricIndex;
     Transport::FabricTable * mFabrics = nullptr;
 
     SessionIDAllocator mIDAllocator;
