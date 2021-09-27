@@ -55,7 +55,7 @@ source_set("commands") {
 
   public_deps = [
     "${chip_root}/src/controller",
-    "${chip_root}/src/lib/shell:shell_core"
+    "${chip_root}/src/lib/shell:shell_core",
   ]
 
   if (chip_device_platform != "none") {
