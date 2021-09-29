@@ -9,18 +9,22 @@
 #include "LEDWidget.h"
 #include <platform/CHIPDeviceLayer.h>
 
-#include <app/common/zap-generated/attribute-id.h>
-#include <app/common/zap-generated/attribute-type.h>
-#include <app/common/zap-generated/cluster-id.h>
+#include <app-common/zap-generated/attribute-id.h>
+#include <app-common/zap-generated/attribute-type.h>
+#include <app-common/zap-generated/cluster-id.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
+#include <credentials/DeviceAttestationCredsProvider.h>
+#include <credentials/examples/DeviceAttestationCredsExample.h>
+
 
 #include <dk_buttons_and_leds.h>
 #include <drivers/sensor.h>
 #include <logging/log.h>
 #include <zephyr.h>
 
+using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 LOG_MODULE_DECLARE(app);
@@ -105,7 +109,10 @@ int AppTask::Init()
 		      K_MSEC(kMeasurementsIntervalMs));
 
 	/* Init ZCL Data Model and start server */
-	InitServer();
+	chip::Server::GetInstance().Init();
+
+	/* Initialize device attestation config */
+	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -120,19 +127,18 @@ void AppTask::OpenPairingWindow()
 {
 	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
 	if (ConnectivityMgr().IsThreadProvisioned()) {
-		LOG_INF("NFC Tag emulation and Matter service BLE advertisement not started - device is commissioned to a Thread network.");
+		LOG_INF("NFC Tag emulation and Matter service BLE advertising not started - device is commissioned to a Thread network.");
 		return;
 	}
 
 	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-		LOG_INF("BLE Advertisement is already enabled");
+		LOG_INF("BLE advertising is already enabled");
 		return;
 	}
 
-	if (OpenBasicCommissioningWindow(chip::ResetFabrics::kNo) == CHIP_NO_ERROR) {
-		LOG_INF("Enabled BLE Advertisement");
-	} else {
-		LOG_ERR("OpenDefaultPairingWindow() failed");
+	if (chip::Server::GetInstance().GetCommissioningWindowManager().OpenBasicCommissioningWindow() !=
+	    CHIP_NO_ERROR) {
+		LOG_ERR("OpenBasicCommissioningWindow() failed");
 	}
 }
 

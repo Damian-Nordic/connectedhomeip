@@ -38,9 +38,10 @@ include(${CHIP_ROOT}/src/app/chip_data_model.cmake)
 
 target_include_directories(app PRIVATE
     src
-    ${NLIO_ROOT}
+    ${COMMON_ROOT}/src
     ${NRFCONNECT_COMMON}/util/include
-    ${NRFCONNECT_COMMON}/app/include
+    ${NLIO_ROOT}
+    ${CHIP_ROOT}/zzz_generated/app-common
 )
 
 target_sources(app PRIVATE
