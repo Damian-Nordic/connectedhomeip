@@ -38,9 +38,9 @@ public:
     CHIP_ERROR FindCommissioners(DiscoveryFilter filter = DiscoveryFilter()) override { return FindCommissionersStatus; }
     CHIP_ERROR FindCommissionableNodes(DiscoveryFilter filter = DiscoveryFilter()) override { return CHIP_ERROR_NOT_IMPLEMENTED; }
 
-    CHIP_ERROR InitStatus                = CHIP_NO_ERROR;
-    CHIP_ERROR ResolveNodeIdStatus       = CHIP_NO_ERROR;
-    CHIP_ERROR FindCommissionersStatus   = CHIP_NO_ERROR;
+    CHIP_ERROR InitStatus              = CHIP_NO_ERROR;
+    CHIP_ERROR ResolveNodeIdStatus     = CHIP_NO_ERROR;
+    CHIP_ERROR FindCommissionersStatus = CHIP_NO_ERROR;
 };
 
 } // namespace
