@@ -22,7 +22,7 @@ execute_process(
     COMMAND ${Python3_EXECUTABLE} scripts/setup/nrfconnect/update_ncs.py --check --quiet)
 
 # Check nRF Connect SDK version in the build phase
-add_custom_target(check-nrfconnect-version ALL
+add_custom_target(check_nrfconnect_version ALL
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../..
     COMMAND ${Python3_EXECUTABLE} scripts/setup/nrfconnect/update_ncs.py --check --quiet || (exit 0)
     USES_TERMINAL)

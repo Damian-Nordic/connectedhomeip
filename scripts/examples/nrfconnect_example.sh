@@ -16,27 +16,28 @@
 #    limitations under the License.
 #
 
-cd "$(dirname "$0")/../../examples"
+cd "$(dirname "$0")/../.."
 
 APP="$1"
 BOARD="$2"
+BUILD_DIR="out/nrfconnect"
 shift 2
 
-if [[ ! -f "$APP/nrfconnect/CMakeLists.txt" || -z "$BOARD" ]]; then
+if [[ ! -f "examples/$APP/nrfconnect/CMakeLists.txt" || -z "$BOARD" ]]; then
     echo "Usage: $0 <application> <board>" >&2
     echo "Applications:" >&2
-    ls */nrfconnect/CMakeLists.txt | awk -F/ '{print "  "$1}' >&2
+    ls examples/*/nrfconnect/CMakeLists.txt | awk -F/ '{print "  "$2}' >&2
     exit 1
 fi
 
 set -x
 
 # Activate Matter environment
-source "../scripts/activate.sh"
+source "scripts/activate.sh"
 
 # Activate Zephyr environment
 [[ -n $ZEPHYR_BASE ]] && source "$ZEPHYR_BASE/zephyr-env.sh"
 export GNUARMEMB_TOOLCHAIN_PATH="$PW_PIGWEED_CIPD_INSTALL_DIR"
 env
 
-west build -b "$BOARD" -d "$APP/nrfconnect/build/$BOARD" "$APP/nrfconnect" -- "$@"
+west build -b "$BOARD" -d "$BUILD_DIR" -p always "examples/$APP/nrfconnect" "$@"

@@ -166,6 +166,12 @@ target_link_libraries(app PRIVATE
   pw_rpc.server
 )
 
-target_link_libraries(pw_build INTERFACE zephyr_interface)
+target_link_libraries(pw_build INTERFACE zephyr_interface enable_gnu_cpp17)
+
+# Disable Pigweed's C++17 configuration so that it does not interfere with the -std=gnu++17 flag,
+# used by the application.
+get_target_property(PW_BUILD_LIBRARIES pw_build INTERFACE_LINK_LIBRARIES)
+list(REMOVE_ITEM PW_BUILD_LIBRARIES pw_build.cpp17)
+set_target_properties(pw_build PROPERTIES INTERFACE_LINK_LIBRARIES "${PW_BUILD_LIBRARIES}")
 
 endif(CONFIG_CHIP_PW_RPC)

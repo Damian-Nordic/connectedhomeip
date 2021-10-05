@@ -121,10 +121,6 @@ if (NOT CHIP_LIBRARIES)
     set(CHIP_LIBRARIES -lCHIP)
 endif()
 
-if (CONFIG_CHIP_PW_RPC)
-    list(APPEND CHIP_LIBRARIES -lPwRpc)
-endif()
-
 # Set up CHIP project configuration file
 
 if (CONFIG_CHIP_PROJECT_CONFIG)
@@ -151,38 +147,33 @@ endif()
 
 # Find required programs
 
-find_program(GN_EXECUTABLE gn)
-if (${GN_EXECUTABLE} STREQUAL GN_EXECUTABLE-NOTFOUND)
-    message(FATAL_ERROR "The 'gn' command was not found. Make sure you have GN installed.")
-else()
-    # Parse the 'gn --version' output to find the installed version.
-    set(MIN_GN_VERSION 1851)
-    execute_process(
-        COMMAND
-        ${GN_EXECUTABLE} --version
-        OUTPUT_VARIABLE gn_version_output
-        ERROR_VARIABLE  gn_error_output
-        RESULT_VARIABLE gn_status
-    )
+find_package(Python3 REQUIRED)
+find_program(GN_EXECUTABLE gn REQUIRED)
 
-    if(${gn_status} EQUAL 0)
-        if(gn_version_output VERSION_LESS ${MIN_GN_VERSION})
-            message(FATAL_ERROR "Found unsuitable version of 'gn'. Required is at least ${MIN_GN_VERSION}")
-        endif()
-    else()
-        message(FATAL_ERROR "Could NOT find working gn: Found gn (${GN_EXECUTABLE}), but failed to load with:\n ${gn_error_output}")
-    endif()
+# Parse the 'gn --version' output to find the installed version.
+set(MIN_GN_VERSION 1851)
+execute_process(
+    COMMAND ${GN_EXECUTABLE} --version
+    OUTPUT_VARIABLE GN_STDOUT
+    ERROR_VARIABLE  GN_STDERR
+    RESULT_VARIABLE GN_STATUS
+)
+
+if(NOT GN_STATUS EQUAL 0)
+    message(FATAL_ERROR "Could NOT find working gn: Found gn (${GN_EXECUTABLE}), but failed to load with:\n${GN_STDERR}")
 endif()
 
-find_package(Python3 REQUIRED)
+if(GN_STDOUT VERSION_LESS ${MIN_GN_VERSION})
+    message(FATAL_ERROR "Found unsuitable version of 'gn'. Required is at least ${MIN_GN_VERSION}")
+endif()
+
+# Determine if ccache should be used
+
+get_property(CHIP_COMPILER_LAUNCHER GLOBAL PROPERTY RULE_LAUNCH_COMPILE)
 
 # ==============================================================================
 # Generate configuration for CHIP GN build system
 # ==============================================================================
-
-if (CONFIG_CHIP_PW_RPC)
-    chip_gn_arg_import("${GN_ROOT_TARGET}/lib/pw_rpc/pw_rpc.gni")
-endif()
 
 chip_gn_arg_cflags("target_cflags"                          ${CHIP_CFLAGS})
 chip_gn_arg_cflags("target_cflags_c"                        ${CHIP_CFLAGS_C})
@@ -200,7 +191,10 @@ chip_gn_arg_bool  ("chip_build_tests"                       CONFIG_CHIP_BUILD_TE
 chip_gn_arg_bool  ("chip_monolithic_tests"                  CONFIG_CHIP_BUILD_TESTS)
 chip_gn_arg_bool  ("chip_inet_config_enable_tcp_endpoint"   CONFIG_CHIP_BUILD_TESTS)
 chip_gn_arg_bool  ("chip_build_libshell"                    CONFIG_CHIP_LIB_SHELL)
-chip_gn_arg_bool  ("chip_build_pw_rpc_lib"                  CONFIG_CHIP_PW_RPC)
+
+if (CHIP_COMPILER_LAUNCHER)
+    chip_gn_arg_string("pw_command_launcher" ${CHIP_COMPILER_LAUNCHER})
+endif()
 
 if (CONFIG_CHIP_ENABLE_DNSSD_SRP)
     chip_gn_arg_string("chip_mdns" "platform")
