@@ -38,3 +38,4 @@
 /* Configure the number of fabrics and operational node services */
 #define CHIP_CONFIG_MAX_DEVICE_ADMINS 5
 #define CHIP_DEVICE_CONFIG_THREAD_SRP_MAX_SERVICES 10
+#define CHIP_CONFIG_UNAUTHENTICATED_CONNECTION_POOL_SIZE 10
