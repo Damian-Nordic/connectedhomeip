@@ -60,7 +60,7 @@
                                                                                                                                    \
             /* 233 - Breadcrumb, */                                                                                                \
             0x6F,                                                                                                                  \
-            0x00                                                                                                                   \
+            0x00,                                                                                                                  \
                                                                                                                                    \
             /* 241 - BasicCommissioningInfoList, */                                                                                \
             0x00,                                                                                                                  \
@@ -354,7 +354,7 @@
                                                                                                                                    \
             /* 233 - Breadcrumb, */                                                                                                \
             0x6F,                                                                                                                  \
-            0x00,                                                                                                                   \
+            0x00,                                                                                                                  \
                                                                                                                                    \
             /* 241 - BasicCommissioningInfoList, */                                                                                \
             0x00,                                                                                                                  \
@@ -759,7 +759,7 @@
             { 0x0000, ZAP_TYPE(INT16S), 2, 0, ZAP_EMPTY_DEFAULT() },        /* measured value */                                   \
             { 0x0001, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(-4000) },  /* min measured value */                               \
             { 0x0002, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(8500) },   /* max measured value */                               \
-            { 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                                  \
+            { 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0004) }, /* ClusterRevision */                                  \
                                                                                                                                    \
             /* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */                                                     \
             { 0x0000, ZAP_TYPE(INT16U), 2, 0, ZAP_EMPTY_DEFAULT() },       /* measured value */                                    \
@@ -984,10 +984,10 @@
 #define ZAP_REPORT_DIRECTION(x) ZRD(x)
 
 // User options for plugin Reporting
-#define EMBER_AF_PLUGIN_REPORTING_TABLE_SIZE (5)
+#define EMBER_AF_PLUGIN_REPORTING_TABLE_SIZE (6)
 #define EMBER_AF_PLUGIN_REPORTING_ENABLE_GROUP_BOUND_REPORTS
 
-#define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS_TABLE_SIZE (5)
+#define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS_TABLE_SIZE (6)
 #define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS                                                                               \
     {                                                                                                                              \
                                                                                                                                    \
@@ -1001,6 +1001,11 @@
             {                                                                                                                      \
                 ZAP_REPORT_DIRECTION(REPORTED), 0x0000, 0x003E, 0x0004, ZAP_CLUSTER_MASK(SERVER), 0x0000, { { 1, 65534, 0 } }      \
             }, /* TrustedRootCertificates */                                                                                       \
+                                                                                                                                   \
+            /* Endpoint: 1, Cluster: Temperature Measurement (server) */                                                           \
+            {                                                                                                                      \
+                ZAP_REPORT_DIRECTION(REPORTED), 0x0001, 0x0402, 0x0000, ZAP_CLUSTER_MASK(SERVER), 0x0000, { { 0, 65344, 0 } }      \
+            }, /* measured value */                                                                                                \
                                                                                                                                    \
             /* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */                                                     \
             {                                                                                                                      \
