@@ -465,7 +465,7 @@ void AppTask::UpdatePowerSourceClusterState() {
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge failed %x", status);
-	}	
+	}
 }
 
 void AppTask::UpdateClustersState()
