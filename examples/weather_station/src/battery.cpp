@@ -24,7 +24,7 @@ LOG_MODULE_DECLARE(app);
 #define BATTERY_FULL_OHMS DT_PROP(VBATT, full_ohms)
 #define BATTERY_OUTPUT_OHMS DT_PROP(VBATT, output_ohms)
 
-namespace 
+namespace
 {
 const device *sAdcController;
 const device *sMeasurementGpioController;
@@ -135,7 +135,7 @@ int BatteryChargeControlInit()
 bool BatteryCharged()
 {
 	if (sChargeGpioController) {
-		/* Invert logic (low state means charging and high not charging) */ 
+		/* Invert logic (low state means charging and high not charging) */
 		return !gpio_pin_get(sChargeGpioController, BATTERY_CHARGE_PIN);
 	}
 	return true;
