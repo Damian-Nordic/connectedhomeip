@@ -13,13 +13,14 @@
 #define BUZZER_PWM_PIN DT_PROP(BUZZER_PWM_NODE, ch0_pin)
 #define BUZZER_PWM_FLAGS DT_PWMS_FLAGS(BUZZER_PWM_NODE)
 
-constexpr uint16_t kBuzzerPwmPeriodUs = 10000;
+constexpr uint16_t kBuzzerPwmPeriodUs    = 10000;
 constexpr uint16_t kBuzzerPwmDutyCycleUs = 5000;
 
-static const device *sBuzzerDevice;
+static const device * sBuzzerDevice;
 static bool sBuzzerState;
 
-int BuzzerInit() {
+int BuzzerInit()
+{
     sBuzzerDevice = device_get_binding(BUZZER_PWM_NAME);
     if (!sBuzzerDevice)
     {
@@ -28,12 +29,13 @@ int BuzzerInit() {
     return 0;
 }
 
-void BuzzerSetState(bool onOff) {
+void BuzzerSetState(bool onOff)
+{
     sBuzzerState = onOff;
-    pwm_pin_set_usec(sBuzzerDevice, BUZZER_PWM_PIN, kBuzzerPwmPeriodUs, sBuzzerState ? kBuzzerPwmDutyCycleUs : 0,
-				       BUZZER_PWM_FLAGS);
+    pwm_pin_set_usec(sBuzzerDevice, BUZZER_PWM_PIN, kBuzzerPwmPeriodUs, sBuzzerState ? kBuzzerPwmDutyCycleUs : 0, BUZZER_PWM_FLAGS);
 }
 
-void BuzzerToggleState() {
+void BuzzerToggleState()
+{
     BuzzerSetState(!sBuzzerState);
 }

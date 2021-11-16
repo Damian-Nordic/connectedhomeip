@@ -10,34 +10,41 @@
 
 class LEDWidget;
 
-struct AppEvent {
-	enum FunctionEventType : uint8_t {
-		FunctionPress,
-		FunctionRelease,
-		FunctionTimer,
-		MeasurementsTimer,
-		IdentifyTimer,
-	};
+struct AppEvent
+{
+    enum FunctionEventType : uint8_t
+    {
+        FunctionPress,
+        FunctionRelease,
+        FunctionTimer,
+        MeasurementsTimer,
+        IdentifyTimer,
+    };
 
-	enum UpdateLedStateEventType : uint8_t { UpdateLedState = IdentifyTimer + 1 };
+    enum UpdateLedStateEventType : uint8_t
+    {
+        UpdateLedState = IdentifyTimer + 1
+    };
 
-	enum OtherEventType : uint8_t {
+    enum OtherEventType : uint8_t
+    {
 #ifdef CONFIG_MCUMGR_SMP_BT
-		StartSMPAdvertising = UpdateLedState + 1
+        StartSMPAdvertising = UpdateLedState + 1
 #endif
-	};
+    };
 
-	AppEvent() = default;
+    AppEvent() = default;
 
-	explicit AppEvent(FunctionEventType type) : Type(type) {}
+    explicit AppEvent(FunctionEventType type) : Type(type) {}
 
-	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
+    AppEvent(UpdateLedStateEventType type, LEDWidget * ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
 
-	explicit AppEvent(OtherEventType type) : Type(type) {}
+    explicit AppEvent(OtherEventType type) : Type(type) {}
 
-	uint8_t Type;
+    uint8_t Type;
 
-	struct {
-		LEDWidget *LedWidget;
-	} UpdateLedStateEvent;
+    struct
+    {
+        LEDWidget * LedWidget;
+    } UpdateLedStateEvent;
 };
