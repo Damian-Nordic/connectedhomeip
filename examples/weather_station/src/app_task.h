@@ -16,40 +16,41 @@
 
 struct k_timer;
 
-class AppTask {
+class AppTask
+{
 public:
-	int StartApp();
+    int StartApp();
 
-	void PostEvent(const AppEvent &aEvent);
-	void UpdateClustersState();
+    void PostEvent(const AppEvent & aEvent);
+    void UpdateClustersState();
 
 private:
-	friend AppTask &GetAppTask();
+    friend AppTask & GetAppTask();
 
-	int Init();
-	void OpenPairingWindow();
-	void DispatchEvent(AppEvent &event);
-	void UpdateTemperatureClusterState();
-	void UpdatePressureClusterState();
-	void UpdateRelativeHumidityClusterState();
-	void UpdatePowerSourceClusterState();
+    int Init();
+    void OpenPairingWindow();
+    void DispatchEvent(AppEvent & event);
+    void UpdateTemperatureClusterState();
+    void UpdatePressureClusterState();
+    void UpdateRelativeHumidityClusterState();
+    void UpdatePowerSourceClusterState();
 
 #ifdef CONFIG_MCUMGR_SMP_BT
-	static void RequestSMPAdvertisingStart(void);
+    static void RequestSMPAdvertisingStart(void);
 #endif
-	static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
-	static void ButtonPushHandler();
-	static void ButtonReleaseHandler();
-	static void FunctionTimerHandler();
-	static void MeasurementsTimerHandler();
-	static void UpdateStatusLED();
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+    static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
+    static void ButtonPushHandler();
+    static void ButtonReleaseHandler();
+    static void FunctionTimerHandler();
+    static void MeasurementsTimerHandler();
+    static void UpdateStatusLED();
+    static void LEDStateUpdateHandler(LEDWidget & ledWidget);
+    static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent * event, intptr_t arg);
 
-	static AppTask sAppTask;
+    static AppTask sAppTask;
 };
 
-inline AppTask &GetAppTask()
+inline AppTask & GetAppTask()
 {
-	return AppTask::sAppTask;
+    return AppTask::sAppTask;
 }
