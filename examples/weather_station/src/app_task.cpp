@@ -39,7 +39,7 @@ enum class FunctionTimerMode { kDisabled, kFactoryResetTrigger, kFactoryResetCom
 enum class LedState { kAlive, kAdvertisingBle, kConnectedBle, kProvisioned };
 
 #if CONFIG_CHIP_DEVICE_AVERAGE_CURRENT_CONSUMPTION <= 0
-#error Invalid CONFIG_CHIP_DEVICE_AVERAGE_CURRENT_CONSUMPTION value set 
+#error Invalid CONFIG_CHIP_DEVICE_AVERAGE_CURRENT_CONSUMPTION value set
 #endif
 
 constexpr size_t kAppEventQueueSize = 10;
@@ -484,7 +484,7 @@ void AppTask::UpdatePowerSourceClusterState() {
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge failed %x", status);
-	}	
+	}
 }
 
 void AppTask::UpdateClustersState()
