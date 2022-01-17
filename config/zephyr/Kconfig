@@ -34,6 +34,46 @@ menuconfig CHIP
 
 if CHIP
 
+config CHIP_DEVICE_VENDOR_ID
+	int "Device vendor ID"
+	default 9050 # 0x235A
+	range 0 65535
+	help
+	  Device vendor ID is used by various CHIP components. For example, it is
+	  an attribute of the Basic Information cluster and it is included in OTA
+	  (Over-the-air update) image header.
+
+config CHIP_DEVICE_PRODUCT_ID
+	int "Device product ID"
+	default 0
+	range 0 65535
+	help
+	  Device product ID is used by various CHIP components. For example, it is
+	  an attribute of the Basic Information cluster and it is included in OTA
+	  (Over-the-air update) image header.
+
+config CHIP_DEVICE_SOFTWARE_VERSION
+	int "Device software version"
+	default 0
+	range 0 4294967295
+	help
+	  Device software version is used by various CHIP components. For example,
+	  it is an attribute of the Basic Information cluster and it is included in
+	  OTA (Over-the-air update) image header. Note that due to the rollback
+	  protection a device will only accept software updates with versions
+	  greater than its current one.
+
+config CHIP_DEVICE_SOFTWARE_VERSION_STRING
+	string "Device software version string"
+	default "prerelease"
+	help
+	  Device software version string may contain any string between 1 and 64
+	  characters that provides a user-friendly description of the numeric
+	  software version specified in CHIP_DEVICE_SOFTWARE_VERSION.
+	  Device software version string is used by various CHIP components.
+	  For example, it is an attribute of the Basic Information cluster and it
+	  is included in OTA (Over-the-air update) image header.
+
 config CHIP_PROJECT_CONFIG
 	string "Project configuration file for CHIP"
 	help
@@ -130,6 +170,18 @@ config APP_LINK_WITH_CHIP
 	help
 	  Add Connected Home over IP header files to the 'app' include path
 	  and link the 'app' with Connected Home over IP libraries.
+
+config CHIP_OTA_IMAGE_BUILD
+	bool "Generate OTA image"
+	help
+	  Enable building OTA (Over-the-air update) image.
+
+config CHIP_OTA_IMAGE_EXTRA_ARGS
+	string "OTA image creator extra arguments"
+	depends on CHIP_OTA_IMAGE_BUILD
+	help
+	  This option allows one to pass optional arguments to the
+	  ota_image_tool.py script, used for building OTA image.
 
 module = MATTER
 module-str = Matter
