@@ -108,9 +108,9 @@ endif()
 zephyr_include_directories(${ZEPHYR_BASE}/../modules/crypto/mbedtls/mbedtls/include)
 zephyr_include_directories(${CHIP_ROOT}/src/platform/telink/)
 
+zephyr_set_gnu_cpp_standard()
 zephyr_get_compile_flags(CHIP_CFLAGS_C C)
 zephyr_get_compile_flags(CHIP_CFLAGS_CC CXX)
-zephyr_get_gnu_cpp_standard(CHIP_CFLAGS_CC)
 
 convert_list_of_flags_to_string_of_flags(CHIP_CFLAGS CHIP_CFLAGS)
 convert_list_of_flags_to_string_of_flags(CHIP_CFLAGS_C CHIP_CFLAGS_C)
@@ -237,7 +237,7 @@ add_dependencies(chip-gn kernel)
 # ==============================================================================
 
 zephyr_interface_library_named(chip)
-target_compile_definitions(chip INTERFACE CHIP_HAVE_CONFIG_H)
+target_compile_definitions(chip INTERFACE CHIP_HAVE_CONFIG_H _SYS__PTHREADTYPES_H_)
 target_include_directories(chip INTERFACE
     ${CHIP_ROOT}/src
     ${CHIP_ROOT}/src/include

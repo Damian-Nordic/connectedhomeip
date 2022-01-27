@@ -49,7 +49,6 @@ target_compile_options(app PRIVATE -Werror)
 
 project(chip-nrfconnect-pump-example)
 
-include(${CHIP_ROOT}/config/nrfconnect/app/enable-gnu-std.cmake)
 include(${CHIP_ROOT}/config/nrfconnect/app/flashing.cmake)
 include(${CHIP_ROOT}/src/app/chip_data_model.cmake)
 

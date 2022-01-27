@@ -35,8 +35,6 @@ endif()
 
 project(chip-nrf52840-pigweed-example)
 
-include(${CHIP_ROOT}/config/nrfconnect/app/enable-gnu-std.cmake)
-
 target_compile_options(app PRIVATE -Werror)
 
 include(${PIGWEED_ROOT}/pw_build/pigweed.cmake)

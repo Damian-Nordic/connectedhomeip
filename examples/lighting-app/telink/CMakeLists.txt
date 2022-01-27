@@ -28,8 +28,6 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(chip-telink-lighting-example)
 
-include(${CHIP_ROOT}/config/telink/app/enable-gnu-std.cmake)
-
 target_compile_options(app PRIVATE -fpermissive)
 
 target_include_directories(app PRIVATE

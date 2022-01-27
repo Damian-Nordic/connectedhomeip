@@ -34,20 +34,27 @@ function(zephyr_get_compile_flags VAR LANG)
     set(${VAR} ${INCLUDES} ${SYSTEM_INCLUDES} ${DEFINES} ${FLAGS} ${${VAR}} PARENT_SCOPE)
 endfunction()
 
-# Select gnu++<YY> standard based on Kconfig configuration
-macro(zephyr_get_gnu_cpp_standard VAR)
+# Override Zephyr build configuration to use a GNU extension to C++ standard.
+# That is, replace `-std=c++XX` with the corresponding `-std=gnu++XX` flag.
+# This is needed because Matter codebase requires the GNU extensions, but they
+# cannot be selected using Zephyr's Kconfig variables.
+function(zephyr_set_gnu_cpp_standard)
     if (CONFIG_STD_CPP11)
-        list(APPEND ${VAR} -std=gnu++11)
+        set(dialect_property dialect_cpp11)
     elseif (CONFIG_STD_CPP14)
-        list(APPEND ${VAR} -std=gnu++14)
+        set(dialect_property dialect_cpp14)
     elseif (CONFIG_STD_CPP17)
-        list(APPEND ${VAR} -std=gnu++17)
-    elseif (CONFIG_STD_CPP2A)
-        list(APPEND ${VAR} -std=gnu++20)
+        set(dialect_property dialect_cpp17)
+    elseif (CONFIG_STD_CPP20)
+        set(dialect_property dialect_cpp20)
     else()
         message(FATAL_ERROR "Building with unsupported C++ standard")
     endif()
-endmacro()
+
+    get_target_property(dialect_flags compiler-cpp ${dialect_property})
+    list(TRANSFORM dialect_flags REPLACE "-std=c\\+\\+(.*)" "-std=gnu\+\+\\1")
+    set_property(TARGET compiler-cpp PROPERTY ${dialect_property} ${dialect_flags})
+endfunction()
 
 function(zephyr_set_openthread_config_impl OT_DIR CONFIG_FILE)
     get_property(DEFINES DIRECTORY ${OT_DIR} PROPERTY COMPILE_DEFINITIONS)
