@@ -1861,6 +1861,9 @@ void DeviceCommissioner::PerformCommissioningStep(DeviceProxy * proxy, Commissio
     }
     break;
     case CommissioningStage::kFindOperational: {
+#if CONFIG_NETWORK_LAYER_BLE
+        CloseBleConnection();
+#endif
         UpdateDevice(proxy->GetDeviceId());
     }
     break;
