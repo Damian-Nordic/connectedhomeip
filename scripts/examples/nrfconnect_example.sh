@@ -46,4 +46,4 @@ export GNUARMEMB_TOOLCHAIN_PATH="$PW_PIGWEED_CIPD_INSTALL_DIR"
 export CCACHE_BASEDIR="$APP/nrfconnect"
 
 env
-west build -p always -b "$BOARD" -d "$APP/nrfconnect" "$APP/nrfconnect" -- "${COMMON_CI_FLAGS[@]}" "$@"
+west build -p always -b "$BOARD" -d "$APP/nrfconnect/build" "$APP/nrfconnect" -- "${COMMON_CI_FLAGS[@]}" "$@"
