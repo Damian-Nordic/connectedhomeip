@@ -93,7 +93,7 @@ CHIP_ERROR GenericConfigurationManagerImpl<ConfigClass>::GetSoftwareVersionStrin
 }
 
 template <class ConfigClass>
-CHIP_ERROR GenericConfigurationManagerImpl<ConfigClass>::GetSoftwareVersion(uint16_t & softwareVer)
+CHIP_ERROR GenericConfigurationManagerImpl<ConfigClass>::GetSoftwareVersion(uint32_t & softwareVer)
 {
     softwareVer = static_cast<uint32_t>(CHIP_DEVICE_CONFIG_DEVICE_SOFTWARE_VERSION);
     return CHIP_NO_ERROR;
