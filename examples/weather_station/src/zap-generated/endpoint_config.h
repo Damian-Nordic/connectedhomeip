@@ -319,11 +319,11 @@
 			{ 0x00000004, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_EMPTY_DEFAULT() }, /* ProductID         \
 														  */                  \
 			{ 0x00000005, ZAP_TYPE(CHAR_STRING), 33,                                                                      \
-			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_EMPTY_DEFAULT() }, /* NodeLabel           \
-														*/                    \
+			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                \
+			  ZAP_EMPTY_DEFAULT() }, /* NodeLabel */                                                                      \
 			{ 0x00000006, ZAP_TYPE(CHAR_STRING), 3,                                                                       \
-			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_EMPTY_DEFAULT() }, /* Location            \
-														*/                    \
+			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                \
+			  ZAP_EMPTY_DEFAULT() }, /* Location */                                                                       \
 			{ 0x00000007, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                             \
 			  ZAP_SIMPLE_DEFAULT(0x00) }, /* HardwareVersion */                                                           \
 			{ 0x00000008, ZAP_TYPE(CHAR_STRING), 65, ZAP_ATTRIBUTE_MASK(SINGLETON),                                       \
