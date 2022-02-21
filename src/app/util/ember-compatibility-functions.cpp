@@ -302,8 +302,6 @@ void IncreaseClusterDataVersion(const ConcreteClusterPath & aConcreteClusterPath
     else
     {
         (*(version))++;
-        ChipLogDetail(DataManagement, "Endpoint %" PRIx16 ", Cluster " ChipLogFormatMEI " update version to %" PRIx32,
-                      aConcreteClusterPath.mEndpointId, ChipLogValueMEI(aConcreteClusterPath.mClusterId), *(version));
     }
     return;
 }
