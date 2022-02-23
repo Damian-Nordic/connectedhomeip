@@ -101,6 +101,8 @@ public:
      */
     void ResetReadHandlerTracker() { mCurReadHandlerIdx = 0; }
 
+    void ScheduleUrgentEventDeliverySync();
+
 private:
     friend class TestReportingEngine;
     /**

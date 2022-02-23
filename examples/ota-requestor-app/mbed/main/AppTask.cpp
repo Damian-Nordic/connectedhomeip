@@ -418,7 +418,7 @@ void AppTask::FunctionTimerEventHandler(AppEvent * aEvent)
             sAppTask.CancelTimer(kFunction_Button_1);
             sAppTask.mFunction[kFunction_Button_1] = kFunction_NoneSelected;
 
-            ConfigurationMgr().InitiateFactoryReset();
+            chip::Server::GetInstance().ScheduleFactoryReset();
         }
         break;
     case kFunction_Button_2:
