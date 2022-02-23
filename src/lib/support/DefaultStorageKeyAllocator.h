@@ -72,6 +72,10 @@ public:
     const char * BindingTable() { return Format("bt"); }
     const char * BindingTableEntry(uint8_t index) { return Format("bt/%x", index); }
 
+    const char * OTADefaultProvider(FabricIndex fabric) { return Format("o/dp/%x", fabric); }
+    const char * OTACurrentProvider() { return "o/pl"; }
+    const char * OTAUpdateToken() { return "o/ut"; }
+
 private:
     static const size_t kKeyLengthMax = 32;
 
