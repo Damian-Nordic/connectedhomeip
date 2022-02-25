@@ -31,14 +31,22 @@ class GenericOTARequestorStorage : public OTARequestorStorage
 public:
     void Init(PersistentStorageDelegate & persistentStorage) { mPersistentStorage = &persistentStorage; }
 
-    CHIP_ERROR StoreProviderLocation(const ProviderLocationType & provider) override;
-    CHIP_ERROR LoadProviderLocation(ProviderLocationType & provider) override;
+    CHIP_ERROR StoreDefaultProvider(const ProviderLocationType & provider) override;
+    CHIP_ERROR ClearDefaultProvider(FabricIndex fabricIndex) override;
+    CHIP_ERROR LoadDefaultProviders(ProviderLocationList & providers) override;
+
+    CHIP_ERROR StoreCurrentProviderLocation(const ProviderLocationType & provider) override;
+    CHIP_ERROR ClearCurrentProviderLocation() override;
+    CHIP_ERROR LoadCurrentProviderLocation(ProviderLocationType & provider) override;
 
     CHIP_ERROR StoreUpdateToken(ByteSpan updateToken) override;
+    CHIP_ERROR ClearUpdateToken() override;
     CHIP_ERROR LoadUpdateToken(MutableByteSpan & updateToken) override;
 
 private:
     static constexpr size_t kMaxSerializedSize = 128u;
+
+    CHIP_ERROR LoadProvider(const char * key, ProviderLocationType & provider);
 
     PersistentStorageDelegate * mPersistentStorage = nullptr;
 };

@@ -22,13 +22,16 @@
  */
 
 #include <app-common/zap-generated/cluster-objects.h>
-#include <app/AttributeAccessInterface.h>
-#include <app/CommandHandler.h>
 #include <app/util/af-enums.h>
 
 #pragma once
 
 namespace chip {
+
+namespace app {
+class CommandHandler;
+class ConcreteCommandPath;
+} // namespace app
 
 /**
  * A class to represent a list of the provider locations

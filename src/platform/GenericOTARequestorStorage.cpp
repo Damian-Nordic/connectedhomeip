@@ -28,7 +28,7 @@
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR GenericOTARequestorStorage::StoreProviderLocation(const ProviderLocationType & provider)
+CHIP_ERROR GenericOTARequestorStorage::StoreDefaultProvider(const ProviderLocationType & provider)
 {
     uint8_t buffer[kMaxSerializedSize];
     TLV::TLVWriter writer;
@@ -36,24 +36,54 @@ CHIP_ERROR GenericOTARequestorStorage::StoreProviderLocation(const ProviderLocat
     writer.Init(buffer);
     ReturnErrorOnFailure(provider.EncodeForRead(writer, TLV::AnonymousTag(), provider.fabricIndex));
 
-    return mPersistentStorage->SyncSetKeyValue(DefaultStorageKeyAllocator().OTAProviderLocation(), buffer,
+    return mPersistentStorage->SyncSetKeyValue(DefaultStorageKeyAllocator().OTADefaultProvider(provider.fabricIndex), buffer,
                                                static_cast<uint16_t>(writer.GetLengthWritten()));
 }
 
-CHIP_ERROR GenericOTARequestorStorage::LoadProviderLocation(ProviderLocationType & provider)
+CHIP_ERROR GenericOTARequestorStorage::ClearDefaultProvider(FabricIndex fabricIndex)
 {
-    uint8_t buffer[kMaxSerializedSize];
-    uint16_t size = sizeof(buffer);
+    return mPersistentStorage->SyncDeleteKeyValue(DefaultStorageKeyAllocator().OTADefaultProvider(fabricIndex));
+}
 
-    ReturnErrorOnFailure(mPersistentStorage->SyncGetKeyValue(DefaultStorageKeyAllocator().OTAProviderLocation(), buffer, size));
+CHIP_ERROR GenericOTARequestorStorage::LoadDefaultProviders(ProviderLocationList & providers)
+{
+    for (FabricIndex fabricIndex = 0; fabricIndex < CHIP_CONFIG_MAX_FABRICS; fabricIndex++)
+    {
+        ProviderLocationType provider;
+        CHIP_ERROR error = LoadProvider(DefaultStorageKeyAllocator().OTADefaultProvider(fabricIndex), provider);
 
-    TLV::TLVReader reader;
+        if (error == CHIP_ERROR_PERSISTED_STORAGE_VALUE_NOT_FOUND)
+        {
+            continue;
+        }
 
-    reader.Init(buffer, size);
-    ReturnErrorOnFailure(reader.Next(TLV::AnonymousTag()));
-    ReturnErrorOnFailure(provider.Decode(reader));
+        ReturnErrorOnFailure(error);
+        providers.Add(provider);
+    }
 
     return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR GenericOTARequestorStorage::StoreCurrentProviderLocation(const ProviderLocationType & provider)
+{
+    uint8_t buffer[kMaxSerializedSize];
+    TLV::TLVWriter writer;
+
+    writer.Init(buffer);
+    ReturnErrorOnFailure(provider.EncodeForRead(writer, TLV::AnonymousTag(), provider.fabricIndex));
+
+    return mPersistentStorage->SyncSetKeyValue(DefaultStorageKeyAllocator().OTACurrentProvider(), buffer,
+                                               static_cast<uint16_t>(writer.GetLengthWritten()));
+}
+
+CHIP_ERROR GenericOTARequestorStorage::ClearCurrentProviderLocation()
+{
+    return mPersistentStorage->SyncDeleteKeyValue(DefaultStorageKeyAllocator().OTACurrentProvider());
+}
+
+CHIP_ERROR GenericOTARequestorStorage::LoadCurrentProviderLocation(ProviderLocationType & provider)
+{
+    return LoadProvider(DefaultStorageKeyAllocator().OTACurrentProvider(), provider);
 }
 
 CHIP_ERROR GenericOTARequestorStorage::StoreUpdateToken(ByteSpan updateToken)
@@ -62,6 +92,11 @@ CHIP_ERROR GenericOTARequestorStorage::StoreUpdateToken(ByteSpan updateToken)
 
     return mPersistentStorage->SyncSetKeyValue(DefaultStorageKeyAllocator().OTAUpdateToken(), updateToken.data(),
                                                static_cast<uint16_t>(updateToken.size()));
+}
+
+CHIP_ERROR GenericOTARequestorStorage::ClearUpdateToken()
+{
+    return mPersistentStorage->SyncDeleteKeyValue(DefaultStorageKeyAllocator().OTAUpdateToken());
 }
 
 CHIP_ERROR GenericOTARequestorStorage::LoadUpdateToken(MutableByteSpan & updateToken)
@@ -73,6 +108,22 @@ CHIP_ERROR GenericOTARequestorStorage::LoadUpdateToken(MutableByteSpan & updateT
 
     updateToken.reduce_size(size);
     return error;
+}
+
+CHIP_ERROR GenericOTARequestorStorage::LoadProvider(const char * key, ProviderLocationType & provider)
+{
+    uint8_t buffer[kMaxSerializedSize];
+    uint16_t size = sizeof(buffer);
+
+    ReturnErrorOnFailure(mPersistentStorage->SyncGetKeyValue(key, buffer, size));
+
+    TLV::TLVReader reader;
+
+    reader.Init(buffer, size);
+    ReturnErrorOnFailure(reader.Next(TLV::AnonymousTag()));
+    ReturnErrorOnFailure(provider.Decode(reader));
+
+    return CHIP_NO_ERROR;
 }
 
 } // namespace DeviceLayer

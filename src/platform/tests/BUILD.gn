@@ -90,9 +90,8 @@ if (chip_device_platform != "none" && chip_device_platform != "fake") {
       test_sources += [ "TestConnectivityMgr.cpp" ]
     }
 
-    if (chip_enable_ota_requestor) {
+    if (chip_enable_ota_requestor_generic_storage) {
       test_sources += [ "TestGenericOTARequestorStorage.cpp" ]
-      public_deps += [ "${chip_root}/src/lib/asn1" ]
     }
   }
 } else {

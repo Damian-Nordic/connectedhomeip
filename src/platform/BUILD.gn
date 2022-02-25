@@ -315,6 +315,11 @@ if (chip_device_platform != "none") {
       sources += [
         "GenericOTARequestorDriver.cpp",
         "GenericOTARequestorDriver.h",
+      ]
+    }
+
+    if (chip_enable_ota_requestor_generic_storage) {
+      sources += [
         "GenericOTARequestorStorage.cpp",
         "GenericOTARequestorStorage.h",
       ]

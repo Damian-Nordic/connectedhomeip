@@ -22,6 +22,9 @@
 #include <lib/support/Span.h>
 
 namespace chip {
+
+class ProviderLocationList;
+
 namespace DeviceLayer {
 
 class OTARequestorStorage
@@ -31,11 +34,17 @@ public:
 
     virtual ~OTARequestorStorage() {}
 
-    virtual CHIP_ERROR StoreProviderLocation(const ProviderLocationType & provider) = 0;
-    virtual CHIP_ERROR LoadProviderLocation(ProviderLocationType & provider)        = 0;
+    virtual CHIP_ERROR StoreDefaultProvider(const ProviderLocationType & provider) = 0;
+    virtual CHIP_ERROR ClearDefaultProvider(FabricIndex fabricIndex)               = 0;
+    virtual CHIP_ERROR LoadDefaultProviders(ProviderLocationList & providers)      = 0;
+
+    virtual CHIP_ERROR StoreCurrentProviderLocation(const ProviderLocationType & provider) = 0;
+    virtual CHIP_ERROR ClearCurrentProviderLocation()                                      = 0;
+    virtual CHIP_ERROR LoadCurrentProviderLocation(ProviderLocationType & provider)        = 0;
 
     virtual CHIP_ERROR StoreUpdateToken(ByteSpan updateToken)         = 0;
     virtual CHIP_ERROR LoadUpdateToken(MutableByteSpan & updateToken) = 0;
+    virtual CHIP_ERROR ClearUpdateToken()                             = 0;
 };
 
 } // namespace DeviceLayer
