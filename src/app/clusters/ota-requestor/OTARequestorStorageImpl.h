@@ -26,7 +26,7 @@ class PersistentStorageDelegate;
 
 namespace DeviceLayer {
 
-class GenericOTARequestorStorage : public OTARequestorStorage
+class OTARequestorStorageImpl : public OTARequestorStorage
 {
 public:
     void Init(PersistentStorageDelegate & persistentStorage) { mPersistentStorage = &persistentStorage; }

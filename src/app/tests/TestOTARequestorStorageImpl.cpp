@@ -31,7 +31,7 @@ namespace {
 void TestDefaultProviders(nlTestSuite * inSuite, void * inContext)
 {
     TestPersistentStorageDelegate persistentStorage;
-    GenericOTARequestorStorage otaStorage;
+    OTARequestorStorageImpl otaStorage;
     otaStorage.Init(persistentStorage);
 
     OTARequestorStorage::ProviderLocationType provider1 = { /* fabric */ 1, /* node */ 0x11111111, /* endpoint */ 0 };
@@ -74,7 +74,7 @@ void TestDefaultProviders(nlTestSuite * inSuite, void * inContext)
 void TestDefaultProvidersEmpty(nlTestSuite * inSuite, void * inContext)
 {
     TestPersistentStorageDelegate persistentStorage;
-    GenericOTARequestorStorage otaStorage;
+    OTARequestorStorageImpl otaStorage;
     otaStorage.Init(persistentStorage);
 
     ProviderLocationList providers = {};
@@ -86,7 +86,7 @@ void TestDefaultProvidersEmpty(nlTestSuite * inSuite, void * inContext)
 void TestCurrentProviderLocation(nlTestSuite * inSuite, void * inContext)
 {
     TestPersistentStorageDelegate persistentStorage;
-    GenericOTARequestorStorage otaStorage;
+    OTARequestorStorageImpl otaStorage;
     otaStorage.Init(persistentStorage);
 
     OTARequestorStorage::ProviderLocationType provider;
@@ -109,7 +109,7 @@ void TestCurrentProviderLocation(nlTestSuite * inSuite, void * inContext)
 void TestUpdateToken(nlTestSuite * inSuite, void * inContext)
 {
     TestPersistentStorageDelegate persistentStorage;
-    GenericOTARequestorStorage otaStorage;
+    OTARequestorStorageImpl otaStorage;
     otaStorage.Init(persistentStorage);
 
     constexpr size_t updateTokenLength = 32;
@@ -150,7 +150,7 @@ int TestTearDown(void * inContext)
 
 } // namespace
 
-int TestGenericOTARequestorStorage()
+int TestOTARequestorStorageImpl()
 {
     nlTestSuite theSuite = { "OTA Storage tests", &sTests[0], TestSetup, TestTearDown };
 
@@ -159,4 +159,4 @@ int TestGenericOTARequestorStorage()
     return nlTestRunnerStats(&theSuite);
 }
 
-CHIP_REGISTER_TEST_SUITE(TestGenericOTARequestorStorage)
+CHIP_REGISTER_TEST_SUITE(TestOTARequestorStorageImpl)
