@@ -24,8 +24,6 @@ namespace chip {
 
 class PersistentStorageDelegate;
 
-namespace DeviceLayer {
-
 class OTARequestorStorageImpl : public OTARequestorStorage
 {
 public:
@@ -51,5 +49,4 @@ private:
     PersistentStorageDelegate * mPersistentStorage = nullptr;
 };
 
-} // namespace DeviceLayer
 } // namespace chip

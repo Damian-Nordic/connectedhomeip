@@ -26,7 +26,6 @@
 #include <limits>
 
 namespace chip {
-namespace DeviceLayer {
 
 CHIP_ERROR OTARequestorStorageImpl::StoreDefaultProvider(const ProviderLocationType & provider)
 {
@@ -126,5 +125,4 @@ CHIP_ERROR OTARequestorStorageImpl::LoadProvider(const char * key, ProviderLocat
     return CHIP_NO_ERROR;
 }
 
-} // namespace DeviceLayer
 } // namespace chip

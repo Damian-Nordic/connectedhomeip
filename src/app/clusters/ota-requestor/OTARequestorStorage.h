@@ -25,8 +25,6 @@ namespace chip {
 
 class ProviderLocationList;
 
-namespace DeviceLayer {
-
 class OTARequestorStorage
 {
 public:
@@ -47,5 +45,4 @@ public:
     virtual CHIP_ERROR ClearUpdateToken()                             = 0;
 };
 
-} // namespace DeviceLayer
 } // namespace chip

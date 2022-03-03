@@ -59,7 +59,10 @@ source_set("ota-requestor-test-srcs") {
     "${chip_root}/src/app/clusters/ota-requestor/OTARequestorStorageImpl.h",
   ]
 
-  public_deps = [ "${chip_root}/src/lib/core" ]
+  public_deps = [
+    "${chip_root}/src/app/common:cluster-objects",
+    "${chip_root}/src/lib/core",
+  ]
 }
 
 chip_test_suite("tests") {
