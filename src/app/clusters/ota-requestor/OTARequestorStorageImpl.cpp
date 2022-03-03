@@ -47,7 +47,7 @@ CHIP_ERROR GenericOTARequestorStorage::ClearDefaultProvider(FabricIndex fabricIn
 
 CHIP_ERROR GenericOTARequestorStorage::LoadDefaultProviders(ProviderLocationList & providers)
 {
-    for (FabricIndex fabricIndex = 0; fabricIndex < CHIP_CONFIG_MAX_FABRICS; fabricIndex++)
+    for (FabricIndex fabricIndex = 1; fabricIndex <= CHIP_CONFIG_MAX_FABRICS; fabricIndex++)
     {
         ProviderLocationType provider;
         CHIP_ERROR error = LoadProvider(DefaultStorageKeyAllocator().OTADefaultProvider(fabricIndex), provider);
