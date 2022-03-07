@@ -32,8 +32,7 @@ public:
 
     virtual ~OTARequestorStorage() {}
 
-    virtual CHIP_ERROR StoreDefaultProvider(const ProviderLocationType & provider) = 0;
-    virtual CHIP_ERROR ClearDefaultProvider(FabricIndex fabricIndex)               = 0;
+    virtual CHIP_ERROR StoreDefaultProviders(const ProviderLocationList & provider) = 0;
     virtual CHIP_ERROR LoadDefaultProviders(ProviderLocationList & providers)      = 0;
 
     virtual CHIP_ERROR StoreCurrentProviderLocation(const ProviderLocationType & provider) = 0;

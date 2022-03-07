@@ -34,17 +34,22 @@ void TestDefaultProviders(nlTestSuite * inSuite, void * inContext)
     OTARequestorStorageImpl otaStorage;
     otaStorage.Init(persistentStorage);
 
-    OTARequestorStorage::ProviderLocationType provider1 = { /* fabric */ 1, /* node */ 0x11111111, /* endpoint */ 0 };
-    OTARequestorStorage::ProviderLocationType provider2 = { /* fabric */ 2, /* node */ 0x22222222, /* endpoint */ 1 };
-    OTARequestorStorage::ProviderLocationType provider3 = { /* fabric */ 3, /* node */ 0x33333333, /* endpoint */ 2 };
-
-    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.StoreDefaultProvider(provider1));
-    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.StoreDefaultProvider(provider2));
-    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.StoreDefaultProvider(provider3));
-    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.ClearDefaultProvider(2));
+    const auto makeProvider = [](FabricIndex fabric, NodeId nodeId, EndpointId endpointId) {
+        OTARequestorStorage::ProviderLocationType provider;
+        provider.fabricIndex    = fabric;
+        provider.providerNodeID = nodeId;
+        provider.endpoint       = endpointId;
+        return provider;
+    };
 
     ProviderLocationList providers = {};
+    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == providers.Add(makeProvider(FabricIndex(1), NodeId(0x11111111), EndpointId(1))));
+    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == providers.Add(makeProvider(FabricIndex(2), NodeId(0x22222222), EndpointId(2))));
+    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == providers.Add(makeProvider(FabricIndex(3), NodeId(0x33333333), EndpointId(3))));
+    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.StoreDefaultProviders(providers));
 
+    providers = {};
+    NL_TEST_ASSERT(inSuite, !providers.Begin().Next());
     NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.LoadDefaultProviders(providers));
 
     auto provider = providers.Begin();
@@ -56,7 +61,16 @@ void TestDefaultProviders(nlTestSuite * inSuite, void * inContext)
     {
         NL_TEST_ASSERT(inSuite, provider.GetValue().fabricIndex == 1);
         NL_TEST_ASSERT(inSuite, provider.GetValue().providerNodeID == 0x11111111);
-        NL_TEST_ASSERT(inSuite, provider.GetValue().endpoint == 0);
+        NL_TEST_ASSERT(inSuite, provider.GetValue().endpoint == 1);
+    }
+
+    NL_TEST_ASSERT(inSuite, hasNext = provider.Next());
+
+    if (hasNext)
+    {
+        NL_TEST_ASSERT(inSuite, provider.GetValue().fabricIndex == 2);
+        NL_TEST_ASSERT(inSuite, provider.GetValue().providerNodeID == 0x22222222);
+        NL_TEST_ASSERT(inSuite, provider.GetValue().endpoint == 2);
     }
 
     NL_TEST_ASSERT(inSuite, hasNext = provider.Next());
@@ -65,7 +79,7 @@ void TestDefaultProviders(nlTestSuite * inSuite, void * inContext)
     {
         NL_TEST_ASSERT(inSuite, provider.GetValue().fabricIndex == 3);
         NL_TEST_ASSERT(inSuite, provider.GetValue().providerNodeID == 0x33333333);
-        NL_TEST_ASSERT(inSuite, provider.GetValue().endpoint == 2);
+        NL_TEST_ASSERT(inSuite, provider.GetValue().endpoint == 3);
     }
 
     NL_TEST_ASSERT(inSuite, !provider.Next());
@@ -79,7 +93,7 @@ void TestDefaultProvidersEmpty(nlTestSuite * inSuite, void * inContext)
 
     ProviderLocationList providers = {};
 
-    NL_TEST_ASSERT(inSuite, CHIP_NO_ERROR == otaStorage.LoadDefaultProviders(providers));
+    NL_TEST_ASSERT(inSuite, CHIP_ERROR_PERSISTED_STORAGE_VALUE_NOT_FOUND == otaStorage.LoadDefaultProviders(providers));
     NL_TEST_ASSERT(inSuite, !providers.Begin().Next());
 }
 
