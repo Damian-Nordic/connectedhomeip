@@ -187,6 +187,7 @@ public:
     virtual CHIP_ERROR GetCurrentHeapFree(uint64_t & currentHeapFree);
     virtual CHIP_ERROR GetCurrentHeapUsed(uint64_t & currentHeapUsed);
     virtual CHIP_ERROR GetCurrentHeapHighWatermark(uint64_t & currentHeapHighWatermark);
+    virtual CHIP_ERROR ResetWatermarks();
 
     /*
      * Get the linked list of thread metrics of the current plaform. After usage, each caller of GetThreadMetrics
@@ -270,6 +271,11 @@ inline CHIP_ERROR DiagnosticDataProvider::GetCurrentHeapUsed(uint64_t & currentH
 }
 
 inline CHIP_ERROR DiagnosticDataProvider::GetCurrentHeapHighWatermark(uint64_t & currentHeapHighWatermark)
+{
+    return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+}
+
+inline CHIP_ERROR DiagnosticDataProvider::ResetWatermarks()
 {
     return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 }

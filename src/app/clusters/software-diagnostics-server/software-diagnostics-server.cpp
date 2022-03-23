@@ -148,29 +148,43 @@ class SoftwareDiagnosticsDelegate : public DeviceLayer::SoftwareDiagnosticsDeleg
 
 SoftwareDiagnosticsDelegate gDiagnosticDelegate;
 
+EmberAfStatus HandleResetWatermarks(EndpointId endpointId)
+{
+    CHIP_ERROR error = DeviceLayer::GetDiagnosticDataProvider().ResetWatermarks();
+
+    ReturnErrorCodeIf(error == CHIP_NO_ERROR, EMBER_ZCL_STATUS_SUCCESS);
+    ReturnErrorCodeIf(error != CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE, EMBER_ZCL_STATUS_FAILURE);
+
+    // Fall back to the attribute storage-based implementation
+
+    uint64_t currentHeapUsed;
+    EmberAfStatus status = SoftwareDiagnostics::Attributes::CurrentHeapUsed::Get(endpointId, &currentHeapUsed);
+
+    if (status != EMBER_ZCL_STATUS_SUCCESS)
+    {
+        ChipLogError(Zcl, "Failed to get CurrentHeapUsed attribute");
+        return status;
+    }
+
+    status = SoftwareDiagnostics::Attributes::CurrentHeapHighWatermark::Set(endpointId, currentHeapUsed);
+
+    if (status != EMBER_ZCL_STATUS_SUCCESS)
+    {
+        ChipLogError(Zcl, "Failed to reset CurrentHeapHighWaterMark attribute");
+        return status;
+    }
+
+    return EMBER_ZCL_STATUS_SUCCESS;
+}
+
 } // anonymous namespace
 
 bool emberAfSoftwareDiagnosticsClusterResetWatermarksCallback(app::CommandHandler * commandObj,
                                                               const app::ConcreteCommandPath & commandPath,
                                                               const Commands::ResetWatermarks::DecodableType & commandData)
 {
-    EndpointId endpoint = commandPath.mEndpointId;
-
-    uint64_t currentHeapUsed;
-
-    EmberAfStatus status = SoftwareDiagnostics::Attributes::CurrentHeapUsed::Get(endpoint, &currentHeapUsed);
-    VerifyOrExit(status == EMBER_ZCL_STATUS_SUCCESS, ChipLogError(Zcl, "Failed to get the value of the CurrentHeapUsed attribute"));
-
-    status = SoftwareDiagnostics::Attributes::CurrentHeapHighWatermark::Set(endpoint, currentHeapUsed);
-    VerifyOrExit(
-        status == EMBER_ZCL_STATUS_SUCCESS,
-        ChipLogError(
-            Zcl,
-            "Failed to reset the value of the CurrentHeapHighWaterMark attribute to the value of the CurrentHeapUsed attribute"));
-
-exit:
+    EmberAfStatus status = HandleResetWatermarks(commandPath.mEndpointId);
     emberAfSendImmediateDefaultResponse(status);
-
     return true;
 }
 
