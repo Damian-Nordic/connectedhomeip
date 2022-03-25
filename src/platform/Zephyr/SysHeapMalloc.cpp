@@ -22,6 +22,7 @@
 
 extern "C" {
 #include <init.h>
+#include <sys/mutex.h>
 #include <sys/sys_heap.h>
 }
 
@@ -34,6 +35,7 @@ constexpr size_t kMallocAlignment = sizeof(void *);
 
 uint8_t sHeapMemory[8192] alignas(8);
 sys_heap sHeap;
+SYS_MUTEX_DEFINE(sLock);
 
 static int heapInit(const struct device * unused)
 {
@@ -108,14 +110,14 @@ CHIP_ERROR GetStats(Stats & stats)
 
     stats.free    = sysHeapStats.free_bytes;
     stats.used    = sysHeapStats.allocated_bytes;
-    stats.maxUsed = sysHeapStats.allocated_bytes;
+    stats.maxUsed = sysHeapStats.max_allocated_bytes;
 
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR ResetHeapHighWatermark()
 {
-    return CHIP_NO_ERROR;
+    return System::MapErrorZephyr(sys_heap_runtime_stats_reset(&sHeap));
 }
 
 } // namespace Heap

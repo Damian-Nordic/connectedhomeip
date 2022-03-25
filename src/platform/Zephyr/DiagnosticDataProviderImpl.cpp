@@ -26,6 +26,7 @@
 #include <lib/support/logging/CHIPLogging.h>
 #include <platform/DiagnosticDataProvider.h>
 #include <platform/Zephyr/DiagnosticDataProviderImpl.h>
+#include <platform/Zephyr/SysHeapMalloc.h>
 
 #include <drivers/hwinfo.h>
 
@@ -101,38 +102,34 @@ inline DiagnosticDataProviderImpl::DiagnosticDataProviderImpl() : mBootReason(De
 
 CHIP_ERROR DiagnosticDataProviderImpl::GetCurrentHeapFree(uint64_t & currentHeapFree)
 {
-#ifdef CONFIG_NEWLIB_LIBC
-    // This will return the amount of memory which has been allocated from the system, but is not
-    // used right now. Ideally, this value should be increased by the amount of memory which can
-    // be allocated from the system, but Zephyr does not expose that number.
-    currentHeapFree = mallinfo().fordblks;
+    Heap::Stats stats;
+    ReturnErrorOnFailure(Heap::GetStats(stats));
+
+    currentHeapFree = stats.free;
     return CHIP_NO_ERROR;
-#else
-    return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-#endif
 }
 
 CHIP_ERROR DiagnosticDataProviderImpl::GetCurrentHeapUsed(uint64_t & currentHeapUsed)
 {
-#ifdef CONFIG_NEWLIB_LIBC
-    currentHeapUsed = mallinfo().uordblks;
+    Heap::Stats stats;
+    ReturnErrorOnFailure(Heap::GetStats(stats));
+
+    currentHeapUsed = stats.used;
     return CHIP_NO_ERROR;
-#else
-    return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-#endif
 }
 
 CHIP_ERROR DiagnosticDataProviderImpl::GetCurrentHeapHighWatermark(uint64_t & currentHeapHighWatermark)
 {
-#ifdef CONFIG_NEWLIB_LIBC
-    // ARM newlib does not provide a way to obtain the peak heap usage, so for now just return
-    // the amount of memory allocated from the system which should be an upper bound of the peak
-    // usage provided that the heap is not very fragmented.
-    currentHeapHighWatermark = mallinfo().arena;
+    Heap::Stats stats;
+    ReturnErrorOnFailure(Heap::GetStats(stats));
+
+    currentHeapHighWatermark = stats.maxUsed;
     return CHIP_NO_ERROR;
-#else
-    return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-#endif
+}
+
+CHIP_ERROR DiagnosticDataProviderImpl::ResetWatermarks()
+{
+    return Heap::ResetHeapHighWatermark();
 }
 
 CHIP_ERROR DiagnosticDataProviderImpl::GetRebootCount(uint16_t & rebootCount)
