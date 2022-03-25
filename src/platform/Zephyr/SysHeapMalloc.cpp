@@ -29,6 +29,8 @@ extern "C" {
 #include <cstdint>
 #include <cstring>
 
+using namespace chip;
+
 namespace {
 
 constexpr size_t kMallocAlignment = sizeof(void *);
@@ -37,20 +39,48 @@ uint8_t sHeapMemory[8192] alignas(8);
 sys_heap sHeap;
 SYS_MUTEX_DEFINE(sLock);
 
-static int heapInit(const struct device * unused)
+int initHeap(const struct device * unused)
 {
     sys_heap_init(&sHeap, sHeapMemory, sizeof(sHeapMemory));
     return 0;
 }
 
+class LockGuard
+{
+public:
+    LockGuard() : mStatus(sys_mutex_lock(&sLock, K_FOREVER)) {}
+
+    ~LockGuard()
+    {
+        if (mStatus == 0)
+        {
+            sys_mutex_unlock(&sLock);
+        }
+    }
+
+    bool Locked() { return mStatus == 0; }
+
+    CHIP_ERROR Error() { return System::MapErrorZephyr(mStatus); }
+
+private:
+    const int mStatus;
+};
+
 } // namespace
 
-SYS_INIT(heapInit, POST_KERNEL, 0);
+SYS_INIT(initHeap, POST_KERNEL, 0);
 
 extern "C" {
 
 void * malloc(size_t size)
 {
+    LockGuard lockGuard;
+
+    if (!lockGuard.Locked())
+    {
+        return nullptr;
+    }
+
     return sys_heap_aligned_alloc(&sHeap, kMallocAlignment, size);
 }
 
@@ -68,15 +98,30 @@ void * calloc(size_t num, size_t size)
 
 void * realloc(void * mem, size_t size)
 {
+    LockGuard lockGuard;
+
+    if (!lockGuard.Locked())
+    {
+        return nullptr;
+    }
+
     return sys_heap_aligned_realloc(&sHeap, mem, kMallocAlignment, size);
 }
 
 void free(void * mem)
 {
+    LockGuard lockGuard;
+
+    VerifyOrReturn(lockGuard.Locked());
     sys_heap_free(&sHeap, mem);
 }
 
 /*
+TODO:
+These symbols should also be replaced, but they're not weak symbols, so we must first exclude
+them in the linker command line. Perhaps, we should add some CONFIG_LIBC_EXTERNAL_MALLOC
+Kconfig option to Zephyr to strip off all malloc-related newlib functions.
+
 void * _malloc_r(_reent *, size_t size)
 {
     return malloc(size);
@@ -105,6 +150,9 @@ namespace Heap {
 
 CHIP_ERROR GetStats(Stats & stats)
 {
+    LockGuard lockGuard;
+    ReturnErrorOnFailure(lockGuard.Error());
+
     sys_heap_runtime_stats sysHeapStats;
     ReturnErrorOnFailure(System::MapErrorZephyr(sys_heap_runtime_stats_get(&sHeap, &sysHeapStats)));
 
@@ -117,6 +165,9 @@ CHIP_ERROR GetStats(Stats & stats)
 
 CHIP_ERROR ResetHeapHighWatermark()
 {
+    LockGuard lockGuard;
+    ReturnErrorOnFailure(lockGuard.Error());
+
     return System::MapErrorZephyr(sys_heap_runtime_stats_reset(&sHeap));
 }
 
