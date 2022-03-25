@@ -31,6 +31,8 @@ static_library("nrfconnect") {
     "../Zephyr/SystemTimeSupport.cpp",
     "../Zephyr/ZephyrConfig.cpp",
     "../Zephyr/ZephyrConfig.h",
+    "../Zephyr/SysHeapMalloc.cpp",
+    "../Zephyr/SysHeapMalloc.h",
     "BLEManagerImpl.h",
     "BlePlatformConfig.h",
     "CHIPDevicePlatformConfig.h",
