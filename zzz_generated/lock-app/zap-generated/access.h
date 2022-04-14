@@ -39,6 +39,7 @@
     /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
+    /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: view */ \
@@ -69,6 +70,7 @@
     /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
+    /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: view */ \
@@ -99,6 +101,7 @@
     /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
+    /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: view */ \
@@ -128,6 +131,7 @@
     40, /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: manage */ \
     257, /* Cluster: Door Lock, Attribute: Language, Privilege: manage */ \
     257, /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: manage */ \
+    257, /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: manage */ \
     257, /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: manage */ \
     257, /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: manage */ \
     257, /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: manage */ \
@@ -149,6 +153,7 @@
     16, /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: manage */ \
     33, /* Cluster: Door Lock, Attribute: Language, Privilege: manage */ \
     35, /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: manage */ \
+    36, /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: manage */ \
     37, /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: manage */ \
     41, /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: manage */ \
     43, /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: manage */ \
@@ -170,6 +175,7 @@
     kMatterAccessPrivilegeManage, /* Cluster: Basic, Attribute: LocalConfigDisabled, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: Language, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: OperatingMode, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: EnableOneTouchLocking, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Door Lock, Attribute: EnablePrivacyModeButton, Privilege: manage */ \

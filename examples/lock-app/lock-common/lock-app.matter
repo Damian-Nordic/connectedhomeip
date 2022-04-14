@@ -587,6 +587,7 @@ server cluster DoorLock = 257 {
   readonly attribute DlCredentialRuleMask credentialRulesSupport = 27;
   attribute access(write: manage) char_string<3> language = 33;
   attribute access(write: manage) int32u autoRelockTime = 35;
+  attribute access(write: manage) int8u soundVolume = 36;
   attribute access(write: manage) DlOperatingMode operatingMode = 37;
   readonly attribute DlSupportedOperatingModes supportedOperatingModes = 38;
   attribute access(write: manage) boolean enableOneTouchLocking = 41;
