@@ -49,7 +49,7 @@ class HostApp(Enum):
         elif self == HostApp.TV_APP:
             return 'tv-app/linux'
         elif self == HostApp.LOCK:
-            return 'door-lock-app/linux'
+            return 'lock-app/linux'
         elif self == HostApp.SHELL:
             return 'shell/standalone'
         elif self == HostApp.OTA_PROVIDER:
@@ -87,8 +87,8 @@ class HostApp(Enum):
             yield 'chip-tv-app'
             yield 'chip-tv-app.map'
         elif self == HostApp.LOCK:
-            yield 'chip-door-lock-app'
-            yield 'chip-door-lock-app.map'
+            yield 'chip-lock-app'
+            yield 'chip-lock-app.map'
         elif self == HostApp.TESTS:
             pass
         elif self == HostApp.SHELL:

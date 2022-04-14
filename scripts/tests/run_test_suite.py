@@ -168,9 +168,9 @@ def cmd_list(context):
     default=FindBinaryPath('chip-all-clusters-app'),
     help='what all clusters app to use')
 @click.option(
-    '--door-lock-app',
-    default=FindBinaryPath('chip-door-lock-app'),
-    help='what door lock app to use')
+    '--lock-app',
+    default=FindBinaryPath('chip-lock-app'),
+    help='what lock app to use')
 @click.option(
     '--tv-app',
     default=FindBinaryPath('chip-tv-app'),
@@ -181,14 +181,14 @@ def cmd_list(context):
     default=FindBinaryPath("ci-pics-values"),
     help='PICS file to use for test runs.')
 @click.pass_context
-def cmd_run(context, iterations, all_clusters_app, door_lock_app, tv_app, pics_file):
+def cmd_run(context, iterations, all_clusters_app, lock_app, tv_app, pics_file):
     runner = chiptest.runner.Runner()
 
     # Command execution requires an array
     paths = chiptest.ApplicationPaths(
         chip_tool=[context.obj.chip_tool],
         all_clusters_app=[all_clusters_app],
-        door_lock_app=[door_lock_app],
+        lock_app=[lock_app],
         tv_app=[tv_app]
     )
 
