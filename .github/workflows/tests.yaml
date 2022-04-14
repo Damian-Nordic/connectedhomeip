@@ -178,7 +178,7 @@ jobs:
                      "./scripts/build/build_examples.py \
                         --target darwin-x64-chip-tool${CHIP_TOOL_VARIANT}-${BUILD_VARIANT} \
                         --target darwin-x64-all-clusters-${BUILD_VARIANT} \
-                        --target darwin-x64-door-lock-${BUILD_VARIANT} \
+                        --target darwin-x64-lock-${BUILD_VARIANT} \
                         --target darwin-x64-tv-app-${BUILD_VARIANT} \
                         build \
                         --copy-artifacts-to objdir-clone \
