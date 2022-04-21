@@ -63,6 +63,7 @@ public:
     ~CASESession() override;
 
     Transport::SecureSession::Type GetSecureSessionType() const override { return Transport::SecureSession::Type::kCASE; }
+    NodeId GetLocalNodeId() const override { return mFabricInfo != nullptr ? mFabricInfo->GetNodeId() : kUndefinedNodeId; }
     ScopedNodeId GetPeer() const override { return ScopedNodeId(mPeerNodeId, GetFabricIndex()); }
     CATValues GetPeerCATs() const override { return mPeerCATs; };
 

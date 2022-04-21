@@ -43,6 +43,7 @@ public:
     virtual ~PairingSession() { Clear(); }
 
     virtual Transport::SecureSession::Type GetSecureSessionType() const = 0;
+    virtual NodeId GetLocalNodeId() const                               = 0;
     virtual ScopedNodeId GetPeer() const                                = 0;
     virtual CATValues GetPeerCATs() const                               = 0;
 

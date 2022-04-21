@@ -74,6 +74,7 @@ public:
     ~PASESession() override;
 
     Transport::SecureSession::Type GetSecureSessionType() const override { return Transport::SecureSession::Type::kPASE; }
+    NodeId GetLocalNodeId() const override { return kUndefinedNodeId; }
     ScopedNodeId GetPeer() const override
     {
         return ScopedNodeId(NodeIdFromPAKEKeyId(kDefaultCommissioningPasscodeId), kUndefinedFabricIndex);

@@ -203,18 +203,9 @@ CHIP_ERROR SessionManager::PrepareMessage(const SessionHandle & sessionHandle, P
         CHIP_TRACE_MESSAGE_SENT(payloadHeader, packetHeader, message->Start(), message->TotalLength());
 
         CryptoContext::NonceStorage nonce;
-        if (session->GetSecureSessionType() == SecureSession::Type::kCASE)
-        {
-            FabricInfo * fabric = mFabricTable->FindFabricWithIndex(session->GetFabricIndex());
-            VerifyOrDie(fabric != nullptr);
-            CryptoContext::BuildNonce(nonce, packetHeader.GetSecurityFlags(), messageCounter, fabric->GetNodeId());
-        }
-        else
-        {
-            // PASE Sessions use the undefined node ID of all zeroes, since there is no node ID to use
-            // and the key is short-lived and always different for each PASE session.
-            CryptoContext::BuildNonce(nonce, packetHeader.GetSecurityFlags(), messageCounter, kUndefinedNodeId);
-        }
+        // PASE Sessions use the undefined node ID of all zeroes, since there is no node ID to use
+        // and the key is short-lived and always different for each PASE session.
+        CryptoContext::BuildNonce(nonce, packetHeader.GetSecurityFlags(), messageCounter, session->GetLocalNodeId());
         ReturnErrorOnFailure(SecureMessageCodec::Encrypt(session->GetCryptoContext(), nonce, payloadHeader, packetHeader, message));
         ReturnErrorOnFailure(counter.Advance());
 
@@ -393,9 +384,12 @@ CHIP_ERROR SessionManager::InjectPaseSessionWithTestKey(SessionHolder & sessionH
                                                         uint16_t peerSessionId, FabricIndex fabric,
                                                         const Transport::PeerAddress & peerAddress, CryptoContext::SessionRole role)
 {
-    Optional<SessionHandle> session =
-        mSecureSessions.CreateNewSecureSessionForTest(chip::Transport::SecureSession::Type::kPASE, localSessionId, peerNodeId,
-                                                      CATValues{}, peerSessionId, fabric, GetLocalMRPConfig());
+    FabricInfo * fabricInfo = mFabricTable->FindFabricWithIndex(fabric);
+    VerifyOrReturnError(fabricInfo != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
+
+    Optional<SessionHandle> session = mSecureSessions.CreateNewSecureSessionForTest(
+        chip::Transport::SecureSession::Type::kPASE, localSessionId, fabricInfo->GetNodeId(), peerNodeId, CATValues{},
+        peerSessionId, fabric, GetLocalMRPConfig());
     VerifyOrReturnError(session.HasValue(), CHIP_ERROR_NO_MEMORY);
     SecureSession * secureSession = session.Value()->AsSecureSession();
     secureSession->SetPeerAddress(peerAddress);

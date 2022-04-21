@@ -39,7 +39,7 @@ CHIP_ERROR PairingSession::ActivateSecureSession(const Transport::PeerAddress & 
     uint16_t peerSessionId = GetPeerSessionId();
     ChipLogDetail(Inet, "New secure session created for device " ChipLogFormatScopedNodeId ", LSID:%d PSID:%d!",
                   ChipLogValueScopedNodeId(GetPeer()), secureSession->GetLocalSessionId(), peerSessionId);
-    secureSession->Activate(GetSecureSessionType(), GetPeer(), GetPeerCATs(), peerSessionId, mRemoteMRPConfig);
+    secureSession->Activate(GetSecureSessionType(), GetLocalNodeId(), GetPeer(), GetPeerCATs(), peerSessionId, mRemoteMRPConfig);
     secureSession->SetPeerAddress(peerAddress);
     ReturnErrorOnFailure(DeriveSecureSession(secureSession->GetCryptoContext()));
     secureSession->GetSessionMessageCounter().GetPeerMessageCounter().SetCounter(LocalSessionMessageCounter::kInitialSyncValue);

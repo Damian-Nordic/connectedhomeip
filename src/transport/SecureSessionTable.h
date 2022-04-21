@@ -61,11 +61,12 @@ public:
      */
     CHECK_RETURN_VALUE
     Optional<SessionHandle> CreateNewSecureSessionForTest(SecureSession::Type secureSessionType, uint16_t localSessionId,
-                                                          NodeId peerNodeId, CATValues peerCATs, uint16_t peerSessionId,
-                                                          FabricIndex fabric, const ReliableMessageProtocolConfig & config)
+                                                          NodeId localNodeId, NodeId peerNodeId, CATValues peerCATs,
+                                                          uint16_t peerSessionId, FabricIndex fabric,
+                                                          const ReliableMessageProtocolConfig & config)
     {
-        SecureSession * result =
-            mEntries.CreateObject(secureSessionType, localSessionId, peerNodeId, peerCATs, peerSessionId, fabric, config);
+        SecureSession * result = mEntries.CreateObject(secureSessionType, localSessionId, localNodeId, peerNodeId, peerCATs,
+                                                       peerSessionId, fabric, config);
         return result != nullptr ? MakeOptional<SessionHandle>(*result) : Optional<SessionHandle>::Missing();
     }
 
