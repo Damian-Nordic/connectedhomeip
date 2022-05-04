@@ -32,20 +32,7 @@ class OTAImageProcessorImpl : public OTAImageProcessorInterface
 public:
     static constexpr size_t kBufferSize = CONFIG_CHIP_OTA_REQUESTOR_BUFFER_SIZE;
 
-    enum class ImageType : uint8_t
-    {
-        kAppImage = 0,
-        kNetImage = 1
-    };
-
     void SetOTADownloader(OTADownloader * downloader) { mDownloader = downloader; };
-
-    struct OTAImage
-    {
-        OTAImageContentHeader::FileInfo * mFileInfo;
-        ImageType mImageType;
-        uint64_t mCurrentOffset;
-    };
 
     CHIP_ERROR PrepareDownload() override;
     CHIP_ERROR Finalize() override;
@@ -62,10 +49,7 @@ private:
 
     OTADownloader * mDownloader = nullptr;
     OTAImageHeaderParser mHeaderParser;
-    OTAImageContentHeaderParser mContentHeaderParser;
     uint8_t mBuffer[kBufferSize];
-    OTAImageContentHeader mContentHeader;
-    OTAImage mCurrentImage;
 };
 
 class ExtFlashHandler
