@@ -194,6 +194,15 @@ config CHIP_EXTENDED_DISCOVERY
     bool
     default y
 
+config NVS_LOOKUP_CACHE
+    bool
+    default y
+
+# Increase the default RX stack size
+config IEEE802154_NRF5_RX_STACK_SIZE
+    int
+    default 1024
+
 # Enable OpenThread
 
 config NET_L2_OPENTHREAD
