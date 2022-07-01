@@ -237,8 +237,8 @@ bool ExecutePersistentStorageApiAudit(PersistentStorageDelegate & storage)
     NL_TEST_ASSERT(inSuite, 0 == memcmp(&buf[0], &all_zeroes[0], size));
 
     // Using key and value with base64 symbols
-    const char * kBase64SymbolsKey   = "key+/=";
-    const char * kBase64SymbolValues = "value+/=";
+    const char * kBase64SymbolsKey   = "key+-_";
+    const char * kBase64SymbolValues = "value+-_";
     err = storage.SyncSetKeyValue(kBase64SymbolsKey, kBase64SymbolValues, static_cast<uint16_t>(strlen(kBase64SymbolValues)));
     NL_TEST_ASSERT(inSuite, err == CHIP_NO_ERROR);
 

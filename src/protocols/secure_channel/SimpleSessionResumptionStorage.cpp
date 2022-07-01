@@ -29,6 +29,27 @@
 
 namespace chip {
 
+namespace {
+
+static char Base64ValToKeyChar(uint8_t val)
+{
+    if (val < 26)
+        return static_cast<char>('A' + val);
+    val = static_cast<uint8_t>(val - 26);
+    if (val < 26)
+        return static_cast<char>('a' + val);
+    val = static_cast<uint8_t>(val - 26);
+    if (val < 10)
+        return static_cast<char>('0' + val);
+    if (val == 10)
+        return '+';
+    if (val == 11)
+        return '-';
+    return '_';
+}
+
+} // namespace
+
 constexpr TLV::Tag SimpleSessionResumptionStorage::kFabricIndexTag;
 constexpr TLV::Tag SimpleSessionResumptionStorage::kPeerNodeIdTag;
 constexpr TLV::Tag SimpleSessionResumptionStorage::kResumptionIdTag;
@@ -43,7 +64,7 @@ const char * SimpleSessionResumptionStorage::StorageKey(DefaultStorageKeyAllocat
 const char * SimpleSessionResumptionStorage::StorageKey(DefaultStorageKeyAllocator & keyAlloc, ConstResumptionIdView resumptionId)
 {
     char resumptionIdBase64[BASE64_ENCODED_LEN(resumptionId.size()) + 1];
-    auto len                = Base64Encode(resumptionId.data(), resumptionId.size(), resumptionIdBase64);
+    auto len                = Base64Encode(resumptionId.data(), resumptionId.size(), resumptionIdBase64, Base64ValToKeyChar);
     resumptionIdBase64[len] = '\0';
     return keyAlloc.SessionResumption(resumptionIdBase64);
 }
