@@ -59,7 +59,7 @@ private:
 	static AppTask sAppTask;
 
 #if CONFIG_CHIP_FACTORY_DATA
-    chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
+	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
 #endif
 };
 
