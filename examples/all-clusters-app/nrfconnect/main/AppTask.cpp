@@ -48,10 +48,32 @@
 #include <dk_buttons_and_leds.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/zephyr.h>
+#include <shell/shell.h>
+#include <platform/Zephyr/WiFiManager.h>
 
 using namespace ::chip;
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
+
+static int cmd_wifi(const struct shell * shell, size_t argc, char ** argv)
+{
+    CHIP_ERROR err = chip::DeviceLayer::WiFiManager::Instance().AddNetwork(ByteSpan((const uint8_t*)argv[1], strlen(argv[1])), ByteSpan((const uint8_t*)argv[2], strlen(argv[2])));
+    if (err != CHIP_NO_ERROR) {
+        ChipLogProgress(DeviceLayer, "XXX Add network %d", err.Format());
+        return 1;
+    }
+
+    err = chip::DeviceLayer::WiFiManager::Instance().Connect();
+
+    if (err != CHIP_NO_ERROR) {
+        ChipLogProgress(DeviceLayer, "XXX Connect %d", err.Format());
+        return 1;
+    }
+
+    return 0;
+}
+
+SHELL_CMD_ARG_REGISTER(wifi, NULL, "Wifi", cmd_wifi, 2, 2);
 
 #define FACTORY_RESET_TRIGGER_TIMEOUT 3000
 #define FACTORY_RESET_CANCEL_WINDOW_TIMEOUT 3000

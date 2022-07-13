@@ -40,6 +40,11 @@
 #include <lib/support/ErrorStr.h>
 #include <system/SystemClock.h>
 
+#ifdef CONFIG_CHIP_WIFI
+#include <app/clusters/network-commissioning/network-commissioning.h>
+#include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
+#endif
+
 #if CONFIG_CHIP_OTA_REQUESTOR
 #include "OTAUtil.h"
 #endif
@@ -47,7 +52,9 @@
 #include <dk_buttons_and_leds.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/zephyr.h>
-
+#include <shell/shell.h>
+#include <platform/Zephyr/WiFiManager.h>
+ 
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace ::chip::app::Clusters::DoorLock;
@@ -59,6 +66,26 @@ using namespace ::chip::DeviceLayer;
 #define APP_EVENT_QUEUE_SIZE 10
 #define BUTTON_PUSH_EVENT 1
 #define BUTTON_RELEASE_EVENT 0
+
+static int cmd_wifi(const struct shell * shell, size_t argc, char ** argv)
+{
+    CHIP_ERROR err = chip::DeviceLayer::WiFiManager::Instance().AddNetwork(ByteSpan((const uint8_t*)argv[1], strlen(argv[1])), ByteSpan((const uint8_t*)argv[2], strlen(argv[2])));
+    if (err != CHIP_NO_ERROR) {
+        ChipLogProgress(DeviceLayer, "XXX Add network %d", err.Format());
+        return 1;
+    }
+
+    err = chip::DeviceLayer::WiFiManager::Instance().Connect();
+
+    if (err != CHIP_NO_ERROR) {
+        ChipLogProgress(DeviceLayer, "XXX Connect %d", err.Format());
+        return 1;
+    }
+
+    return 0;
+}
+
+SHELL_CMD_ARG_REGISTER(wifi, NULL, "Wifi", cmd_wifi, 2, 2);
 
 namespace {
 constexpr EndpointId kLockEndpointId = 1;
@@ -84,6 +111,10 @@ bool sHaveBLEConnections  = false;
 chip::DeviceLayer::DeviceInfoProviderImpl gExampleDeviceInfoProvider;
 
 } // namespace
+
+#ifdef CONFIG_CHIP_WIFI
+app::Clusters::NetworkCommissioning::Instance sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
+#endif
 
 AppTask AppTask::sAppTask;
 
@@ -124,7 +155,9 @@ CHIP_ERROR AppTask::Init()
         LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
         return err;
     }
-#elif !defined(CONFIG_CHIP_WIFI)
+#elif defined(CONFIG_CHIP_WIFI)
+    sWiFiCommissioningInstance.Init();
+#else
     return CHIP_ERROR_INTERNAL;
 #endif
 
