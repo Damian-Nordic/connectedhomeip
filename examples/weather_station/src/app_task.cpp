@@ -254,7 +254,7 @@ CHIP_ERROR AppTask::Init()
 
 	gExampleDeviceInfoProvider.SetStorageDelegate(&Server::GetInstance().GetPersistentStorage());
 	chip::DeviceLayer::SetDeviceInfoProvider(&gExampleDeviceInfoProvider);
-	
+
 #if CONFIG_CHIP_OTA_REQUESTOR
 	InitBasicOTARequestor();
 #endif
