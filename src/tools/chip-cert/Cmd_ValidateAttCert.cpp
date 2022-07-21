@@ -161,7 +161,8 @@ bool Cmd_ValidateAttCert(int argc, char * argv[])
     MutableByteSpan pai(paiBuf);
     MutableByteSpan paa(paaBuf);
 
-    AttestationVerificationResult attestationError = AttestationVerificationResult::kSuccess;
+    AttestationVerificationResult attestationResult = AttestationVerificationResult::kSuccess;
+    CHIP_ERROR error                                = CHIP_NO_ERROR;
 
     if (argc == 1)
     {
@@ -207,14 +208,14 @@ bool Cmd_ValidateAttCert(int argc, char * argv[])
 
     // Verify certificate validity information
     {
-        VerifyOrExit(IsCertificateValidAtCurrentTime(dac) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kDacExpired);
+        VerifyOrExit((error = IsCertificateValidAtCurrentTime(dac)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kDacExpired);
 
-        VerifyOrExit(IsCertificateValidAtIssuance(dac, pai) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kPaiExpired);
+        VerifyOrExit((error = IsCertificateValidAtIssuance(dac, pai)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kPaiExpired);
 
-        VerifyOrExit(IsCertificateValidAtIssuance(dac, paa) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kPaaExpired);
+        VerifyOrExit((error = IsCertificateValidAtIssuance(dac, paa)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kPaaExpired);
     }
 
     // Verify that VID and PID in the certificates match.
@@ -223,41 +224,45 @@ bool Cmd_ValidateAttCert(int argc, char * argv[])
         AttestationCertVidPid paiVidPid;
         AttestationCertVidPid paaVidPid;
 
-        VerifyOrExit(ExtractVIDPIDFromX509Cert(dac, dacVidPid) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kDacFormatInvalid);
-        VerifyOrExit(ExtractVIDPIDFromX509Cert(pai, paiVidPid) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kPaiFormatInvalid);
-        VerifyOrExit(ExtractVIDPIDFromX509Cert(paa, paaVidPid) == CHIP_NO_ERROR,
-                     attestationError = AttestationVerificationResult::kPaaFormatInvalid);
+        VerifyOrExit((error = ExtractVIDPIDFromX509Cert(dac, dacVidPid)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kDacFormatInvalid);
+        VerifyOrExit((error = ExtractVIDPIDFromX509Cert(pai, paiVidPid)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kPaiFormatInvalid);
+        VerifyOrExit((error = ExtractVIDPIDFromX509Cert(paa, paaVidPid)) == CHIP_NO_ERROR,
+                     attestationResult = AttestationVerificationResult::kPaaFormatInvalid);
 
         VerifyOrExit(dacVidPid.mVendorId.HasValue() && dacVidPid.mVendorId == paiVidPid.mVendorId,
-                     attestationError = AttestationVerificationResult::kDacVendorIdMismatch);
+                     attestationResult = AttestationVerificationResult::kDacVendorIdMismatch);
 
         if (paaVidPid.mVendorId.HasValue())
         {
             VerifyOrExit(dacVidPid.mVendorId == paaVidPid.mVendorId,
-                         attestationError = AttestationVerificationResult::kPaiVendorIdMismatch);
+                         attestationResult = AttestationVerificationResult::kPaiVendorIdMismatch);
         }
 
         if (paiVidPid.mProductId.HasValue())
         {
             VerifyOrExit(dacVidPid.mProductId == paiVidPid.mProductId,
-                         attestationError = AttestationVerificationResult::kDacProductIdMismatch);
+                         attestationResult = AttestationVerificationResult::kDacProductIdMismatch);
         }
 
-        VerifyOrExit(!paaVidPid.mProductId.HasValue(), attestationError = AttestationVerificationResult::kPaaFormatInvalid);
+        VerifyOrExit(!paaVidPid.mProductId.HasValue(), attestationResult = AttestationVerificationResult::kPaaFormatInvalid);
     }
 
     // Validate certificate chain.
     chip::Crypto::CertificateChainValidationResult chainValidationResult;
-    VerifyOrExit(ValidateCertificateChain(paa.data(), paa.size(), pai.data(), pai.size(), dac.data(), dac.size(),
-                                          chainValidationResult) == CHIP_NO_ERROR,
-                 attestationError = MapError(chainValidationResult));
+    error = ValidateCertificateChain(paa.data(), paa.size(), pai.data(), pai.size(), dac.data(), dac.size(), chainValidationResult);
+    VerifyOrExit(error == CHIP_NO_ERROR, attestationResult = MapError(chainValidationResult));
 
 exit:
-    if (attestationError != AttestationVerificationResult::kSuccess)
+    if (error != CHIP_NO_ERROR)
     {
-        fprintf(stderr, "Attestation Certificates Validation Failed with Error Code: %d\n", static_cast<int>(attestationError));
+        fprintf(stderr, "Error: %" CHIP_ERROR_FORMAT "\n", error.Format());
+    }
+
+    if (attestationResult != AttestationVerificationResult::kSuccess)
+    {
+        fprintf(stderr, "Attestation certificate validation failed with result: %d\n", static_cast<int>(attestationResult));
         return false;
     }
 
