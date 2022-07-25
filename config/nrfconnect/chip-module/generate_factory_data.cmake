@@ -81,6 +81,7 @@ string(APPEND script_args "--spake2_it \"${CONFIG_CHIP_DEVICE_SPAKE2_IT}\"\n")
 string(APPEND script_args "--spake2_salt \"${CONFIG_CHIP_DEVICE_SPAKE2_SALT}\"\n")
 string(APPEND script_args "--discriminator ${CONFIG_CHIP_DEVICE_DISCRIMINATOR}\n")
 string(APPEND script_args "--passcode ${CONFIG_CHIP_DEVICE_SPAKE2_PASSCODE}\n")
+string(APPEND script_args "--include_passcode\n")
 
 # check if spake2 verifier should be generated using script
 if(CONFIG_CHIP_FACTORY_DATA_GENERATE_SPAKE2_VERIFIER)
