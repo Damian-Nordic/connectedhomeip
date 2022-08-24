@@ -109,15 +109,15 @@ def gen_test_certs(chip_cert_exe: str,
                "--key", CD_KEY_PATH,
                "--cert", CD_PATH,
                "--out", output + "/CD.der",
-               "--format-version",  str(1),
+               "--format-version",  "1",
                "--vendor-id",  hex(vendor_id),
                "--product-id",  hex(product_id),
-               "--device-type-id", "0xA",
-               "--certificate-id", "ZIG20142ZB330003-24",
-               "--security-level",  str(0),
-               "--security-info",  str(0),
-               "--certification-type",  str(0),
-               "--version-number", "0x2694",
+               "--device-type-id", "0",
+               "--certificate-id", "FFFFFFFFFFFFFFFFFFF",
+               "--security-level",  "0",
+               "--security-info",  "0",
+               "--certification-type",  "1", # provisional
+               "--version-number", "0xFFFF",
                ]
         subprocess.run(cmd)
 
