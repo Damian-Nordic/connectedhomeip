@@ -9071,7 +9071,7 @@
       "profileId": 259,
       "endpointId": 1,
       "networkId": 0,
-      "endpointVersion": 1,
+      "endpointVersion": 2,
       "deviceIdentifier": 770
     },
     {
@@ -9080,7 +9080,7 @@
       "profileId": 259,
       "endpointId": 2,
       "networkId": 0,
-      "endpointVersion": 1,
+      "endpointVersion": 2,
       "deviceIdentifier": 775
     },
     {
@@ -9089,8 +9089,9 @@
       "profileId": 259,
       "endpointId": 3,
       "networkId": 0,
-      "endpointVersion": 1,
+      "endpointVersion": 2,
       "deviceIdentifier": 773
     }
-  ]
+  ],
+  "log": []
 }
