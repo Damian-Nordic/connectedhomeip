@@ -60,10 +60,7 @@ CryptoContext::CryptoContext() : mKeyAvailable(false) {}
 
 CryptoContext::~CryptoContext()
 {
-    for (auto & key : mKeys)
-    {
-        ClearSecretData(key, sizeof(CryptoKey));
-    }
+    ClearSecretData(mAttestationChallenge, sizeof(mAttestationChallenge));
     mKeyContext = nullptr;
 }
 
@@ -83,6 +80,8 @@ CHIP_ERROR CryptoContext::InitFromSecret(const ByteSpan & secret, const ByteSpan
         info    = RSEKeysInfo;
         infoLen = sizeof(RSEKeysInfo);
     }
+
+    AesKeyByteArray keys[kNumCryptoKeys];
 
 #if CHIP_CONFIG_SECURITY_TEST_MODE
 
@@ -105,14 +104,19 @@ CHIP_ERROR CryptoContext::InitFromSecret(const ByteSpan & secret, const ByteSpan
         "Node can only communicate with other nodes built with this flag set.");
 
     ReturnErrorOnFailure(mHKDF.HKDF_SHA256(kTestSharedSecret, CHIP_CONFIG_TEST_SHARED_SECRET_LENGTH, testSalt.data(),
-                                           testSalt.size(), SEKeysInfo, sizeof(SEKeysInfo), &mKeys[0][0], sizeof(mKeys)));
+                                           testSalt.size(), SEKeysInfo, sizeof(SEKeysInfo), keys, sizeof(keys)));
 #else
 
     ReturnErrorOnFailure(
-        mHKDF.HKDF_SHA256(secret.data(), secret.size(), salt.data(), salt.size(), info, infoLen, &mKeys[0][0], sizeof(mKeys)));
+        mHKDF.HKDF_SHA256(secret.data(), secret.size(), salt.data(), salt.size(), info, infoLen, keys[0], sizeof(keys)));
 
 #endif
 
+    // If the secure session is created by session initiator, use the I2R key to encrypt
+    // messages being transmitted. Otherwise, use the R2I key.
+    mEncryptionKey.Initialize(keys[role == SessionRole::kInitiator ? kI2RKey : kR2IKey]);
+    mDecryptionKey.Initialize(keys[role == SessionRole::kInitiator ? kR2IKey : kI2RKey]);
+    memcpy(&mAttestationChallenge, &keys[kAttestationChallengeKey], Crypto::CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES);
     mKeyAvailable = true;
     mSessionRole  = role;
 
@@ -202,18 +206,8 @@ CHIP_ERROR CryptoContext::Encrypt(const uint8_t * input, size_t input_length, ui
     else
     {
         VerifyOrReturnError(mKeyAvailable, CHIP_ERROR_INVALID_USE_OF_SESSION_KEY);
-        KeyUsage usage = kR2IKey;
-
-        // Message is encrypted before sending. If the secure session was created by session
-        // initiator, we'll use I2R key to encrypt the message that's being transmitted.
-        // Otherwise, we'll use R2I key, as the responder is sending the message.
-        if (mSessionRole == SessionRole::kInitiator)
-        {
-            usage = kI2RKey;
-        }
-
-        ReturnErrorOnFailure(AES_CCM_encrypt(input, input_length, AAD, aadLen, mKeys[usage], Crypto::kAES_CCM128_Key_Length,
-                                             nonce.data(), nonce.size(), output, tag, taglen));
+        ReturnErrorOnFailure(
+            AES_CCM_encrypt(input, input_length, AAD, aadLen, mEncryptionKey, nonce.data(), nonce.size(), output, tag, taglen));
     }
 
     mac.SetTag(&header, tag, taglen);
@@ -247,18 +241,8 @@ CHIP_ERROR CryptoContext::Decrypt(const uint8_t * input, size_t input_length, ui
     else
     {
         VerifyOrReturnError(mKeyAvailable, CHIP_ERROR_INVALID_USE_OF_SESSION_KEY);
-        KeyUsage usage = kI2RKey;
-
-        // Message is decrypted on receive. If the secure session was created by session
-        // initiator, we'll use R2I key to decrypt the message (as it was sent by responder).
-        // Otherwise, we'll use I2R key, as the responder is sending the message.
-        if (mSessionRole == SessionRole::kInitiator)
-        {
-            usage = kR2IKey;
-        }
-
-        ReturnErrorOnFailure(AES_CCM_decrypt(input, input_length, AAD, aadLen, tag, taglen, mKeys[usage],
-                                             Crypto::kAES_CCM128_Key_Length, nonce.data(), nonce.size(), output));
+        ReturnErrorOnFailure(
+            AES_CCM_decrypt(input, input_length, AAD, aadLen, tag, taglen, mDecryptionKey, nonce.data(), nonce.size(), output));
     }
     return CHIP_NO_ERROR;
 }

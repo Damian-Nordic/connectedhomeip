@@ -44,11 +44,11 @@ public:
 
     CryptoContext();
     ~CryptoContext();
-    CryptoContext(CryptoContext &&)      = default;
-    CryptoContext(const CryptoContext &) = default;
-    CryptoContext(Crypto::SymmetricKeyContext * context) : mKeyContext(context){};
-    CryptoContext & operator=(const CryptoContext &) = default;
-    CryptoContext & operator=(CryptoContext &&) = default;
+    CryptoContext(CryptoContext &&)      = delete;
+    CryptoContext(const CryptoContext &) = delete;
+    explicit CryptoContext(Crypto::SymmetricKeyContext * context) : mKeyContext(context){};
+    CryptoContext & operator=(const CryptoContext &) = delete;
+    CryptoContext & operator=(CryptoContext &&) = delete;
 
     /**
      *    Whether the current node initiated the session, or it is responded to a session request.
@@ -136,7 +136,7 @@ public:
     CHIP_ERROR PrivacyDecrypt(const uint8_t * input, size_t input_length, uint8_t * output, const PacketHeader & header,
                               const MessageAuthenticationCode & mac) const;
 
-    ByteSpan GetAttestationChallenge() const { return ByteSpan(mKeys[kAttestationChallengeKey], Crypto::kAES_CCM128_Key_Length); }
+    ByteSpan GetAttestationChallenge() const { return ByteSpan(mAttestationChallenge); }
 
     /**
      * @brief
@@ -152,8 +152,6 @@ public:
     bool IsResponder() const { return mKeyAvailable && mSessionRole == SessionRole::kResponder; }
 
 private:
-    typedef uint8_t CryptoKey[Crypto::kAES_CCM128_Key_Length];
-
     enum KeyUsage
     {
         kI2RKey                  = 0,
@@ -165,7 +163,9 @@ private:
     SessionRole mSessionRole;
 
     bool mKeyAvailable;
-    CryptoKey mKeys[KeyUsage::kNumCryptoKeys];
+    Crypto::AesKey mEncryptionKey;
+    Crypto::AesKey mDecryptionKey;
+    Crypto::AesKeyByteArray mAttestationChallenge;
     Crypto::SymmetricKeyContext * mKeyContext = nullptr;
 
     // Use unencrypted header as additional authenticated data (AAD) during encryption and decryption.

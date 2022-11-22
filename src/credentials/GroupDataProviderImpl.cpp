@@ -1741,32 +1741,42 @@ CHIP_ERROR GroupDataProviderImpl::GroupKeyContext::MessageEncrypt(const ByteSpan
                                                                   const ByteSpan & nonce, MutableByteSpan & mic,
                                                                   MutableByteSpan & ciphertext) const
 {
+    Crypto::AesKey key;
+    ReturnErrorOnFailure(key.Initialize(mEncryptionKey));
+
     uint8_t * output = ciphertext.data();
-    return Crypto::AES_CCM_encrypt(plaintext.data(), plaintext.size(), aad.data(), aad.size(), mEncryptionKey,
-                                   Crypto::kAES_CCM128_Key_Length, nonce.data(), nonce.size(), output, mic.data(), mic.size());
+    return Crypto::AES_CCM_encrypt(plaintext.data(), plaintext.size(), aad.data(), aad.size(), key, nonce.data(), nonce.size(),
+                                   output, mic.data(), mic.size());
 }
 
 CHIP_ERROR GroupDataProviderImpl::GroupKeyContext::MessageDecrypt(const ByteSpan & ciphertext, const ByteSpan & aad,
                                                                   const ByteSpan & nonce, const ByteSpan & mic,
                                                                   MutableByteSpan & plaintext) const
 {
+    Crypto::AesKey key;
+    ReturnErrorOnFailure(key.Initialize(mEncryptionKey));
+
     uint8_t * output = plaintext.data();
-    return Crypto::AES_CCM_decrypt(ciphertext.data(), ciphertext.size(), aad.data(), aad.size(), mic.data(), mic.size(),
-                                   mEncryptionKey, Crypto::kAES_CCM128_Key_Length, nonce.data(), nonce.size(), output);
+    return Crypto::AES_CCM_decrypt(ciphertext.data(), ciphertext.size(), aad.data(), aad.size(), mic.data(), mic.size(), key,
+                                   nonce.data(), nonce.size(), output);
 }
 
 CHIP_ERROR GroupDataProviderImpl::GroupKeyContext::PrivacyEncrypt(const ByteSpan & input, const ByteSpan & nonce,
                                                                   MutableByteSpan & output) const
 {
-    return Crypto::AES_CTR_crypt(input.data(), input.size(), mPrivacyKey, Crypto::kAES_CCM128_Key_Length, nonce.data(),
-                                 nonce.size(), output.data());
+    Crypto::AesKey key;
+    ReturnErrorOnFailure(key.Initialize(mPrivacyKey));
+
+    return Crypto::AES_CTR_crypt(input.data(), input.size(), key, nonce.data(), nonce.size(), output.data());
 }
 
 CHIP_ERROR GroupDataProviderImpl::GroupKeyContext::PrivacyDecrypt(const ByteSpan & input, const ByteSpan & nonce,
                                                                   MutableByteSpan & output) const
 {
-    return Crypto::AES_CTR_crypt(input.data(), input.size(), mPrivacyKey, Crypto::kAES_CCM128_Key_Length, nonce.data(),
-                                 nonce.size(), output.data());
+    Crypto::AesKey key;
+    ReturnErrorOnFailure(key.Initialize(mPrivacyKey));
+
+    return Crypto::AES_CTR_crypt(input.data(), input.size(), key, nonce.data(), nonce.size(), output.data());
 }
 
 GroupDataProviderImpl::GroupSessionIterator * GroupDataProviderImpl::IterateGroupSessions(uint16_t session_id)

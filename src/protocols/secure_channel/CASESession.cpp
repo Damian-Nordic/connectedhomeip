@@ -802,10 +802,11 @@ CHIP_ERROR CASESession::SendSigma2()
     msg_r2_signed_enc_len = static_cast<size_t>(tlvWriter.GetLengthWritten());
 
     // Generate the encrypted data blob
-    ReturnErrorOnFailure(AES_CCM_encrypt(msg_R2_Encrypted.Get(), msg_r2_signed_enc_len, nullptr, 0, sr2k,
-                                         CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES, kTBEData2_Nonce, kTBEDataNonceLength,
-                                         msg_R2_Encrypted.Get(), msg_R2_Encrypted.Get() + msg_r2_signed_enc_len,
-                                         CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES));
+    AesKey key;
+    ReturnErrorOnFailure(key.Initialize(sr2k));
+    ReturnErrorOnFailure(AES_CCM_encrypt(msg_R2_Encrypted.Get(), msg_r2_signed_enc_len, nullptr, 0, key, kTBEData2_Nonce,
+                                         kTBEDataNonceLength, msg_R2_Encrypted.Get(),
+                                         msg_R2_Encrypted.Get() + msg_r2_signed_enc_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES));
 
     // Construct Sigma2 Msg
     const size_t mrpParamsSize = mLocalMRPConfig.HasValue() ? TLV::EstimateStructOverhead(sizeof(uint16_t), sizeof(uint16_t)) : 0;
@@ -945,6 +946,7 @@ CHIP_ERROR CASESession::HandleSigma2(System::PacketBufferHandle && msg)
     constexpr size_t kCaseOverheadForFutureTbeData = 128;
 
     uint8_t sr2k[CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES];
+    AesKey key;
 
     P256ECDSASignature tbsData2Signature;
 
@@ -1014,10 +1016,10 @@ CHIP_ERROR CASESession::HandleSigma2(System::PacketBufferHandle && msg)
     SuccessOrExit(err = tlvReader.GetBytes(msg_R2_Encrypted.Get(), static_cast<uint32_t>(msg_r2_encrypted_len_with_tag)));
     msg_r2_encrypted_len = msg_r2_encrypted_len_with_tag - CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES;
 
+    SuccessOrExit(err = key.Initialize(sr2k));
     SuccessOrExit(err = AES_CCM_decrypt(msg_R2_Encrypted.Get(), msg_r2_encrypted_len, nullptr, 0,
-                                        msg_R2_Encrypted.Get() + msg_r2_encrypted_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, sr2k,
-                                        CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES, kTBEData2_Nonce, kTBEDataNonceLength,
-                                        msg_R2_Encrypted.Get()));
+                                        msg_R2_Encrypted.Get() + msg_r2_encrypted_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, key,
+                                        kTBEData2_Nonce, kTBEDataNonceLength, msg_R2_Encrypted.Get()));
 
     decryptedDataTlvReader.Init(msg_R2_Encrypted.Get(), msg_r2_encrypted_len);
     containerType = TLV::kTLVType_Structure;
@@ -1098,6 +1100,7 @@ CHIP_ERROR CASESession::SendSigma3()
     uint8_t msg_salt[kIPKSize + kSHA256_Hash_Length];
 
     uint8_t sr3k[CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES];
+    AesKey key;
 
     chip::Platform::ScopedMemoryBuffer<uint8_t> msg_R3_Signed;
     size_t msg_r3_signed_len;
@@ -1182,10 +1185,10 @@ CHIP_ERROR CASESession::SendSigma3()
     }
 
     // Generated Encrypted data blob
-    err = AES_CCM_encrypt(msg_R3_Encrypted.Get(), msg_r3_encrypted_len, nullptr, 0, sr3k, CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES,
-                          kTBEData3_Nonce, kTBEDataNonceLength, msg_R3_Encrypted.Get(),
-                          msg_R3_Encrypted.Get() + msg_r3_encrypted_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES);
-    SuccessOrExit(err);
+    SuccessOrExit(err = key.Initialize(sr3k));
+    SuccessOrExit(err = AES_CCM_encrypt(msg_R3_Encrypted.Get(), msg_r3_encrypted_len, nullptr, 0, key, kTBEData3_Nonce,
+                                        kTBEDataNonceLength, msg_R3_Encrypted.Get(), msg_R3_Encrypted.Get() + msg_r3_encrypted_len,
+                                        CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES));
 
     // Generate Sigma3 Msg
     data_len = TLV::EstimateStructOverhead(CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, msg_r3_encrypted_len);
@@ -1256,6 +1259,7 @@ CHIP_ERROR CASESession::HandleSigma3(System::PacketBufferHandle && msg)
     size_t msg_r3_signed_len;
 
     uint8_t sr3k[CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES];
+    AesKey key;
 
     P256ECDSASignature tbsData3Signature;
 
@@ -1306,10 +1310,10 @@ CHIP_ERROR CASESession::HandleSigma3(System::PacketBufferHandle && msg)
     SuccessOrExit(err = mCommissioningHash.AddData(ByteSpan{ buf, bufLen }));
 
     // Step 2 - Decrypt data blob
+    SuccessOrExit(err = key.Initialize(sr3k));
     SuccessOrExit(err = AES_CCM_decrypt(msg_R3_Encrypted.Get(), msg_r3_encrypted_len, nullptr, 0,
-                                        msg_R3_Encrypted.Get() + msg_r3_encrypted_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, sr3k,
-                                        CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES, kTBEData3_Nonce, kTBEDataNonceLength,
-                                        msg_R3_Encrypted.Get()));
+                                        msg_R3_Encrypted.Get() + msg_r3_encrypted_len, CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, key,
+                                        kTBEData3_Nonce, kTBEDataNonceLength, msg_R3_Encrypted.Get()));
 
     decryptedDataTlvReader.Init(msg_R3_Encrypted.Get(), msg_r3_encrypted_len);
     containerType = TLV::kTLVType_Structure;
@@ -1432,10 +1436,8 @@ CHIP_ERROR CASESession::ConstructSaltSigma3(const ByteSpan & ipk, MutableByteSpa
 }
 
 CHIP_ERROR CASESession::ConstructSigmaResumeKey(const ByteSpan & initiatorRandom, const ByteSpan & resumptionID,
-                                                const ByteSpan & skInfo, const ByteSpan & nonce, MutableByteSpan & resumeKey)
+                                                const ByteSpan & skInfo, const ByteSpan & nonce, AesKey & resumeKey)
 {
-    VerifyOrReturnError(resumeKey.size() >= CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES, CHIP_ERROR_BUFFER_TOO_SMALL);
-
     constexpr size_t saltSize = kSigmaParamRandomNumberSize + SessionResumptionStorage::kResumptionIdSize;
     uint8_t salt[saltSize];
 
@@ -1449,10 +1451,11 @@ CHIP_ERROR CASESession::ConstructSigmaResumeKey(const ByteSpan & initiatorRandom
     VerifyOrReturnError(bbuf.Fit(saltWritten), CHIP_ERROR_BUFFER_TOO_SMALL);
 
     HKDF_sha_crypto mHKDF;
+    AesKeyByteArray resumeKeyBytes;
     ReturnErrorOnFailure(mHKDF.HKDF_SHA256(mSharedSecret, mSharedSecret.Length(), salt, saltWritten, skInfo.data(), skInfo.size(),
-                                           resumeKey.data(), CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES));
-    resumeKey.reduce_size(CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES);
-    return CHIP_NO_ERROR;
+                                           resumeKeyBytes, CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES));
+
+    return resumeKey.Initialize(resumeKeyBytes);
 }
 
 CHIP_ERROR CASESession::GenerateSigmaResumeMIC(const ByteSpan & initiatorRandom, const ByteSpan & resumptionID,
@@ -1460,13 +1463,10 @@ CHIP_ERROR CASESession::GenerateSigmaResumeMIC(const ByteSpan & initiatorRandom,
 {
     VerifyOrReturnError(resumeMIC.size() >= CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, CHIP_ERROR_BUFFER_TOO_SMALL);
 
-    uint8_t srk[CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES];
-    MutableByteSpan resumeKey(srk);
-
-    ReturnErrorOnFailure(ConstructSigmaResumeKey(initiatorRandom, resumptionID, skInfo, nonce, resumeKey));
-
-    ReturnErrorOnFailure(AES_CCM_encrypt(nullptr, 0, nullptr, 0, resumeKey.data(), resumeKey.size(), nonce.data(), nonce.size(),
-                                         nullptr, resumeMIC.data(), CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES));
+    AesKey srk;
+    ReturnErrorOnFailure(ConstructSigmaResumeKey(initiatorRandom, resumptionID, skInfo, nonce, srk));
+    ReturnErrorOnFailure(AES_CCM_encrypt(nullptr, 0, nullptr, 0, srk, nonce.data(), nonce.size(), nullptr, resumeMIC.data(),
+                                         CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES));
     resumeMIC.reduce_size(CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES);
 
     return CHIP_NO_ERROR;
@@ -1477,13 +1477,10 @@ CHIP_ERROR CASESession::ValidateSigmaResumeMIC(const ByteSpan & resumeMIC, const
 {
     VerifyOrReturnError(resumeMIC.size() == CHIP_CRYPTO_AEAD_MIC_LENGTH_BYTES, CHIP_ERROR_BUFFER_TOO_SMALL);
 
-    uint8_t srk[CHIP_CRYPTO_SYMMETRIC_KEY_LENGTH_BYTES];
-    MutableByteSpan resumeKey(srk);
-
-    ReturnErrorOnFailure(ConstructSigmaResumeKey(initiatorRandom, resumptionID, skInfo, nonce, resumeKey));
-
-    ReturnErrorOnFailure(AES_CCM_decrypt(nullptr, 0, nullptr, 0, resumeMIC.data(), resumeMIC.size(), resumeKey.data(),
-                                         resumeKey.size(), nonce.data(), nonce.size(), nullptr));
+    AesKey srk;
+    ReturnErrorOnFailure(ConstructSigmaResumeKey(initiatorRandom, resumptionID, skInfo, nonce, srk));
+    ReturnErrorOnFailure(
+        AES_CCM_decrypt(nullptr, 0, nullptr, 0, resumeMIC.data(), resumeMIC.size(), srk, nonce.data(), nonce.size(), nullptr));
 
     return CHIP_NO_ERROR;
 }
