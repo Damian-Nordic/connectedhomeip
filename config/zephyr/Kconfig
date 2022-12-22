@@ -15,7 +15,7 @@
 #
 
 menuconfig CHIP
-	bool "Connected Home over IP protocol stack"
+	bool "Matter protocol stack"
 	default n
 	select CPLUSPLUS
 	imply LIB_CPLUSPLUS
@@ -37,7 +37,7 @@ menuconfig CHIP
 	imply NVS
 	imply SETTINGS
 	help
-	  This option enables Connected Home over IP libraries.
+	  This option enables Matter libraries.
 
 if CHIP
 
@@ -48,97 +48,101 @@ config CHIP_DEVICE_VENDOR_ID
 	default 65521 # 0xFFF1
 	range 0 65535
 	help
-	  Identifier of the device manufacturer, assigned by Connectivity Standards
-	  Alliance. It is used in various CHIP areas, such as the Basic Information
-	  cluster or OTA (Over-the-air update) image header.
+	  16-bit numeric identifier of the device manufacturer, assigned by
+	  Connectivity Standards Alliance. It is exposed as an attribute of the
+	  Basic Information cluster, and included in the header of the generated
+	  Matter Over-the-air (OTA) update image.
 
 config CHIP_DEVICE_VENDOR_NAME
-	string "Human-readable vendor name"
+	string "Device vendor name"
 	help
-	  A human-readable vendor name which provides a simple string
-	  containing identification of device's vendor for the Content APP.
-	  This information should be included in the Matter Basic Cluster.
+	  Human-readable name of the device manufacturer. It is exposed as an
+	  attribute of the Basic Information cluster.
 
 config CHIP_DEVICE_PRODUCT_ID
-	int "Device product ID"
+	int "Product ID"
 	default 32768 # 0x8000
 	range 0 65535
 	help
-	  Identifier of the product, assigned by the device manufacturer. It is used
-	  in various CHIP areas, such as the Basic Information cluster or OTA
-	  (Over-the-air update) image header.
+	  16-bit numeric identifier of the product, assigned by the device
+	  manufacturer. It is exposed as an attribute of the Basic Information
+	  cluster, and included in the header of the generated Matter Over-the-air
+	  (OTA) update image.
 
 config CHIP_DEVICE_PRODUCT_NAME
-	string "Human-readable product name"
-	default "not-specified"
+	string "Product name"
 	help
-	  A human-readable product name which provides a simple string
-	  containing identification of the product for the Content APP.
+	  Human-readable product name, such as the model number, assigned by the
+	  device manufacturer. It is exposed as an attribute of the Basic
+	  Information cluster.
 
 config CHIP_DEVICE_HARDWARE_VERSION
-	int "Integer representation of hardware version"
+	int "Hardware version"
 	default 0
 	help
-	  A hardware version number specifies the version number
-	  of the hardware of the device. The meaning of its value,
-	  and the versioning scheme, are vendor defined.
+	  16-bit hardware version number, assigned by the device manufacturer. It is
+	  exposed as an attribute of the Basic Information cluster.
 
 config CHIP_DEVICE_HARDWARE_VERSION_STRING
-	string "user-friendly string representation of hardware version"
+	string "Hardware version string"
 	default "prerelease"
 	help
-	  A hardware version string parameter specifies the version
-	  of the hardware of the device as a more user-friendly value
-	  than that represented by the hardware version integer value.
-	  The meaning of its value, and the versioning scheme, are
-	  vendor defined.
+	  Human-readable representation of the hardware version number. This must be
+	  an ASCII string of length between 1 and 64 characters. The hardware version
+	  string is exposed as an attribute of the Basic Information cluster.
 
 config CHIP_DEVICE_SOFTWARE_VERSION
-	int "Device software version"
+	int "Software version"
 	default 0
 	range 0 4294967295
 	help
-	  A number identifying the software version. It is used in various CHIP
-	  areas, such as the Basic Information cluster or OTA (Over-the-air update)
-	  image header. Note that due to the rollback protection a device will only
-	  accept a software update whose version is greater than the current one.
+	  32-bit software version number. It is exposed as an attribute of the Basic
+	  Information cluster, and included in the header of the generated Matter
+	  Over-the-air (OTA) update image. The exact numbering scheme is up to the
+	  device manufacturer though when using the Matter OTA mechanism, only
+	  updates to higher versions than the current one are accepted.
 
 config CHIP_DEVICE_SOFTWARE_VERSION_STRING
-	string "Device software version string"
+	string "Software version string"
 	default "prerelease"
 	help
-	  A string between 1 and 64 characters that provides a user-friendly
-	  description of the numeric software version specified in
-	  CHIP_DEVICE_SOFTWARE_VERSION. It is used in various CHIP areas, such as
-	  the Basic Information cluster or OTA (Over-the-air update) image header.
+	  Human-readable representation of the software version number. This must be
+	  an ASCII string of length between 1 and 64 characters. The software
+	  version string is exposed as an attribute of the Basic Information
+	  cluster, and included in the header of the generated Matter Over-the-air
+	  (OTA) update image.
 
 config CHIP_DEVICE_MANUFACTURING_DATE
-	string "Manufacturing date in ISO 8601"
+	string "Manufacturing date (ISO 8601 format)"
 	default "2022-01-01"
 	help
-	  A manufacturing date specifies the date that the device was manufactured.
-	  The format used for providing a manufacturing date is ISO 8601 e.g. YYYY-MM-DD.
+	  Device manufacturing date in the ISO 8601 format: YYYY-MM-DD.
 
 config CHIP_DEVICE_SERIAL_NUMBER
-	string "Serial number of device"
+	string "Device serial number"
 	default "11223344556677889900"
 	help
-	  A serial number parameter defines an unique number of manufactured device.
-	  Maximum length of serial number is 32 characters.
+	  Human-readable representation of the device serial number that uniquely
+	  identifies the device. This must be an ASCII string of no more than 32
+	  characters.
 
 config CHIP_DEVICE_ROTATING_DEVICE_UID
-	string  "A rotating device id unique id"
+	string "Rotating device ID unique ID"
 	default "91a9c12a7c80700a31ddcfa7fce63e44"
 	help
-	  A device rotating id unique id which will be generated if
-	  this config is not set in prj.conf file.
+	  Unique identifier of the device that is used to derive a rotating device
+	  identifier. The rotating device identifier allows commissioners to
+	  discover the device in a privacy-preserving way. This must be a string of
+	  at least 16 bytes encoded in hex.
 
 config CHIP_DEVICE_TYPE
-	int "Device type"
+	int "Primary device type"
 	default 65535
 	range 0 65535
 	help
-	  Type of device that uses the CHIP Device Type Identifier. The default value means invalid device type.
+	  Primary device type implemented by the node. This must be one of the
+	  device type identifiers defined in the Matter Device Library
+	  specification.
 
 config CHIP_DEVICE_DISCRIMINATOR
 	hex "Device pairing discriminator"
@@ -208,16 +212,16 @@ config CHIP_ENABLE_PAIRING_AUTOSTART
 	  Open pairing window automatically at application boot time.
 
 config CHIP_OTA_REQUESTOR
-	bool "Enable OTA requestor"
+	bool "OTA Software Update Requestor"
 	help
-	  Enables OTA (Over-the-air) Requestor role that allows a device to perform
+	  Enable Over-the-air (OTA) Requestor role that allows the node to perform
 	  Device Firmware Upgrade by quering and downloading a new firmware image
-	  from an external OTA Provider node.
+	  from a peer OTA Provider node.
 
 config CHIP_ROTATING_DEVICE_ID
-	bool "Enable rotating device ID support"
+	bool "Generate rotating device ID"
 	help
-	  Enables rotating device identifier that provides a non-trackable identifier
+	  Enable rotating device identifier that provides a non-trackable identifier
 	  which is unique per device and rotates at pre-defined moments.
 
 config CHIP_COMMISSIONABLE_DEVICE_TYPE
