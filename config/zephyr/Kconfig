@@ -15,7 +15,7 @@
 #
 
 menuconfig CHIP
-	bool "Enable Matter protocol stack"
+	bool "Matter protocol stack"
 	default n
 	select CPLUSPLUS
 	imply LIB_CPLUSPLUS
@@ -167,26 +167,26 @@ config CHIP_DEVICE_SPAKE2_IT
 	int "SPAKE2+ iteration count"
 	default 1000
 	help
-	  Provides the SPAKE2 iteration count, which is associated with the ephemeral
+	  Provides the SPAKE2+ iteration count, which is associated with the ephemeral
 	  PAKE passcode verifier used for the commissioning.
 	  The iteration count is used as a crypto parameter to process
-	  SPAKE2 verifier.
+	  SPAKE2+ verifier.
 
 config CHIP_DEVICE_SPAKE2_SALT
 	string "SPAKE2+ salt in string format"
 	default "U1BBS0UyUCBLZXkgU2FsdA=="
 	help
-	  Provides the SPAKE2 salt, which is random data that is used as an additional input
+	  Provides the SPAKE2+ salt, which is random data that is used as an additional input
 	  to a one-way function that “hashes” data.
 	  A new salt should be randomly generated for each password.
-	  The minimum length of SPAKE2 salt is 16 Bytes.
-	  The maximum length of SPAKE2 salt is 32 Bytes.
+	  The minimum length of SPAKE2+ salt is 16 Bytes.
+	  The maximum length of SPAKE2+ salt is 32 Bytes.
 
 config CHIP_DEVICE_SPAKE2_TEST_VERIFIER
 	string "SPAKE2+ verifier for testing purposes"
 	default "uWFwqugDNGiEck/po7KHwwMwwqZgN10XuyBajPGuyzUEV/iree4lOrao5GuwnlQ65CJzbeUB49s31EH+NEkg0JVI5MGCQGMMT/SRPFNRODm3wH/MBiehuFc6FJ/NH6Rmzw=="
 	help
-	  Provides the SPAKE2 verifier that was generated using default values for SPAKE2 salt,
+	  Provides the SPAKE2+ verifier that was generated using default values for SPAKE2+ salt,
 	  iteration count, and passcode. This value can be used for development
 	  or testing purposes.
 	  Generated with the following command:

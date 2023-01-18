@@ -122,19 +122,19 @@ config CHIP_FACTORY_DATA_VERSION
 	  The factory data version contains the current version of the factory data
 	  parameter set, which the user cannot change.
 	  After moving to the next version of the factory data set, this option changes the default value.
-	  Use uhis config to validate the version of the factory data set on the device-side
+	  Use this config to validate the version of the factory data set on the device-side
 	  with the version of the factory data saved in the flash memory.
 
 if CHIP_FACTORY_DATA_BUILD
 
 # Factory data definitions
 config CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE
-	bool "Enable merging the generated factory data with the build target HEX file"
+	bool "Enable merging the generated factory data with the HEX output build file"
 	default y
 	help
-	  Enables merging the generated factory data with the build target merged.hex file.
-	  As a result, a new merged.hex output file is created, which includes all partitions, also
-	  factory data.
+	  Enables merging the generated factory data with the merged.hex output build file.
+	  As a result, the merged.hex build output file, which is used when flashing the firmware
+	  using the west tool, includes the factory data as well.
 
 # Select source of the certificates
 choice CHIP_FACTORY_DATA_CERT_SOURCE
@@ -176,14 +176,12 @@ config CHIP_FACTORY_DATA_USER_CERTS_PAI_CERT
 		Provides the absolute path pointing to the PAI certificate in binary format.
 endif
 
-# Configs for SPAKE2 generation
+# Configs for SPAKE2+ generation
 config CHIP_FACTORY_DATA_GENERATE_SPAKE2_VERIFIER
-	bool "Enable SPAKE2 verifier generation"
+	bool "Enable SPAKE2+ verifier generation"
 	help
-	  Enables the generation of the SPAKE2 verifier according to
+	  Enables the generation of the SPAKE2+ verifier according to
 	  the given iteration counter, salt, and passcode.
-	  To generate SPAKE2 verifier, a SPAKE2P executable must be available
-	  from the system variables environment.
 
 config CHIP_DEVICE_GENERATE_ROTATING_DEVICE_UID
 	bool "Enable generation of a new Rotating device ID unique ID"
