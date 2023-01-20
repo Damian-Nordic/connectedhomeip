@@ -116,7 +116,7 @@ executable("dynamic-chip-bridge-app") {
 
   output_dir = root_out_dir
 
-  configs += ["${chip_root}/src:includes"]
+  configs += [ "${chip_root}/src:includes" ]
 }
 
 group("linux") {
