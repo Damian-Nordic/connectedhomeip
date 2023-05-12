@@ -472,18 +472,23 @@ def main() -> int:
             flush_print(
                 'The path for nrfconnect toolchain was not found. Make sure nrfconnect.ZEPHYR_SDK_INSTALL_DIR is set on your config.yaml file. This is typically <NCS INSTALL PATH>/ncs/toolchains/vX.X.X/opt/zephyr-sdk')
             exit(1)
-        shell.run_cmd(
-            f'source {config["nrfconnect"]["ZEPHYR_BASE"]}/zephyr-env.sh')
-        shell.run_cmd("export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb")
-        shell.run_cmd(
-            f"export ZEPHYR_BASE={config['nrfconnect']['ZEPHYR_BASE']}")
-        shell.run_cmd(
-            f"export ZEPHYR_SDK_INSTALL_DIR={config['nrfconnect']['ZEPHYR_SDK_INSTALL_DIR']}")
-        shell.run_cmd(
-            "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ZEPHYR_SDK_INSTALL_DIR/../../usr/lib")
-        shell.run_cmd(
-            "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ZEPHYR_SDK_INSTALL_DIR/../../usr/local/lib")
-
+        zephyr_sdk_dir = config['nrfconnect']['ZEPHYR_SDK_INSTALL_DIR']
+        shell.run_cmd("export ZEPHYR_TOOLCHAIN_VARIANT=zephyr")
+        shell.run_cmd(f"export ZEPHYR_SDK_INSTALL_DIR={zephyr_sdk_dir}")
+        shell.run_cmd(f"export ZEPHYR_BASE={config['nrfconnect']['ZEPHYR_BASE']}")
+        shell.run_cmd(f'source {config["nrfconnect"]["ZEPHYR_BASE"]}/zephyr-env.sh')
+        # QUIRK:
+        # When the Zephyr SDK is installed as a part of the NCS toolchain, the build system will use
+        # build tools from the NCS toolchain, but it will not update the PATH and LD_LIBRARY_PATH
+        # and hence the build will fail. This ideally, should be handled automatically by the NCS
+        # build system but until it is fixed, set the variables manually.
+        ncs_toolchain_dir = os.path.abspath(f"{zephyr_sdk_dir}/../..")
+        if os.path.exists(os.path.join(ncs_toolchain_dir, 'manifest.json')):
+            shell.run_cmd(f"export PATH=$PATH:{ncs_toolchain_dir}/usr/bin")
+            shell.run_cmd(f"export PATH=$PATH:{ncs_toolchain_dir}/usr/local/bin")
+            shell.run_cmd(f"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{ncs_toolchain_dir}/usr/lib")
+            shell.run_cmd(
+                f"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{ncs_toolchain_dir}/usr/local/lib")
     elif options.build_target == "linux":
         pass
     elif options.build_target == "silabs-thread":
