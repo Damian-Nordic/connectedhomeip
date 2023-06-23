@@ -22,7 +22,6 @@
 #include <LightSwitch.h>
 #include <LightingManager.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <platform/CHIPDeviceLayer.h>
 
 using namespace chip;
@@ -43,37 +42,15 @@ static Engine AppCmdDebugSubCommands;
 static Engine AppCmdIdentifySubCommands;
 static Engine AppCmdIdentifyReadSubCommands;
 
-static CHIP_ERROR AppCmdHelpHandler(int argc, char ** argv)
-{
-    AppCmdSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR AppCmdCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return AppCmdHelpHandler(argc, argv);
-    }
-
     return AppCmdSubCommands.ExecCommand(argc, argv);
 }
 
 namespace Local {
 
-static CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
-{
-    AppCmdLocalSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR AppCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return AppCmdLocalSubCommands.ExecCommand(argc, argv);
 }
 
@@ -138,19 +115,8 @@ CHIP_ERROR AssignUnicastData(LightSwitch::Status mStatus)
 
 namespace Unicast {
 
-static CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
-{
-    AppCmdOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR AppCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return AppCmdOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -200,35 +166,13 @@ CHIP_ERROR AssignGroupData(LightSwitch::Status mStatus)
 
 namespace Group {
 
-static CHIP_ERROR AppSwitchHelpHandler(int argc, char ** argv)
-{
-    AppCmdGroupsSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR AppCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return AppSwitchHelpHandler(argc, argv);
-    }
-
     return AppCmdGroupsSubCommands.ExecCommand(argc, argv);
-}
-
-static CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
-{
-    AppCmdGroupsOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
 }
 
 static CHIP_ERROR OnOffCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return AppCmdGroupsOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -251,35 +195,13 @@ CHIP_ERROR ToggleCommandHandler(int argc, char ** argv)
 
 namespace Identify {
 
-CHIP_ERROR IdentifyHelpHandler(int argc, char ** argv)
-{
-    AppCmdIdentifySubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR AppCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return IdentifyHelpHandler(argc, argv);
-    }
-
     return AppCmdIdentifySubCommands.ExecCommand(argc, argv);
-}
-
-CHIP_ERROR ReadHelpHandler(int argc, char ** argv)
-{
-    AppCmdIdentifyReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR Read(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return ReadHelpHandler(argc, argv);
-    }
-
     return AppCmdIdentifyReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -309,19 +231,8 @@ CHIP_ERROR ReadFeatureMap(int argc, char ** argv)
 
 namespace Debug {
 
-static CHIP_ERROR DebugHelpHandler(int argc, char ** argv)
-{
-    AppCmdDebugSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR AppCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return DebugHelpHandler(argc, argv);
-    }
-
     return AppCmdDebugSubCommands.ExecCommand(argc, argv);
 }
 
@@ -404,7 +315,6 @@ CHIP_ERROR ChangeBrightnessCommandHandler(int argc, char ** argv)
 void RegisterAppShellCommands()
 {
     static const shell_command_t ifxAppCmdSubCommands[] = {
-        { &AppCmdHelpHandler, "help", "Switch commands" },
         { &Local::AppCommandHandler, "local", "Light-switch on/off local device." },
         { &Unicast::AppCommandHandler, "onoff", "Lightbulb on/off remote device by unicast." },
         { &Group::AppCommandHandler, "groups", "Lightbulb on/off remote device by group." },
@@ -412,33 +322,27 @@ void RegisterAppShellCommands()
         { &Identify::AppCommandHandler, "identify", "identify read attribute" },
     };
 
-    static const shell_command_t ifxAppCmdLocalSubCommands[] = { { &Local::OnOffHelpHandler, "help",
-                                                                   "Usage: switch local [on|off|toggle]" },
-                                                                 { &Local::OnCommandHandler, "on", "Make light on" },
+    static const shell_command_t ifxAppCmdLocalSubCommands[] = { { &Local::OnCommandHandler, "on", "Make light on" },
                                                                  { &Local::OffCommandHandler, "off", "Make light off" },
                                                                  { &Local::ToggleCommandHandler, "toggle", "Toggle the light" } };
 
     static const shell_command_t ifxAppCmdOnOffSubCommands[] = {
-        { &Unicast::OnOffHelpHandler, "help", "Usage: switch onoff [on|off|toggle]" },
         { &Unicast::OnCommandHandler, "on", "Sends on command to bound Lightbulb" },
         { &Unicast::OffCommandHandler, "off", "Sends off command to bound Lightbulb" },
         { &Unicast::ToggleCommandHandler, "toggle", "Sends toggle command to bound Lightbulb" },
     };
 
     static const shell_command_t ifxAppCmdGroupsSubCommands[] = {
-        { &Group::AppSwitchHelpHandler, "help", "Switch a group of bounded Lightbulbs" },
         { &Group::OnOffCommandHandler, "onoff", "Usage: switch groups onoff [on|off|toggle]" },
     };
 
     static const shell_command_t ifxAppCmdGroupsOnOffSubCommands[] = {
-        { &Group::OnOffHelpHandler, "help", "Usage: switch groups onoff [on|off|toggle]" },
         { &Group::OnCommandHandler, "on", "Sends on command to bound Group" },
         { &Group::OffCommandHandler, "off", "Sends off command to bound Group" },
         { &Group::ToggleCommandHandler, "toggle", "Sends toggle command to bound Group" },
     };
 
     static const shell_command_t ifxAppCmdDebugSubCommands[] = {
-        { &Debug::DebugHelpHandler, "help", "Debug use commands " },
         { &Debug::StartBLEAdvertisingDebugCommandHandler, "bleadv", "Usage: switch debug bleadv [start|stop]" },
         { &Debug::TableDebugCommandHandler, "table", "Print a binding table. Usage: switch debug table" },
         { &Debug::GroupBindCommandHandler, "bind_group", "Usage: switch debug bind_group [fabric index] [group id] [cluster id]" },
@@ -453,7 +357,6 @@ void RegisterAppShellCommands()
     };
 
     static const shell_command_t ifxAppCmdIdentifyReadSubCommands[] = {
-        { &Identify::ReadHelpHandler, "help", "Usage: switch identify read <attribute>" },
         { &Identify::ReadAttributeList, "attlist", "attribute list attribute" },
         { &Identify::ReadFeatureMap, "featureMap", "featureMap attribute" },
     };

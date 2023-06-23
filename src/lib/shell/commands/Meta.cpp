@@ -30,7 +30,6 @@
 #include <CHIPVersion.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CodeUtils.h>
 #include <platform/CHIPDeviceLayer.h>
 
@@ -49,12 +48,6 @@ static void AtExitShell()
     chip::DeviceLayer::PlatformMgr().Shutdown();
 }
 
-static CHIP_ERROR HelpHandler(int argc, char ** argv)
-{
-    Engine::Root().ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 static CHIP_ERROR VersionHandler(int argc, char ** argv)
 {
     streamer_printf(streamer_get(), "CHIP %s\r\n", CHIP_VERSION_STRING);
@@ -65,7 +58,6 @@ void RegisterMetaCommands()
 {
     static shell_command_t sCmds[] = {
         { &ExitHandler, "exit", "Exit the shell application" },
-        { &HelpHandler, "help", "List out all top level commands" },
         { &VersionHandler, "version", "Output the software version" },
     };
 

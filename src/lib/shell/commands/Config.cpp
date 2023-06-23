@@ -19,7 +19,6 @@
 #include <lib/core/CHIPCore.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -34,12 +33,6 @@ namespace chip {
 namespace Shell {
 
 static chip::Shell::Engine sShellConfigSubcommands;
-
-CHIP_ERROR ConfigHelpHandler(int argc, char ** argv)
-{
-    sShellConfigSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 static CHIP_ERROR ConfigGetVendorId(bool printHeader)
 {
@@ -182,16 +175,11 @@ static CHIP_ERROR PrintAllConfigs()
 
 static CHIP_ERROR ConfigHandler(int argc, char ** argv)
 {
-    switch (argc)
+    if (argc == 0)
     {
-    case 0:
         return PrintAllConfigs();
-    case 1:
-        if ((strcmp(argv[0], "help") == 0) || (strcmp(argv[0], "-h") == 0))
-        {
-            return ConfigHelpHandler(argc, argv);
-        }
     }
+
     return sShellConfigSubcommands.ExecCommand(argc, argv);
 }
 
@@ -203,7 +191,6 @@ void RegisterConfigCommands()
                                                    "to set some values (discriminator): config [param_name] [param_value]." };
 
     static const shell_command_t sConfigSubCommands[] = {
-        { &ConfigHelpHandler, "help", "Usage: config <subcommand>" },
         { &ConfigVendorId, "vendorid", "Get VendorId. Usage: config vendorid" },
         { &ConfigProductId, "productid", "Get ProductId. Usage: config productid" },
         { &ConfigHardwareVersion, "hardwarever", "Get HardwareVersion. Usage: config hardwarever" },

@@ -19,7 +19,6 @@
 #include <lib/core/CHIPCore.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -46,12 +45,6 @@ uint16_t sServerPortCommissioning = CHIP_UDC_PORT;
 bool sServerEnabled               = false;
 
 } // namespace
-
-static CHIP_ERROR CmdAppServerHelp(int argc, char ** argv)
-{
-    sShellServerSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 static CHIP_ERROR CmdAppServerStart(int argc, char ** argv)
 {
@@ -202,16 +195,6 @@ static CHIP_ERROR CmdAppServerEndpoints(int argc, char ** argv)
 
 static CHIP_ERROR CmdAppServer(int argc, char ** argv)
 {
-    switch (argc)
-    {
-    case 0:
-        return CmdAppServerHelp(argc, argv);
-    case 1:
-        if ((strcmp(argv[0], "help") == 0) || (strcmp(argv[0], "-h") == 0))
-        {
-            return CmdAppServerHelp(argc, argv);
-        }
-    }
     return sShellServerSubcommands.ExecCommand(argc, argv);
 }
 
@@ -223,10 +206,9 @@ static void CmdAppServerAtExit()
 void cmd_app_server_init()
 {
     static const shell_command_t sServerComand = { &CmdAppServer, "server",
-                                                   "Manage the ZCL application server. Usage: server [help|start|stop]" };
+                                                   "Manage the ZCL application server. Usage: server [start|stop...]" };
 
     static const shell_command_t sServerSubCommands[] = {
-        { &CmdAppServerHelp, "help", "Usage: server <subcommand>" },
         { &CmdAppServerStart, "start", "Start the ZCL application server." },
         { &CmdAppServerStop, "stop", "Stop the ZCL application server." },
         { &CmdAppServerPort, "port", "Get/Set operational port of server." },

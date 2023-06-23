@@ -21,7 +21,6 @@
 #include <platform/CHIPDeviceLayer.h>
 #endif
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -33,12 +32,6 @@ namespace Shell {
 
 static chip::Shell::Engine sShellDeviceSubcommands;
 
-int DeviceHelpHandler(int argc, char ** argv)
-{
-    sShellDeviceSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return 0;
-}
-
 static CHIP_ERROR FactoryResetHandler(int argc, char ** argv)
 {
     streamer_printf(streamer_get(), "Performing factory reset ... \r\n");
@@ -48,11 +41,6 @@ static CHIP_ERROR FactoryResetHandler(int argc, char ** argv)
 
 static CHIP_ERROR DeviceHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        DeviceHelpHandler(argc, argv);
-        return CHIP_NO_ERROR;
-    }
     return sShellDeviceSubcommands.ExecCommand(argc, argv);
 }
 

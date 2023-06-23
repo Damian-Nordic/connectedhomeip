@@ -22,7 +22,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -312,19 +311,14 @@ void ProcessLevelControlGroupBindingCommand(BindingCommandData * data, const Emb
  * LevelControl switch shell functions
  *********************************************************/
 
-CHIP_ERROR LevelControlHelpHandler(int argc, char ** argv)
+CHIP_ERROR LevelControlHelpHandler()
 {
-    sShellSwitchLevelControlSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchLevelControlSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR LevelControlSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return LevelControlHelpHandler(argc, argv);
-    }
-
     return sShellSwitchLevelControlSubCommands.ExecCommand(argc, argv);
 }
 
@@ -332,7 +326,7 @@ CHIP_ERROR MoveToLevelSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -351,7 +345,7 @@ CHIP_ERROR MoveSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -370,7 +364,7 @@ CHIP_ERROR StepSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -390,7 +384,7 @@ CHIP_ERROR StopSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -407,7 +401,7 @@ CHIP_ERROR MoveToLevelWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -426,7 +420,7 @@ CHIP_ERROR MoveWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -445,7 +439,7 @@ CHIP_ERROR StepWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -465,7 +459,7 @@ CHIP_ERROR StopWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return LevelControlHelpHandler(argc, argv);
+        return LevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -482,19 +476,8 @@ CHIP_ERROR StopWithOnOffSwitchCommandHandler(int argc, char ** argv)
  * LevelControl Read switch shell functions
  *********************************************************/
 
-CHIP_ERROR LevelControlReadHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchLevelControlReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR LevelControlRead(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return LevelControlReadHelpHandler(argc, argv);
-    }
-
     return sShellSwitchLevelControlReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -667,19 +650,14 @@ CHIP_ERROR LevelControlReadStartUpCurrentLevel(int argc, char ** argv)
  * Groups LevelControl switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsLevelControlHelpHandler(int argc, char ** argv)
+CHIP_ERROR GroupsLevelControlHelpHandler()
 {
-    sShellSwitchGroupsLevelControlSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchGroupsLevelControlSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR GroupsLevelControlSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsLevelControlHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsLevelControlSubCommands.ExecCommand(argc, argv);
 }
 
@@ -687,7 +665,7 @@ CHIP_ERROR GroupsMoveToLevelSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -707,7 +685,7 @@ CHIP_ERROR GroupsMoveSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -727,7 +705,7 @@ CHIP_ERROR GroupsStepSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -748,7 +726,7 @@ CHIP_ERROR GroupsStopSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -766,7 +744,7 @@ CHIP_ERROR GroupsMoveToLevelWithOnOffSwitchCommandHandler(int argc, char ** argv
 {
     if (argc != 4)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -786,7 +764,7 @@ CHIP_ERROR GroupsMoveWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -806,7 +784,7 @@ CHIP_ERROR GroupsStepWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -827,7 +805,7 @@ CHIP_ERROR GroupsStopWithOnOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return GroupsLevelControlHelpHandler(argc, argv);
+        return GroupsLevelControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();

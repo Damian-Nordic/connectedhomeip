@@ -20,7 +20,6 @@
 #ifdef CONFIG_CHIP_LIB_SHELL
 #include <lib/core/CHIPError.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 
 namespace SwitchCommands {
 

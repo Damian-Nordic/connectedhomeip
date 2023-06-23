@@ -32,7 +32,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -149,19 +148,8 @@ void InitBindingHandlerInternal(intptr_t arg)
  * Switch shell functions
  *********************************************************/
 
-CHIP_ERROR SwitchHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR SwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return SwitchHelpHandler(argc, argv);
-    }
-
     return sShellSwitchSubCommands.ExecCommand(argc, argv);
 }
 
@@ -169,19 +157,8 @@ CHIP_ERROR SwitchCommandHandler(int argc, char ** argv)
  * bind switch shell functions
  *********************************************************/
 
-CHIP_ERROR BindingHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchBindingSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR BindingSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return BindingHelpHandler(argc, argv);
-    }
-
     return sShellSwitchBindingSubCommands.ExecCommand(argc, argv);
 }
 
@@ -220,19 +197,8 @@ CHIP_ERROR BindingUnicastBindCommandHandler(int argc, char ** argv)
  * Groups switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchGroupsSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR GroupsSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsSubCommands.ExecCommand(argc, argv);
 }
 
@@ -244,7 +210,6 @@ static void RegisterSwitchCommands()
 {
 
     static const shell_command_t sSwitchSubCommands[] = {
-        { &SwitchHelpHandler, "help", "Usage: switch <subcommand>" },
         { &IdentifySwitchCommandHandler, "identify", " Usage: switch identify <subcommand>" },
         { &OnOffSwitchCommandHandler, "onoff", " Usage: switch onoff <subcommand>" },
         { &LevelControlSwitchCommandHandler, "levelcontrol", " Usage: switch levlecontrol <subcommand>" },
@@ -255,21 +220,18 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchIdentifySubCommands[] = {
-        { &IdentifyHelpHandler, "help", "Usage: switch identify <subcommand>" },
         { &IdentifyCommandHandler, "identify", "identify Usage: switch identify identify" },
         { &TriggerEffectSwitchCommandHandler, "triggereffect", "triggereffect Usage: switch identify triggereffect" },
         { &IdentifyRead, "read", "Usage : switch identify read <attribute>" }
     };
 
     static const shell_command_t sSwitchIdentifyReadSubCommands[] = {
-        { &IdentifyReadHelpHandler, "help", "Usage : switch identify read <attribute>" },
         { &IdentifyReadAttributeList, "attlist", "Read attribute list" },
         { &IdentifyReadIdentifyTime, "identifytime", "Read identifytime attribute" },
         { &IdentifyReadIdentifyType, "identifytype", "Read identifytype attribute" },
     };
 
     static const shell_command_t sSwitchOnOffSubCommands[] = {
-        { &OnOffHelpHandler, "help", "Usage: switch ononff <subcommand>" },
         { &OnSwitchCommandHandler, "on", "on Usage: switch onoff on" },
         { &OffSwitchCommandHandler, "off", "off Usage: switch onoff off" },
         { &ToggleSwitchCommandHandler, "toggle", "toggle Usage: switch onoff toggle" },
@@ -281,7 +243,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchOnOffReadSubCommands[] = {
-        { &OnOffReadHelpHandler, "help", "Usage : switch ononff read <attribute>" },
         { &OnOffReadAttributeList, "attlist", "Read attribute list" },
         { &OnOffReadOnOff, "onoff", "Read onoff attribute" },
         { &OnOffReadGlobalSceneControl, "GSC", "Read GlobalSceneControl attribute" },
@@ -291,7 +252,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchLevelControlSubCommands[] = {
-        { &LevelControlHelpHandler, "help", "Usage: switch levelcontrol <subcommand>" },
         { &MoveToLevelSwitchCommandHandler, "movetolevel",
           "movetolevel Usage: switch levelcontrol movetolevel <level> <transitiontime> <optionsmask> <optionsoverride>" },
         { &MoveSwitchCommandHandler, "move",
@@ -312,7 +272,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchLevelControlReadSubCommands[] = {
-        { &LevelControlReadHelpHandler, "help", "Usage : switch levelcontrol read <attribute>" },
         { &LevelControlReadAttributeList, "attlist", "Read attribute list" },
         { &LevelControlReadCurrentLevel, "currentlevel", "Read currentlevel attribute" },
         { &LevelControlReadRemainingTime, "remainingtime", "Read remainingtime attribute" },
@@ -331,7 +290,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchColorControlSubCommands[] = {
-        { &ColorControlHelpHandler, "help", "Usage: switch colorcontrol <subcommand>" },
         { &MoveToHueCommandHandler, "movetohue",
           "movetohue Usage: switch colorcontrol movetohue <hue> <direction> <transitiontime> <optionsmask> <optionsoverride>" },
         { &MoveHueCommandHandler, "movehue",
@@ -384,7 +342,6 @@ static void RegisterSwitchCommands()
 
     static const shell_command_t sSwitchColorControlReadSubCommands[] = {
         // fill in read color control attributes commands
-        { &ColorControlReadHelpHandler, "help", "Usage : switch colorcontrol read <attribute>" },
         { &ColorControlReadAttributeList, "attlist", "Read attribute list" },
         { &ColorControlReadCurrentHue, "currenthue", "Read currenthue attribute" },
         { &ColorControlReadCurrentSaturation, "currentsat", "Read currentsaturaion attribute" },
@@ -441,13 +398,11 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchThermostatSubCommands[] = {
-        { &ThermostatHelpHandler, "help", "Usage: switch thermostat <subcommand>" },
         { &SetpointRaiseLowerSwitchCommandHandler, "SPRL", "setpointraiselower Usage: switch thermostat SPRL <mode> <amount>" },
         { &ThermostatRead, "read", "Usage : switch thermostat read <attribute>" }
     };
 
     static const shell_command_t sSwitchThermostatReadSubCommands[] = {
-        { &ThermostatReadHelpHandler, "help", "Usage : switch thermostat read <attribute>" },
         { &ThermostatReadAttributeList, "attlist", "Read attribute list" },
         { &ThermostatReadLocalTemperature, "localtemp", "Read localtemperature attribute" },
         { &ThermostatReadAbsMinHeatSetpointLimit, "absminHSL", "Read absminheatsetpointlimit attribute" },
@@ -467,7 +422,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchGroupsSubCommands[] = {
-        { &GroupsHelpHandler, "help", "Usage: switch groups <subcommand>" },
         { &GroupsOnOffSwitchCommandHandler, "onoff", "Usage: switch groups onoff <subcommand>" },
         { &GroupsLevelControlSwitchCommandHandler, "levelcontrol", "Usage: switch groups levelcontrol <subcommand>" },
         { &GroupsColorControlSwitchCommandHandler, "colorcontrol", "Usage: switch groups colorcontrol <subcommand>" },
@@ -475,13 +429,11 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchGroupsIdentifySubCommands[] = {
-        { &GroupsIdentifyHelpHandler, "help", "Usage: switch groups onoff <subcommand>" },
         { &GroupIdentifyCommandHandler, "identify", "Sends identify command to bound group" },
         { &GroupTriggerEffectSwitchCommandHandler, "triggereffect", "Sends triggereffect command to group" },
     };
 
     static const shell_command_t sSwitchGroupsOnOffSubCommands[] = {
-        { &GroupsOnOffHelpHandler, "help", "Usage: switch groups onoff <subcommand>" },
         { &GroupOnSwitchCommandHandler, "on", "Sends on command to bound group" },
         { &GroupOffSwitchCommandHandler, "off", "Sends off command to bound group" },
         { &GroupToggleSwitchCommandHandler, "toggle", "Sends toggle command to group" },
@@ -491,7 +443,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchGroupsLevelControlSubCommands[] = {
-        { &GroupsLevelControlHelpHandler, "help", "Usage: switch groupos levelcontrol <subcommand>" },
         { &GroupsMoveToLevelSwitchCommandHandler, "movetolevel",
           "movetolevel Usage: switch groups levelcontrol movetolevel <level> <transitiontime> <optionsmask> <optionsoverride>" },
         { &GroupsMoveSwitchCommandHandler, "move",
@@ -512,7 +463,6 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchGroupsColorControlSubCommands[] = {
-        { &GroupsColorControlHelpHandler, "help", "Usage: switch groups colorcontrol <subcommand>" },
         { &GroupsMoveToHueCommandHandler, "movetohue",
           "movetohue Usage: switch groups colorcontrol movetohue <hue> <direction> <transitiontime> <optionsmask> "
           "<optionsoverride>" },
@@ -568,13 +518,11 @@ static void RegisterSwitchCommands()
     };
 
     static const shell_command_t sSwitchGroupsThermostatSubCommands[] = {
-        { &GroupsThermostatHelpHandler, "help", "Usage: switch groups thermostat <subcommand>" },
         { &GroupsSetpointRaiseLowerSwitchCommandHandler, "SPRL",
           "setpointraiselower Usage: switch groups thermostat SPRL <mode> <amount>" },
     };
 
     static const shell_command_t sSwitchBindingSubCommands[] = {
-        { &BindingHelpHandler, "help", "Usage: switch binding <subcommand>" },
         { &BindingGroupBindCommandHandler, "group", "Usage: switch binding group <fabric index> <group id>" },
         { &BindingUnicastBindCommandHandler, "unicast", "Usage: switch binding unicast <fabric index> <node id> <endpoint>" }
     };

@@ -25,7 +25,6 @@
 #include <lib/core/CHIPCore.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/Base64.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CodeUtils.h>
@@ -35,12 +34,6 @@ chip::Shell::Engine sShellBase64Commands;
 
 namespace chip {
 namespace Shell {
-
-static CHIP_ERROR Base64HelpHandler(int argc, char ** argv)
-{
-    sShellBase64Commands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 static CHIP_ERROR Base64DecodeHandler(int argc, char ** argv)
 {
@@ -84,10 +77,6 @@ static CHIP_ERROR Base64EncodeHandler(int argc, char ** argv)
 
 static CHIP_ERROR Base64Dispatch(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return Base64HelpHandler(argc, argv);
-    }
     return sShellBase64Commands.ExecCommand(argc, argv);
 }
 
@@ -95,7 +84,6 @@ void RegisterBase64Commands()
 {
     /// Subcommands for root command: `base64 <subcommand>`
     static const shell_command_t sBase64SubCommands[] = {
-        { &Base64HelpHandler, "help", "Usage: base64 <subcommand>" },
         { &Base64EncodeHandler, "encode", "Encode a hex sting as base64. Usage: base64 encode <hex_string>" },
         { &Base64DecodeHandler, "decode", "Decode a base64 sting as hex. Usage: base64 decode <base64_string>" },
     };

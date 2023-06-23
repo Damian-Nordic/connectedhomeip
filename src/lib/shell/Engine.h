@@ -124,7 +124,7 @@ public:
      * @param on_command            An iterator callback to be called for each command.
      * @param arg                   A context variable to be passed to each command iterated.
      */
-    void ForEachCommand(shell_command_iterator_t * on_command, void * arg);
+    void ForEachCommand(shell_command_iterator_t * on_command, void * arg = nullptr);
 
     /**
      * Dispatch and execute the command for the given argument list.
@@ -143,6 +143,12 @@ public:
      * @param count                 The number of commands in the command set array.
      */
     void RegisterCommands(shell_command_t * command_set, unsigned count);
+
+    /**
+     * Prints all the registered commands and their help texts.
+     *
+     */
+    void PrintHelp();
 
     /**
      * Runs the shell mainloop. Will display the prompt and enable interaction.

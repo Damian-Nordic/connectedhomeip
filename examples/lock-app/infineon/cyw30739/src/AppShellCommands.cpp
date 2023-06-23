@@ -18,12 +18,10 @@
  */
 
 #include <LockManager.h>
-#include <lib/shell/commands/Help.h>
 #include <platform/CHIPDeviceLayer.h>
 
 using namespace chip::Shell;
 
-static CHIP_ERROR AppCommandHelpHandler(int argc, char * argv[]);
 static CHIP_ERROR AppCommandLockHandler(int argc, char * argv[]);
 static CHIP_ERROR AppCommandDispatch(int argc, char * argv[]);
 
@@ -34,11 +32,6 @@ chip::EndpointId endpointId = DOOR_LOCK_SERVER_ENDPOINT;
 void RegisterAppShellCommands(void)
 {
     static const shell_command_t sAppSubCommands[] = {
-        {
-            .cmd_func = AppCommandHelpHandler,
-            .cmd_name = "help",
-            .cmd_help = "Usage: app <subcommand>",
-        },
         {
             .cmd_func = AppCommandLockHandler,
             .cmd_name = "lock",
@@ -55,12 +48,6 @@ void RegisterAppShellCommands(void)
     sAppSubcommands.RegisterCommands(sAppSubCommands, ArraySize(sAppSubCommands));
 
     Engine::Root().RegisterCommands(&sAppCommand, 1);
-}
-
-CHIP_ERROR AppCommandHelpHandler(int argc, char * argv[])
-{
-    sAppSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR AppCommandLockHandler(int argc, char * argv[])
@@ -106,10 +93,5 @@ CHIP_ERROR AppCommandLockHandler(int argc, char * argv[])
 
 CHIP_ERROR AppCommandDispatch(int argc, char * argv[])
 {
-    if (argc == 0)
-    {
-        AppCommandHelpHandler(argc, argv);
-        return CHIP_NO_ERROR;
-    }
     return sAppSubcommands.ExecCommand(argc, argv);
 }

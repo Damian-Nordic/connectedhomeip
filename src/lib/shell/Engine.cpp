@@ -81,26 +81,35 @@ void Engine::RegisterCommands(shell_command_t * command_set, unsigned count)
     ++_commandSetCount;
 }
 
+void Engine::PrintHelp()
+{
+    ForEachCommand([](shell_command_t * command, void *) {
+        streamer_printf(streamer_get(), "  %-15s %s\r\n", command->cmd_name, command->cmd_help);
+        return CHIP_NO_ERROR;
+    });
+}
+
 CHIP_ERROR Engine::ExecCommand(int argc, char * argv[])
 {
-    CHIP_ERROR retval = CHIP_ERROR_INVALID_ARGUMENT;
-
-    VerifyOrReturnError(argc > 0, retval);
-    // Find the command
-    for (unsigned i = 0; i < _commandSetCount; i++)
+    if (argc > 0)
     {
-        for (unsigned j = 0; j < _commandSetSize[i]; j++)
+        // Find the command
+        for (unsigned i = 0; i < _commandSetCount; i++)
         {
-            if (strcmp(argv[0], _commandSet[i][j].cmd_name) == 0)
+            for (unsigned j = 0; j < _commandSetSize[i]; j++)
             {
-                // Execute the command!
-                retval = _commandSet[i][j].cmd_func(argc - 1, argv + 1);
-                break;
+                if (strcmp(argv[0], _commandSet[i][j].cmd_name) == 0)
+                {
+                    // Execute the command!
+                    return _commandSet[i][j].cmd_func(argc - 1, argv + 1);
+                }
             }
         }
     }
 
-    return retval;
+    PrintHelp();
+
+    return CHIP_ERROR_INVALID_ARGUMENT;
 }
 
 void Engine::RegisterDefaultCommands()

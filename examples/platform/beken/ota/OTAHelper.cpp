@@ -27,7 +27,6 @@
 #include <app/clusters/ota-requestor/DefaultOTARequestorUserConsent.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/logging/CHIPLogging.h>
 
 using namespace chip::DeviceLayer;

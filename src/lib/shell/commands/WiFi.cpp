@@ -17,7 +17,6 @@
 
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/shell/streamer.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/ConnectivityManager.h>
@@ -29,12 +28,6 @@ namespace chip {
 namespace Shell {
 
 static chip::Shell::Engine sShellWiFiSubCommands;
-
-static CHIP_ERROR WiFiHelpHandler(int argc, char ** argv)
-{
-    sShellWiFiSubCommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 static CHIP_ERROR PrintWiFiMode()
 {
@@ -115,10 +108,6 @@ static CHIP_ERROR WiFiConnectHandler(int argc, char ** argv)
 
 static CHIP_ERROR WiFiDispatch(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return WiFiHelpHandler(argc, argv);
-    }
     return sShellWiFiSubCommands.ExecCommand(argc, argv);
 }
 
@@ -126,7 +115,6 @@ void RegisterWiFiCommands()
 {
     /// Subcommands for root command: `device <subcommand>`
     static const shell_command_t sWiFiSubCommands[] = {
-        { &WiFiHelpHandler, "help", "" },
         { &WiFiModeHandler, "mode", "Get/Set wifi mode. Usage: wifi mode [disable|ap|sta]." },
         { &WiFiConnectHandler, "connect", "Connect to AP. Usage: wifi connect ssid psk." },
     };

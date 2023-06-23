@@ -25,7 +25,6 @@
 #include <lib/core/CHIPEncoding.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -61,12 +60,6 @@ private:
 
     static CHIP_ERROR OnOffHandler(int argc, char ** argv)
     {
-        if (argc == 0)
-        {
-            sSubShell.ForEachCommand(PrintCommandHelp, nullptr);
-            return CHIP_NO_ERROR;
-        }
-
         CHIP_ERROR error = sSubShell.ExecCommand(argc, argv);
 
         if (error != CHIP_NO_ERROR)
@@ -186,11 +179,6 @@ private:
 
     static CHIP_ERROR CASEHandler(int argc, char ** argv)
     {
-        if (argc == 0)
-        {
-            sSubShell.ForEachCommand(PrintCommandHelp, nullptr);
-            return CHIP_NO_ERROR;
-        }
         CHIP_ERROR err = sSubShell.ExecCommand(argc, argv);
         if (err != CHIP_NO_ERROR)
         {

@@ -18,7 +18,6 @@
 #include "EventHandlerLibShell.h"
 #include "AppTask.h"
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 
 #include "app/server/Server.h"
 #include "platform/CHIPDeviceLayer.h"
@@ -36,26 +35,13 @@ using Shell::streamer_printf;
 
 Engine sShellDoorlockSubCommands;
 Engine sShellDoorlockEventSubCommands;
-Engine sShellDoorlockEventAlarmSubCommands;
-Engine sShellDoorlockEventDoorStateSubCommands;
 
 /********************************************************
  * Doorlock shell functions
  *********************************************************/
 
-CHIP_ERROR DoorlockHelpHandler(int argc, char ** argv)
-{
-    sShellDoorlockSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR DoorlockCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return DoorlockHelpHandler(argc, argv);
-    }
-
     return sShellDoorlockSubCommands.ExecCommand(argc, argv);
 }
 
@@ -63,19 +49,8 @@ CHIP_ERROR DoorlockCommandHandler(int argc, char ** argv)
  * Event shell functions
  *********************************************************/
 
-CHIP_ERROR EventHelpHandler(int argc, char ** argv)
-{
-    sShellDoorlockEventSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR EventDoorlockCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return EventHelpHandler(argc, argv);
-    }
-
     return sShellDoorlockEventSubCommands.ExecCommand(argc, argv);
 }
 
@@ -83,19 +58,8 @@ CHIP_ERROR EventDoorlockCommandHandler(int argc, char ** argv)
  * Alarm shell functions
  *********************************************************/
 
-CHIP_ERROR AlarmHelpHandler(int argc, char ** argv)
-{
-    sShellDoorlockEventAlarmSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR AlarmEventHandler(int argc, char ** argv)
 {
-
-    if (argc == 0)
-    {
-        return AlarmHelpHandler(argc, argv);
-    }
     if (argc >= 2)
     {
         ChipLogError(Zcl, "Too many arguments provided to function %s, line %d", __func__, __LINE__);
@@ -115,19 +79,8 @@ CHIP_ERROR AlarmEventHandler(int argc, char ** argv)
  * Door state shell functions
  *********************************************************/
 
-CHIP_ERROR DoorStateHelpHandler(int argc, char ** argv)
-{
-    sShellDoorlockEventDoorStateSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR DoorStateEventHandler(int argc, char ** argv)
 {
-
-    if (argc == 0)
-    {
-        return DoorStateHelpHandler(argc, argv);
-    }
     if (argc >= 2)
     {
         ChipLogError(Zcl, "Too many arguments provided to function %s, line %d", __func__, __LINE__);
@@ -150,30 +103,16 @@ CHIP_ERROR DoorStateEventHandler(int argc, char ** argv)
 
 CHIP_ERROR RegisterLockEvents()
 {
-    static const shell_command_t sDoorlockSubCommands[] = { { &DoorlockHelpHandler, "help", "Usage: doorlock <subcommand>" },
-                                                            { &EventDoorlockCommandHandler, "event",
+    static const shell_command_t sDoorlockSubCommands[] = { { &EventDoorlockCommandHandler, "event",
                                                               " Usage: doorlock event <subcommand>" } };
 
     static const shell_command_t sDoorlockEventSubCommands[] = {
-        { &EventHelpHandler, "help", "Usage : doorlock event <subcommand>" },
         { &AlarmEventHandler, "lock-alarm", "Sends lock alarm event to lock app" },
         { &DoorStateEventHandler, "door-state-change", "Sends door state change event to lock app" }
     };
 
-    static const shell_command_t sDoorlockEventAlarmSubCommands[] = { { &AlarmHelpHandler, "help",
-                                                                        "Usage : doorlock event lock-alarm AlarmCode" } };
-
-    static const shell_command_t sDoorlockEventDoorStateSubCommands[] = {
-        { &DoorStateHelpHandler, "help", "Usage : doorlock event door-state-change DoorState" }
-    };
-
     static const shell_command_t sDoorLockCommand = { &DoorlockCommandHandler, "doorlock",
                                                       "doorlock commands. Usage: doorlock <subcommand>" };
-
-    sShellDoorlockEventAlarmSubCommands.RegisterCommands(sDoorlockEventAlarmSubCommands, ArraySize(sDoorlockEventAlarmSubCommands));
-
-    sShellDoorlockEventDoorStateSubCommands.RegisterCommands(sDoorlockEventDoorStateSubCommands,
-                                                             ArraySize(sDoorlockEventDoorStateSubCommands));
 
     sShellDoorlockEventSubCommands.RegisterCommands(sDoorlockEventSubCommands, ArraySize(sDoorlockEventSubCommands));
     sShellDoorlockSubCommands.RegisterCommands(sDoorlockSubCommands, ArraySize(sDoorlockSubCommands));

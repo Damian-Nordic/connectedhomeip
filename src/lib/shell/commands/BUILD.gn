@@ -20,8 +20,6 @@ import("${chip_root}/src/platform/device.gni")
 source_set("commands") {
   sources = [
     "Base64.cpp",
-    "Help.cpp",
-    "Help.h",
     "Meta.cpp",
   ]
 

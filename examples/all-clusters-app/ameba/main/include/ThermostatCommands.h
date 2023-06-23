@@ -22,7 +22,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -183,19 +182,14 @@ void ProcessThermostatGroupBindingCommand(BindingCommandData * data, const Ember
  * Thermostat switch shell functions
  *********************************************************/
 
-CHIP_ERROR ThermostatHelpHandler(int argc, char ** argv)
+CHIP_ERROR ThermostatHelpHandler()
 {
-    sShellSwitchThermostatSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchThermostatSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR ThermostatSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return ThermostatHelpHandler(argc, argv);
-    }
-
     return sShellSwitchThermostatSubCommands.ExecCommand(argc, argv);
 }
 
@@ -203,7 +197,7 @@ CHIP_ERROR SetpointRaiseLowerSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return ThermostatHelpHandler(argc, argv);
+        return ThermostatHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -220,19 +214,8 @@ CHIP_ERROR SetpointRaiseLowerSwitchCommandHandler(int argc, char ** argv)
  * Thermostat Read switch shell functions
  *********************************************************/
 
-CHIP_ERROR ThermostatReadHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchThermostatReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR ThermostatRead(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return ThermostatReadHelpHandler(argc, argv);
-    }
-
     return sShellSwitchThermostatReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -416,19 +399,8 @@ CHIP_ERROR ThermostatReadSystemMode(int argc, char ** argv)
  * Groups Thermostat switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsThermostatHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchGroupsThermostatSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR GroupsThermostatSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsThermostatHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsThermostatSubCommands.ExecCommand(argc, argv);
 }
 

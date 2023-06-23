@@ -48,7 +48,6 @@
 
 #if defined(ENABLE_CHIP_SHELL)
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 #define FACTORY_RESET_TRIGGER_TIMEOUT 3000
@@ -70,7 +69,6 @@
 
 #if defined(ENABLE_CHIP_SHELL)
 using chip::Shell::Engine;
-using chip::Shell::PrintCommandHelp;
 using chip::Shell::shell_command_t;
 using chip::Shell::streamer_get;
 using chip::Shell::streamer_printf;
@@ -121,19 +119,14 @@ AppTask AppTask::sAppTask;
  * Light shell functions
  *********************************************************/
 
-CHIP_ERROR LightHelpHandler(int argc, char ** argv)
+CHIP_ERROR LightHelpHandler()
 {
-    sShellLightSubCommands.ForEachCommand(PrintCommandHelp, nullptr);
+    sShellLightSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR LightCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return LightHelpHandler(argc, argv);
-    }
-
     return sShellLightSubCommands.ExecCommand(argc, argv);
 }
 
@@ -141,19 +134,8 @@ CHIP_ERROR LightCommandHandler(int argc, char ** argv)
  * OnOff switch shell functions
  *********************************************************/
 
-CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
-{
-    sShellLightOnOffSubCommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR OnOffLightCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return sShellLightOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -175,7 +157,7 @@ CHIP_ERROR ColorLightCommandHandler(int argc, char ** argv)
 
     if (argc < 3)
     {
-        return LightHelpHandler(argc, argv);
+        return LightHelpHandler();
     }
 
     rgb = (atoi(argv[2]) << 16) | (atoi(argv[1]) << 8) | atoi(argv[0]);
@@ -190,7 +172,7 @@ CHIP_ERROR LevelLightCommandHandler(int argc, char ** argv)
     uint8_t level = 0;
     if (argc < 1)
     {
-        return LightHelpHandler(argc, argv);
+        return LightHelpHandler();
     }
 
     level = atoi(argv[0]);
@@ -227,11 +209,6 @@ static void RegisterLightCommands()
 {
     static const shell_command_t sLightSubCommands[] = {
         {
-            .cmd_func = LightHelpHandler,
-            .cmd_name = "help",
-            .cmd_help = "Usage: light <subcommand>",
-        },
-        {
             .cmd_func = OnOffLightCommandHandler,
             .cmd_name = "onoff",
             .cmd_help = "Usage: light onoff <subcommand>",
@@ -259,11 +236,6 @@ static void RegisterLightCommands()
     };
 
     static const shell_command_t sLightOnOffSubCommands[] = {
-        {
-            .cmd_func = OnOffHelpHandler,
-            .cmd_name = "help",
-            .cmd_help = "Usage : light ononff <subcommand>",
-        },
         {
             .cmd_func = OnLightCommandHandler,
             .cmd_name = "on",

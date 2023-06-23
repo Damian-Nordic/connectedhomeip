@@ -22,7 +22,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -194,19 +193,14 @@ void ProcessOnOffGroupBindingCommand(BindingCommandData * data, const EmberBindi
  * OnOff switch shell functions
  *********************************************************/
 
-CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
+CHIP_ERROR OnOffHelpHandler()
 {
-    sShellSwitchOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchOnOffSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR OnOffSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return sShellSwitchOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -244,7 +238,7 @@ CHIP_ERROR OffWithEffectSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return OnOffHelpHandler(argc, argv);
+        return OnOffHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -271,7 +265,7 @@ CHIP_ERROR OnWithTimedOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 3)
     {
-        return OnOffHelpHandler(argc, argv);
+        return OnOffHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -289,19 +283,8 @@ CHIP_ERROR OnWithTimedOffSwitchCommandHandler(int argc, char ** argv)
  * OnOff Read switch shell functions
  *********************************************************/
 
-CHIP_ERROR OnOffReadHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchOnOffReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR OnOffRead(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffReadHelpHandler(argc, argv);
-    }
-
     return sShellSwitchOnOffReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -375,19 +358,14 @@ CHIP_ERROR OnOffReadStartUpOnOff(int argc, char ** argv)
  * Groups OnOff switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsOnOffHelpHandler(int argc, char ** argv)
+CHIP_ERROR GroupsOnOffHelpHandler()
 {
-    sShellSwitchGroupsOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchGroupsOnOffSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR GroupsOnOffSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsOnOffHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -428,7 +406,7 @@ CHIP_ERROR GroupOffWithEffectSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return GroupsOnOffHelpHandler(argc, argv);
+        return GroupsOnOffHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -457,7 +435,7 @@ CHIP_ERROR GroupOnWithTimedOffSwitchCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return GroupsOnOffHelpHandler(argc, argv);
+        return GroupsOnOffHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();

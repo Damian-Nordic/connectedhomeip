@@ -24,7 +24,6 @@
 #include <lib/dnssd/platform/Dnssd.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/BytesToHex.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CodeUtils.h>
@@ -212,23 +211,11 @@ CHIP_ERROR BrowseCommissionerHandler(int argc, char ** argv)
 
 CHIP_ERROR BrowseHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        sShellDnsBrowseSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-        return CHIP_NO_ERROR;
-    }
-
     return sShellDnsBrowseSubcommands.ExecCommand(argc, argv);
 }
 
 CHIP_ERROR DnsHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        sShellDnsSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-        return CHIP_NO_ERROR;
-    }
-
     sResolverProxy.Init(DeviceLayer::UDPEndPointManager());
     sResolverProxy.SetOperationalDelegate(&sDnsShellResolverDelegate);
     sResolverProxy.SetCommissioningDelegate(&sDnsShellResolverDelegate);

@@ -27,7 +27,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -153,19 +152,8 @@ void InitBindingHandlerInternal(intptr_t arg)
  * Switch shell functions
  *********************************************************/
 
-CHIP_ERROR SwitchHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR SwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return SwitchHelpHandler(argc, argv);
-    }
-
     return sShellSwitchSubCommands.ExecCommand(argc, argv);
 }
 
@@ -173,19 +161,8 @@ CHIP_ERROR SwitchCommandHandler(int argc, char ** argv)
  * OnOff switch shell functions
  *********************************************************/
 
-CHIP_ERROR OnOffHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR OnOffSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return OnOffHelpHandler(argc, argv);
-    }
-
     return sShellSwitchOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -223,19 +200,8 @@ CHIP_ERROR ToggleSwitchCommandHandler(int argc, char ** argv)
  * bind switch shell functions
  *********************************************************/
 
-CHIP_ERROR BindingHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchBindingSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR BindingSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return BindingHelpHandler(argc, argv);
-    }
-
     return sShellSwitchBindingSubCommands.ExecCommand(argc, argv);
 }
 
@@ -274,19 +240,8 @@ CHIP_ERROR BindingUnicastBindCommandHandler(int argc, char ** argv)
  * Groups switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchGroupsSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR GroupsSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsSubCommands.ExecCommand(argc, argv);
 }
 
@@ -294,19 +249,8 @@ CHIP_ERROR GroupsSwitchCommandHandler(int argc, char ** argv)
  * Groups OnOff switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsOnOffHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchGroupsOnOffSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR GroupsOnOffSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsOnOffHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsOnOffSubCommands.ExecCommand(argc, argv);
 }
 
@@ -351,32 +295,27 @@ static void RegisterSwitchCommands()
 {
 
     static const shell_command_t sSwitchSubCommands[] = {
-        { &SwitchHelpHandler, "help", "Usage: switch <subcommand>" },
         { &OnOffSwitchCommandHandler, "onoff", " Usage: switch onoff <subcommand>" },
         { &GroupsSwitchCommandHandler, "groups", "Usage: switch groups <subcommand>" },
         { &BindingSwitchCommandHandler, "binding", "Usage: switch binding <subcommand>" }
     };
 
     static const shell_command_t sSwitchOnOffSubCommands[] = {
-        { &OnOffHelpHandler, "help", "Usage : switch ononff <subcommand>" },
         { &OnSwitchCommandHandler, "on", "Sends on command to bound lighting app" },
         { &OffSwitchCommandHandler, "off", "Sends off command to bound lighting app" },
         { &ToggleSwitchCommandHandler, "toggle", "Sends toggle command to bound lighting app" }
     };
 
-    static const shell_command_t sSwitchGroupsSubCommands[] = { { &GroupsHelpHandler, "help", "Usage: switch groups <subcommand>" },
-                                                                { &GroupsOnOffSwitchCommandHandler, "onoff",
+    static const shell_command_t sSwitchGroupsSubCommands[] = { { &GroupsOnOffSwitchCommandHandler, "onoff",
                                                                   "Usage: switch groups onoff <subcommand>" } };
 
     static const shell_command_t sSwitchGroupsOnOffSubCommands[] = {
-        { &GroupsOnOffHelpHandler, "help", "Usage: switch groups onoff <subcommand>" },
         { &GroupOnSwitchCommandHandler, "on", "Sends on command to bound group" },
         { &GroupOffSwitchCommandHandler, "off", "Sends off command to bound group" },
         { &GroupToggleSwitchCommandHandler, "toggle", "Sends toggle command to group" }
     };
 
     static const shell_command_t sSwitchBindingSubCommands[] = {
-        { &BindingHelpHandler, "help", "Usage: switch binding <subcommand>" },
         { &BindingGroupBindCommandHandler, "group", "Usage: switch binding group <fabric index> <group id>" },
         { &BindingUnicastBindCommandHandler, "unicast", "Usage: switch binding unicast <fabric index> <node id> <endpoint>" }
     };

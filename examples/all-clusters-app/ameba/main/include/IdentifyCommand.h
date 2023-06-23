@@ -22,7 +22,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -131,19 +130,8 @@ void ProcessIdentifyGroupBindingCommand(BindingCommandData * data, const EmberBi
  * Identify switch shell functions
  *********************************************************/
 
-CHIP_ERROR IdentifyHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchIdentifySubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR IdentifySwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return IdentifyHelpHandler(argc, argv);
-    }
-
     return sShellSwitchIdentifySubCommands.ExecCommand(argc, argv);
 }
 
@@ -174,19 +162,8 @@ CHIP_ERROR TriggerEffectSwitchCommandHandler(int argc, char ** argv)
  * Identify Read switch shell functions
  *********************************************************/
 
-CHIP_ERROR IdentifyReadHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchIdentifyReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR IdentifyRead(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return IdentifyReadHelpHandler(argc, argv);
-    }
-
     return sShellSwitchIdentifyReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -227,19 +204,8 @@ CHIP_ERROR IdentifyReadIdentifyType(int argc, char ** argv)
  * Groups Identify switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsIdentifyHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchGroupsIdentifySubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR GroupsIdentifySwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsIdentifyHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsIdentifySubCommands.ExecCommand(argc, argv);
 }
 

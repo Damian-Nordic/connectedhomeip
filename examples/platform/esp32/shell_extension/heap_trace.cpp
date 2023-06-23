@@ -21,7 +21,6 @@
 
 #include <lib/core/CHIPError.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/shell/streamer.h>
 #include <lib/support/CodeUtils.h>
 
@@ -31,7 +30,6 @@
 #include "esp_heap_trace.h"
 
 using chip::Shell::Engine;
-using chip::Shell::PrintCommandHelp;
 using chip::Shell::shell_command_t;
 using chip::Shell::streamer_get;
 using chip::Shell::streamer_printf;
@@ -47,12 +45,6 @@ heap_trace_record_t sTraceRecords[kNumHeapTraceRecords];
 #endif
 
 Engine sShellHeapSubCommands;
-
-CHIP_ERROR HeapTraceHelpHandler(int argc, char ** argv)
-{
-    sShellHeapSubCommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 #if CONFIG_HEAP_TRACING_STANDALONE
 CHIP_ERROR HeapTraceResetHandler(int argc, char ** argv)
@@ -111,12 +103,6 @@ CHIP_ERROR HeapTraceTaskHandler(int argc, char ** argv)
 
 CHIP_ERROR HeapTraceDispatch(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        HeapTraceHelpHandler(argc, argv);
-        return CHIP_NO_ERROR;
-    }
-
     return sShellHeapSubCommands.ExecCommand(argc, argv);
 }
 
@@ -128,7 +114,6 @@ namespace chip {
 void RegisterHeapTraceCommands()
 {
     static const shell_command_t sHeapSubCommands[] = {
-        { &HeapTraceHelpHandler, "help", "Usage: heap-trace <subcommand>" },
 #if CONFIG_HEAP_TRACING_STANDALONE
         { &HeapTraceResetHandler, "reset", "Reset the heap trace baseline" },
         { &HeapTraceDumpHandler, "dump", "Dump the last collected heap trace" },

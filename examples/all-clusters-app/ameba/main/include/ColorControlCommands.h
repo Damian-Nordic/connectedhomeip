@@ -22,7 +22,6 @@
 
 #if CONFIG_ENABLE_CHIP_SHELL
 #include "lib/shell/Engine.h"
-#include "lib/shell/commands/Help.h"
 #endif // ENABLE_CHIP_SHELL
 
 using namespace chip;
@@ -751,19 +750,14 @@ void ProcessColorControlGroupBindingCommand(BindingCommandData * data, const Emb
  * ColorControl switch shell functions
  *********************************************************/
 
-CHIP_ERROR ColorControlHelpHandler(int argc, char ** argv)
+CHIP_ERROR ColorControlHelpHandler()
 {
-    sShellSwitchColorControlSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchColorControlSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR ColorControlSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return ColorControlHelpHandler(argc, argv);
-    }
-
     return sShellSwitchColorControlSubCommands.ExecCommand(argc, argv);
 }
 
@@ -771,7 +765,7 @@ CHIP_ERROR MoveToHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -791,7 +785,7 @@ CHIP_ERROR MoveHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -810,7 +804,7 @@ CHIP_ERROR StepHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -830,7 +824,7 @@ CHIP_ERROR MoveToSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -849,7 +843,7 @@ CHIP_ERROR MoveSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -868,7 +862,7 @@ CHIP_ERROR StepSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -888,7 +882,7 @@ CHIP_ERROR MoveToHueAndSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -908,7 +902,7 @@ CHIP_ERROR MoveToColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -928,7 +922,7 @@ CHIP_ERROR MoveColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -947,7 +941,7 @@ CHIP_ERROR StepColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -967,7 +961,7 @@ CHIP_ERROR MoveToColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -986,7 +980,7 @@ CHIP_ERROR EnhancedMoveToHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1006,7 +1000,7 @@ CHIP_ERROR EnhancedMoveHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1025,7 +1019,7 @@ CHIP_ERROR EnhancedStepHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1045,7 +1039,7 @@ CHIP_ERROR EnhancedMoveToHueAndSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1065,7 +1059,7 @@ CHIP_ERROR ColorLoopSetCommandHandler(int argc, char ** argv)
 {
     if (argc != 7)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1087,7 +1081,7 @@ CHIP_ERROR StopMoveStepCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1104,7 +1098,7 @@ CHIP_ERROR MoveColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 6)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1125,7 +1119,7 @@ CHIP_ERROR StepColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 7)
     {
-        return ColorControlHelpHandler(argc, argv);
+        return ColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1147,19 +1141,8 @@ CHIP_ERROR StepColorTemperatureCommandHandler(int argc, char ** argv)
  * ColorControl Read switch shell functions
  *********************************************************/
 
-CHIP_ERROR ColorControlReadHelpHandler(int argc, char ** argv)
-{
-    sShellSwitchColorControlReadSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
-
 CHIP_ERROR ColorControlRead(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return ColorControlReadHelpHandler(argc, argv);
-    }
-
     return sShellSwitchColorControlReadSubCommands.ExecCommand(argc, argv);
 }
 
@@ -1750,19 +1733,14 @@ CHIP_ERROR ColorControlReadStartUpColorTemperatureMireds(int argc, char ** argv)
  * Groups ColorControl switch shell functions
  *********************************************************/
 
-CHIP_ERROR GroupsColorControlHelpHandler(int argc, char ** argv)
+CHIP_ERROR GroupsColorControlHelpHandler()
 {
-    sShellSwitchGroupsColorControlSubCommands.ForEachCommand(Shell::PrintCommandHelp, nullptr);
+    sShellSwitchGroupsColorControlSubCommands.PrintHelp();
     return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR GroupsColorControlSwitchCommandHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        return GroupsColorControlHelpHandler(argc, argv);
-    }
-
     return sShellSwitchGroupsColorControlSubCommands.ExecCommand(argc, argv);
 }
 
@@ -1770,7 +1748,7 @@ CHIP_ERROR GroupsMoveToHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1791,7 +1769,7 @@ CHIP_ERROR GroupsMoveHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1811,7 +1789,7 @@ CHIP_ERROR GroupsStepHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1832,7 +1810,7 @@ CHIP_ERROR GroupsMoveToSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1852,7 +1830,7 @@ CHIP_ERROR GroupsMoveSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1872,7 +1850,7 @@ CHIP_ERROR GroupsStepSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1893,7 +1871,7 @@ CHIP_ERROR GroupsMoveToHueAndSaturationCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1914,7 +1892,7 @@ CHIP_ERROR GroupsMoveToColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1935,7 +1913,7 @@ CHIP_ERROR GroupsMoveColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1955,7 +1933,7 @@ CHIP_ERROR GroupsStepColorCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1976,7 +1954,7 @@ CHIP_ERROR GroupsMoveToColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -1996,7 +1974,7 @@ CHIP_ERROR GroupsEnhancedMoveToHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2017,7 +1995,7 @@ CHIP_ERROR GroupsEnhancedMoveHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 4)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2037,7 +2015,7 @@ CHIP_ERROR GroupsEnhancedStepHueCommandHandler(int argc, char ** argv)
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2058,7 +2036,7 @@ CHIP_ERROR GroupsEnhancedMoveToHueAndSaturationCommandHandler(int argc, char ** 
 {
     if (argc != 5)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2079,7 +2057,7 @@ CHIP_ERROR GroupsColorLoopSetCommandHandler(int argc, char ** argv)
 {
     if (argc != 7)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2102,7 +2080,7 @@ CHIP_ERROR GroupsStopMoveStepCommandHandler(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2120,7 +2098,7 @@ CHIP_ERROR GroupsMoveColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 6)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();
@@ -2142,7 +2120,7 @@ CHIP_ERROR GroupsStepColorTemperatureCommandHandler(int argc, char ** argv)
 {
     if (argc != 7)
     {
-        return GroupsColorControlHelpHandler(argc, argv);
+        return GroupsColorControlHelpHandler();
     }
 
     BindingCommandData * data = Platform::New<BindingCommandData>();

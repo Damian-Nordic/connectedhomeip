@@ -18,7 +18,6 @@
 #include <OTAProviderCommands.h>
 #include <lib/shell/Commands.h>
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/logging/CHIPLogging.h>
 
 using namespace chip::app::Clusters::OtaSoftwareUpdateProvider;
@@ -63,12 +62,6 @@ CHIP_ERROR ApplyUpdateActionHandler(int argc, char ** argv)
 
 CHIP_ERROR OTAProviderHandler(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        sSubShell.ForEachCommand(PrintCommandHelp, nullptr);
-        return CHIP_NO_ERROR;
-    }
-
     CHIP_ERROR error = sSubShell.ExecCommand(argc, argv);
 
     if (error != CHIP_NO_ERROR)

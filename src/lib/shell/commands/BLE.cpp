@@ -21,7 +21,6 @@
 #include <platform/CHIPDeviceLayer.h>
 #endif
 #include <lib/shell/Engine.h>
-#include <lib/shell/commands/Help.h>
 #include <lib/support/CHIPArgParser.hpp>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -32,12 +31,6 @@ namespace chip {
 namespace Shell {
 
 static chip::Shell::Engine sShellDeviceSubcommands;
-
-CHIP_ERROR BLEHelpHandler(int argc, char ** argv)
-{
-    sShellDeviceSubcommands.ForEachCommand(PrintCommandHelp, nullptr);
-    return CHIP_NO_ERROR;
-}
 
 CHIP_ERROR BLEAdvertiseHandler(int argc, char ** argv)
 {
@@ -91,18 +84,12 @@ CHIP_ERROR BLEAdvertiseHandler(int argc, char ** argv)
 
 CHIP_ERROR BLEDispatch(int argc, char ** argv)
 {
-    if (argc == 0)
-    {
-        BLEHelpHandler(argc, argv);
-        return CHIP_NO_ERROR;
-    }
     return sShellDeviceSubcommands.ExecCommand(argc, argv);
 }
 
 void RegisterBLECommands()
 {
     static const shell_command_t sBLESubCommands[] = {
-        { &BLEHelpHandler, "help", "Usage: ble <subcommand>" },
         { &BLEAdvertiseHandler, "adv", "Enable or disable advertisement. Usage: ble adv <start|stop|state>" },
     };
 
